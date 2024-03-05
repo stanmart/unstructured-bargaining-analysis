@@ -1,6 +1,3 @@
-# Snakefile
-
-# Define the rule to create session data
 rule create_session_data:
     conda: "environment.yml"
     input:
