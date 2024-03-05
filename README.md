@@ -1,3 +1,6 @@
+[![checks](https://github.com/stanmart/unstructured-bargaining-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/stanmart/unstructured-bargaining-analysis/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/licenses/MIT)
+
 # Unstructured bargaining analysis
 Code for analyzing the results of the unstructured bargaining experiment
 
