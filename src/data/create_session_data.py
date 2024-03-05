@@ -5,6 +5,7 @@ import polars.selectors as cs
 def load_chat_data(path: str, session_code: str) -> pl.LazyFrame:
     data = (
         pl.scan_csv(path)
+        .filter(pl.col("session_code") == session_code)
         .select(
             [
                 "participant_code",
@@ -14,7 +15,6 @@ def load_chat_data(path: str, session_code: str) -> pl.LazyFrame:
                 "body",
             ]
         )
-        .filter(pl.col("session_code") == session_code)
     )
     return data
 
@@ -50,7 +50,6 @@ def load_live_data(
             "timestamp",
             "round_number",
             "offer_id",
-            "accepted_offer",
             "group_id",
             "id_in_group",
             "accepted_offer",
@@ -67,10 +66,13 @@ def load_bargaining_data(path: str, session_code: str) -> pl.LazyFrame:
         .select(
             [
                 "participant.code",
-                "subsession.round_number" "group.id_in_subsession" "player.id_in_group",
+                "subsession.round_number",
+                "group.id_in_subsession",
+                "player.id_in_group",
                 "player.accepted_offer",
                 "player.payoff_this_round",
                 "player.payoff",
+                "participant.payoff",
                 "subsession.start_time",
                 "player.end_time",
                 "subsession.expiry",
@@ -158,15 +160,15 @@ if __name__ == "__main__":
         snakemake.input.bargaining_data,  # noqa F821 # type: ignore
         snakemake.wildcards.session_code,  # noqa F821 # type: ignore
     )
-    survey_data = load_bargaining_data(
+    survey_data = load_survey_data(
         snakemake.input.survey_data,  # noqa F821 # type: ignore
         snakemake.wildcards.session_code,  # noqa F821 # type: ignore
     )
     chat_data = organize_chat_data(chat_data_raw, bargaining_data)
 
-    chat_data.write_csv(snakemake.output.chat_data)  # noqa F821 # type: ignore
-    page_loads.write_csv(snakemake.output.page_loads)  # noqa F821 # type: ignore
-    proposals.write_csv(snakemake.output.proposals)  # noqa F821 # type: ignore
-    acceptances.write_csv(snakemake.output.acceptances)  # noqa F821 # type: ignore
-    bargaining_data.write_csv(snakemake.output.bargaining_data)  # noqa F821 # type: ignore
-    survey_data.write_csv(snakemake.output.survey_data)  # noqa F821 # type: ignore
+    chat_data.sink_csv(snakemake.output.chat)  # noqa F821 # type: ignore
+    page_loads.sink_csv(snakemake.output.page_loads)  # noqa F821 # type: ignore
+    proposals.sink_csv(snakemake.output.proposals)  # noqa F821 # type: ignore
+    acceptances.sink_csv(snakemake.output.acceptances)  # noqa F821 # type: ignore
+    bargaining_data.sink_csv(snakemake.output.bargaining_data)  # noqa F821 # type: ignore
+    survey_data.sink_csv(snakemake.output.survey_data)  # noqa F821 # type: ignore
