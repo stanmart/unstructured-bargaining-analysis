@@ -2,6 +2,7 @@
 
 # Define the rule to create session data
 rule create_session_data:
+    conda: "environment.yml"
     input:
         bargaining_data = "data/raw/bargaining_data.csv",
         live_data = "data/raw/live_data.csv",
