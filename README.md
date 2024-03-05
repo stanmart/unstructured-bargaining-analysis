@@ -24,3 +24,27 @@ To organize the data for a given session with code `session_code`, simply tell s
 ```bash
 snakemake --use-conda --cores 1 data/clean/session_p15obeom/chat.csv
 ```
+
+## Automated checks
+
+The project is set up with GitHub Actions to run automated checks on every push and pull request to the main branch. The checks include:
+ - `ruff check` for Python code style
+ - `ruff format` for Python code formatting
+ - `codespell` for spell checking
+
+These checks can also be run locally as pre-commit hooks. First, install [`pre-commit`](https://pre-commit.com/#install), e.g. using `pipx`:
+
+```bash
+pipx install pyright
+pipx install pre-commit
+```
+
+Then, you can install the hooks by running
+```bash
+pre-commit install
+```
+After this, the checks will be performed automatically before every commit. If you want to run the checks manually, you can do so by running
+
+```bash
+pre-commit run --all-files
+```
