@@ -1,3 +1,16 @@
+rule create_action_data:
+    conda: "environment.yml"
+    input:
+        chat_data = "data/clean/session_{session_code}/chat.csv",
+        acceptances = "data/clean/session_{session_code}/acceptances.csv",
+        proposals = "data/clean/session_{session_code}/proposals.csv",
+    output:
+        actions = "data/clean/session_{session_code}/actions.csv",
+    script:
+        "src/data/create_action_data.py"
+
+
+
 rule create_session_data:
     conda: "environment.yml"
     input:
