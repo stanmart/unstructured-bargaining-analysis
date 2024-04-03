@@ -49,7 +49,6 @@ def load_live_data(
             "participant_code",
             "timestamp",
             "round_number",
-            "offer_id",
             "group_id",
             "id_in_group",
             "accepted_offer",
@@ -143,8 +142,29 @@ def load_survey_data(path: str, session_code: str) -> pl.LazyFrame:
 def organize_chat_data(
     chat_data: pl.LazyFrame, bargaining_data: pl.LazyFrame
 ) -> pl.LazyFrame:
-    # TODO
-    return chat_data
+    data_tomerge = bargaining_data.select(
+        [
+            "participant_code",
+            "round_number",
+            "group_id",
+            "id_in_group",
+            "start_time",
+        ]
+    ).sort("participant_code", "start_time")
+
+    merged_data = (
+        chat_data.sort("participant_code", "timestamp")
+        .join_asof(
+            data_tomerge,
+            by="participant_code",
+            left_on="timestamp",
+            right_on="start_time",
+            strategy="backward",
+        )
+        .drop("start_time")
+        .sort("round_number", "timestamp")
+    )
+    return merged_data
 
 
 if __name__ == "__main__":
@@ -164,9 +184,9 @@ if __name__ == "__main__":
         snakemake.input.survey_data,  # noqa F821 # type: ignore
         snakemake.wildcards.session_code,  # noqa F821 # type: ignore
     )
-    chat_data = organize_chat_data(chat_data_raw, bargaining_data)
+    chat_data = organize_chat_data(chat_data_raw, bargaining_data).collect()
 
-    chat_data.sink_csv(snakemake.output.chat)  # noqa F821 # type: ignore
+    chat_data.write_csv(snakemake.output.chat)  # noqa F821 # type: ignore
     page_loads.sink_csv(snakemake.output.page_loads)  # noqa F821 # type: ignore
     proposals.sink_csv(snakemake.output.proposals)  # noqa F821 # type: ignore
     acceptances.sink_csv(snakemake.output.acceptances)  # noqa F821 # type: ignore
