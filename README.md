@@ -25,7 +25,7 @@ Furthermore, data exported from otree must be placed into the `data/raw` directo
 To organize the data for a given session with code `session_code`, simply tell snakemake that you'd like to get one of the target files (the others will be generated automatically):
 
 ```bash
-snakemake --use-conda --cores 1 data/clean/session_p15obeom/chat.csv
+snakemake --use-conda --cores 1 data/clean/session_p15obeom/actions.csv
 ```
 
 ## Automated checks
