@@ -12,9 +12,15 @@ def merge_action_data(
     )
     proposals = pl.scan_csv(proposals_path).with_columns(action=pl.lit("proposal"))
 
-    return pl.concat([chat_data, acceptances, proposals], how="diagonal").sort(
-        "group_id", "round_number", "timestamp"
+    action_data = pl.concat([chat_data, acceptances, proposals], how="diagonal").sort(
+        "round_number", "group_id", "timestamp"
     )
+    first_columns = ["round_number", "group_id", "timestamp", "action"]
+    colorder = first_columns + [
+        col for col in action_data.columns if col not in first_columns
+    ]
+
+    return action_data.select(colorder)
 
 
 if __name__ == "__main__":
