@@ -14,3 +14,13 @@ rule create_session_data:
         survey_data = "data/clean/session_{session_code}/survey_data.csv"
     script:
         "src/data/create_session_data.py"
+
+
+rule power_analysis:
+    conda: "environment.yml"
+    input:
+        "src/power_analysis/power.ipynb",
+    output:
+        "out/power_analysis/power.html"
+    shell:
+        "jupyter nbconvert --execute --to html -- {input} --output {output} --output-dir ."
