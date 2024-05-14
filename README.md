@@ -18,6 +18,7 @@ Furthermore, data exported from otree must be placed into the `data/raw` directo
  - Per-app: live_bargaining (custom_export) → `data/raw/live_data.csv`
  - Per-app: live_bargaining → `data/raw/bargaining_data.csv`
  - Per-app: survey → `data/raw/survey_data.csv`
+ - Per-app: sliders: → `data/raw/slider_data.csv`
  - Chat logs → `data/raw/chat_data.csv`
 
 ## Running the analysis
