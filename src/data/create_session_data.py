@@ -98,6 +98,27 @@ def load_bargaining_data(path: str, session_code: str) -> pl.LazyFrame:
     return data
 
 
+def load_slider_data(path: str, session_code: str) -> pl.LazyFrame:
+    data = (
+        pl.scan_csv(path)
+        .filter(pl.col("session.code") == session_code)
+        .select(
+            [
+                "participant.code",
+                "player.num_correct",
+            ]
+        )
+        .rename(
+            {
+                "participant.code": "participant_code",
+                "player.num_correct": "slider_performance",
+            }
+        )
+    )
+
+    return data
+
+
 def load_survey_data(path: str, session_code: str) -> pl.LazyFrame:
     data = (
         pl.scan_csv(path)
@@ -107,15 +128,28 @@ def load_survey_data(path: str, session_code: str) -> pl.LazyFrame:
                 "participant.code",
                 "player.age",
                 "player.gender",
+                "player.gender_other",
                 "player.degree",
+                "player.degree_other",
                 "player.study_field",
+                "player.study_field_other",
                 "player.nationality",
-                "player.reflection",
+                "player.has_second_nationality",
+                "player.second_nationality",
+                "player.own_strategy",
+                "player.other_players_strategy",
                 "player.pilot_difficulty",
                 "player.pilot_explanation",
                 "player.pilot_interface",
                 "player.pilot_time",
+                "player.research_question",
                 "player.comments",
+                "player.dummy_player_axiom",
+                "player.symmetry_axiom",
+                "player.efficiency_axiom",
+                "player.linearity_additivity_axiom",
+                "player.linearity_HD1_axiom",
+                "player.stability_axiom",
             ]
         )
         .rename(
@@ -123,15 +157,28 @@ def load_survey_data(path: str, session_code: str) -> pl.LazyFrame:
                 "participant.code": "participant_code",
                 "player.age": "age",
                 "player.gender": "gender",
+                "player.gender_other": "gender_if_other",
                 "player.degree": "degree",
+                "player.degree_other": "degree_if_other",
                 "player.study_field": "study_field",
+                "player.study_field_other": "study_field_if_other",
                 "player.nationality": "nationality",
-                "player.reflection": "reflection",
-                "player.pilot_difficulty": "pilot_difficulty",
-                "player.pilot_explanation": "pilot_explanation",
-                "player.pilot_interface": "pilot_interface",
-                "player.pilot_time": "pilot_time",
+                "player.has_second_nationality": "has_secondnationality",
+                "player.second_nationality": "second_nationality",
+                "player.own_strategy": "own_strategy",
+                "player.other_players_strategy": "other_players_strategy",
+                "player.pilot_difficulty": "difficulty",
+                "player.pilot_explanation": "explanation",
+                "player.pilot_interface": "interface",
+                "player.pilot_time": "enough_time",
+                "player.research_question": "research_question",
                 "player.comments": "comments",
+                "player.dummy_player_axiom": "dummy_player_axiom",
+                "player.symmetry_axiom": "symmetry_axiom",
+                "player.efficiency_axiom": "efficiency_axiom",
+                "player.linearity_additivity_axiom": "linearity_additivity_axiom",
+                "player.linearity_HD1_axiom": "linearity_HD1_axiom",
+                "player.stability_axiom": "stability_axiom",
             }
         )
     )
@@ -180,6 +227,10 @@ if __name__ == "__main__":
         snakemake.input.bargaining_data,  # noqa F821 # type: ignore
         snakemake.wildcards.session_code,  # noqa F821 # type: ignore
     )
+    slider_data = load_slider_data(
+        snakemake.input.slider_data,  # noqa F821 # type: ignore
+        snakemake.wildcards.session_code,  # noqa F821 # type: ignore
+    )
     survey_data = load_survey_data(
         snakemake.input.survey_data,  # noqa F821 # type: ignore
         snakemake.wildcards.session_code,  # noqa F821 # type: ignore
@@ -191,4 +242,5 @@ if __name__ == "__main__":
     proposals.sink_csv(snakemake.output.proposals)  # noqa F821 # type: ignore
     acceptances.sink_csv(snakemake.output.acceptances)  # noqa F821 # type: ignore
     bargaining_data.sink_csv(snakemake.output.bargaining_data)  # noqa F821 # type: ignore
+    slider_data.sink_csv(snakemake.output.slider_data)  # noqa F821 # type: ignore
     survey_data.sink_csv(snakemake.output.survey_data)  # noqa F821 # type: ignore
