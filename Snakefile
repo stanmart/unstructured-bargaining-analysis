@@ -14,12 +14,14 @@ rule create_action_data:
 rule create_session_data:
     conda: "environment.yml"
     input:
+        wide_data = "data/raw/wide_data.csv",
         bargaining_data = "data/raw/bargaining_data.csv",
         live_data = "data/raw/live_data.csv",
         chat_data = "data/raw/chat_data.csv",
         slider_data = "data/raw/slider_data.csv",
         survey_data = "data/raw/survey_data.csv",
     output:
+        session_details = "data/clean/session_{session_code}/session_details.txt",
         chat = "data/clean/session_{session_code}/chat.csv",
         page_loads = "data/clean/session_{session_code}/page_loads.csv",
         proposals = "data/clean/session_{session_code}/proposals.csv",

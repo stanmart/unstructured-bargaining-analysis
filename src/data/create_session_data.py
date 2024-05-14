@@ -2,6 +2,43 @@ import polars as pl
 import polars.selectors as cs
 
 
+def load_session_details(path: str, session_code: str) -> dict[str, bool | int]:
+    data = pl.scan_csv(path)
+    session_details = (
+        data.filter(pl.col("session.code") == session_code)
+        .select(
+            [
+                "session.code",
+                "session.is_demo",
+                "session.config.real_world_currency_per_point",
+                "session.config.seconds_per_round",
+                "session.config.seconds_for_sliders",
+                "session.config.name",
+            ]
+        )
+        .rename(
+            {
+                "session.code": "session_code",
+                "session.is_demo": "demo_session",
+                "session.config.real_world_currency_per_point": "currency_per_point",
+                "session.config.seconds_per_round": "seconds_for_bargaining",
+                "session.config.seconds_for_sliders": "seconds_for_sliders",
+                "session.config.name": "treatment_name",
+            }
+        )
+        .unique()
+        .collect()
+    )
+
+    if len(session_details) == 0:
+        raise ValueError(f"No data found for session code {session_code}")
+
+    if len(session_details) > 1:
+        raise ValueError(f"Non-unique configuration found for {session_code}")
+
+    return session_details.rows(named=True)[0]
+
+
 def load_chat_data(path: str, session_code: str) -> pl.LazyFrame:
     data = (
         pl.scan_csv(path)
@@ -65,6 +102,7 @@ def load_bargaining_data(path: str, session_code: str) -> pl.LazyFrame:
         .select(
             [
                 "participant.code",
+                "participant.label",
                 "subsession.round_number",
                 "group.id_in_subsession",
                 "player.id_in_group",
@@ -80,6 +118,7 @@ def load_bargaining_data(path: str, session_code: str) -> pl.LazyFrame:
         .rename(
             {
                 "participant.code": "participant_code",
+                "participant.label": "participant_label",
                 "subsession.round_number": "round_number",
                 "group.id_in_subsession": "group_id",
                 "participant.payoff": "payoff_total",
@@ -215,6 +254,10 @@ def organize_chat_data(
 
 
 if __name__ == "__main__":
+    session_details = load_session_details(
+        snakemake.input.wide_data,  # noqa F821 # type: ignore
+        snakemake.wildcards.session_code,  # noqa F821 # type: ignore
+    )
     chat_data_raw = load_chat_data(
         snakemake.input.chat_data,  # noqa F821 # type: ignore
         snakemake.wildcards.session_code,  # noqa F821 # type: ignore
@@ -244,3 +287,7 @@ if __name__ == "__main__":
     bargaining_data.sink_csv(snakemake.output.bargaining_data)  # noqa F821 # type: ignore
     slider_data.sink_csv(snakemake.output.slider_data)  # noqa F821 # type: ignore
     survey_data.sink_csv(snakemake.output.survey_data)  # noqa F821 # type: ignore
+
+    with open(snakemake.output.session_details, "w") as file:  # noqa F821 # type: ignore
+        for field, value in session_details.items():
+            file.write(f"{field}: {value}\n")
