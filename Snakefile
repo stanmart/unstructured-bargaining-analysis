@@ -1,8 +1,13 @@
 SESSION_CODES = ["ykdzfw2h", "5r4374w0"]
 
 
+rule create_datasets:
+    input:
+        actions = "data/clean/_collected/actions.csv",
+        outcomes = "data/clean/_collected/outcomes.csv",
+
+
 rule concatenate_sessions:
-    conda: "environment.yml"
     input:
         actions = expand("data/clean/session_{session_code}/actions.csv", session_code=SESSION_CODES),
         outcomes = expand("data/clean/session_{session_code}/outcomes.csv", session_code=SESSION_CODES),
@@ -15,7 +20,6 @@ rule concatenate_sessions:
 
 
 rule merge_session_data:
-    conda: "environment.yml"
     input:
         chat_data = "data/clean/session_{session_code}/chat.csv",
         acceptances = "data/clean/session_{session_code}/acceptances.csv",
@@ -31,7 +35,6 @@ rule merge_session_data:
 
 
 rule collect_session_data:
-    conda: "environment.yml"
     input:
         wide_data = "data/raw/wide_data.csv",
         bargaining_data = "data/raw/bargaining_data.csv",
@@ -53,7 +56,6 @@ rule collect_session_data:
 
 
 rule power_analysis:
-    conda: "environment.yml"
     input:
         "src/power_analysis/power.ipynb",
     output:

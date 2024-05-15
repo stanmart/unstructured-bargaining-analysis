@@ -1,0 +1,22 @@
+[project]
+name = "unstructured-bargaining-analysis"
+version = "0.1.0"
+description = "Data analysis scripts for the unstructured bargaining experiment."
+authors = ["Mia Lu <mia.lu@econ.uzh.ch>", "Martin Stancsics <martin.stancsics@gmail.com>"]
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64", "win-64", "osx-64", "osx-arm64"]
+
+[tasks]
+create_datasets = "snakemake --cores 1 create_datasets"
+power_analysis = "snakemake --cores 1 power_analysis"
+
+[dependencies]
+python = "3.11.*"
+snakemake = {version = "8.0.*", channel = "bioconda"}
+polars = "0.20.*"
+numpy = "1.26.*"
+scipy = "1.13.*"
+statsmodels = "0.14.*"
+jupyterlab = "4.1.*"
+nbconvert = "7.16.*"
+altair = "5.3.*"
