@@ -1,5 +1,6 @@
 out/
 playground/
+build-graphs/
 
 data/*
 !data/raw/
