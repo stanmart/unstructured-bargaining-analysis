@@ -29,6 +29,7 @@ build-graphs = { features = ["build-graphs"], no-default-feature = true }
 
 [feature.checks.dependencies]
 ruff = "*"
+codespell = "*"
 pyright = "*"
 [feature.checks.tasks]
 format = "ruff check --fix --select I; ruff format; exit 0"
