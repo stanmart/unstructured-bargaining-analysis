@@ -1,17 +1,20 @@
-rule create_action_data:
+rule merge_session_data:
     conda: "environment.yml"
     input:
         chat_data = "data/clean/session_{session_code}/chat.csv",
         acceptances = "data/clean/session_{session_code}/acceptances.csv",
         proposals = "data/clean/session_{session_code}/proposals.csv",
+        bargaining_data = "data/clean/session_{session_code}/bargaining.csv",
+        slider_data = "data/clean/session_{session_code}/slider_data.csv",
+        survey_data = "data/clean/session_{session_code}/survey_data.csv",
     output:
         actions = "data/clean/session_{session_code}/actions.csv",
+        outcomes = "data/clean/session_{session_code}/outcomes.csv",
     script:
-        "src/data/create_action_data.py"
+        "src/data/merge_session_data.py"
 
 
-
-rule create_session_data:
+rule collect_session_data:
     conda: "environment.yml"
     input:
         wide_data = "data/raw/wide_data.csv",
@@ -26,11 +29,11 @@ rule create_session_data:
         page_loads = "data/clean/session_{session_code}/page_loads.csv",
         proposals = "data/clean/session_{session_code}/proposals.csv",
         acceptances = "data/clean/session_{session_code}/acceptances.csv",
-        bargaining_data = "data/clean/session_{session_code}/bargaining_outcomes.csv",
+        bargaining_data = "data/clean/session_{session_code}/bargaining.csv",
         slider_data = "data/clean/session_{session_code}/slider_data.csv",
         survey_data = "data/clean/session_{session_code}/survey_data.csv",
     script:
-        "src/data/create_session_data.py"
+        "src/data/collect_session_data.py"
 
 
 rule power_analysis:
