@@ -1,3 +1,19 @@
+SESSION_CODES = ["ykdzfw2h", "5r4374w0"]
+
+
+rule concatenate_sessions:
+    conda: "environment.yml"
+    input:
+        actions = expand("data/clean/session_{session_code}/actions.csv", session_code=SESSION_CODES),
+        outcomes = expand("data/clean/session_{session_code}/outcomes.csv", session_code=SESSION_CODES),
+        session_details = expand("data/clean/session_{session_code}/session_details.txt", session_code=SESSION_CODES),
+    output:
+        actions = "data/clean/_collected/actions.csv",
+        outcomes = "data/clean/_collected/outcomes.csv",
+    script:
+        "src/data/concatenate_sessions.py"
+
+
 rule merge_session_data:
     conda: "environment.yml"
     input:

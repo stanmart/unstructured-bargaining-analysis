@@ -32,9 +32,11 @@ def merge_outcome_data(
     slider_data = pl.read_csv(slider_data_path)
     survey_data = pl.read_csv(survey_data_path)
 
-    outcome_data = bargaining_data.join(
-        slider_data, on="participant_code", how="left"
-    ).join(survey_data, on="participant_code", how="left")
+    outcome_data = (
+        bargaining_data.join(slider_data, on="participant_code", how="left")
+        .join(survey_data, on="participant_code", how="left")
+        .sort("round_number", "group_id", "id_in_group")
+    )
     return outcome_data
 
 
