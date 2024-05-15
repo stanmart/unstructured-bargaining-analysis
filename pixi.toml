@@ -9,7 +9,6 @@ platforms = ["linux-64", "win-64", "osx-64", "osx-arm64"]
 [tasks]
 create-datasets = "snakemake --cores 1 create_datasets"
 power-analysis = "snakemake --cores 1 power_analysis"
-checks = { depends_on = ["format", "lint", "typecheck", "spellcheck"] }
 
 [dependencies]
 python = "3.11.*"
@@ -32,6 +31,7 @@ ruff = "*"
 codespell = "*"
 pyright = "*"
 [feature.checks.tasks]
+checks = { depends_on = ["format", "lint", "typecheck", "spellcheck"] }
 format = "ruff check --fix --select I; ruff format; exit 0"
 lint = "ruff check --extend-select I; exit 0"
 spellcheck = "codespell --ignore-words codespell-ignore-words.txt --skip '*.csv,playground,out'; exit 0"
