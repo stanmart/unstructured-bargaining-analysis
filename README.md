@@ -31,11 +31,13 @@ The project is set up with GitHub Actions to run automated checks on every push 
  - `ruff check` for Python code style
  - `ruff format` for Python code formatting
  - `codespell` for spell checking
+ - `pyright` for static type checking
 
-These checks can also be run locally as pre-commit hooks. First, install [`pre-commit`](https://pre-commit.com/#install), e.g. using `pipx`:
+These checks can also be run locally using `pixi`. Simply run `pixi run checks` to run all checks. If you only want to run a specific check, you can do so by running `pixi run [CHECK]`, where `[CHECK]` is one of `ruff`, `format`, `codespell`, or `pyright`.
+
+Alternatively, `ruff` and `codespell` checks can also be run installed as pre-commit hooks. First, install [`pre-commit`](https://pre-commit.com/#install), e.g. using `pipx`:
 
 ```bash
-pipx install pyright
 pipx install pre-commit
 ```
 
@@ -43,8 +45,4 @@ Then, you can install the hooks by running
 ```bash
 pre-commit install
 ```
-After this, the checks will be performed automatically before every commit. If you want to run the checks manually, you can do so by running
-
-```bash
-pre-commit run --all-files
-```
+After this, the checks will be performed automatically before every commit.

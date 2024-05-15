@@ -20,3 +20,15 @@ statsmodels = "0.14.*"
 jupyterlab = "4.1.*"
 nbconvert = "7.16.*"
 altair = "5.3.*"
+
+[environments]
+checks = {features = ["checks"]}
+[feature.checks.dependencies]
+ruff = "*"
+pyright = "*"
+[feature.checks.tasks]
+format = "ruff check --fix --select I; ruff format"
+lint = "ruff check --extend-select I"
+spellcheck = "codespell --ignore-words codespell-ignore-words.txt --skip '*.csv,playground'"
+typecheck = "pyright"
+checks = { depends_on = ["format", "lint", "spellcheck", "typecheck"] }
