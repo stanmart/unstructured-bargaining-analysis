@@ -36,7 +36,7 @@ The project is set up with GitHub Actions to run automated checks on every push 
 
 These checks can also be run locally using `pixi`. Simply run `pixi run checks` to run all checks. If you only want to run a specific check, you can do so by running `pixi run [CHECK]`, where `[CHECK]` is one of `ruff`, `format`, `codespell`, or `pyright`.
 
-Alternatively, `ruff` and `codespell` checks can also be run installed as pre-commit hooks. First, install [`pre-commit`](https://pre-commit.com/#install), e.g. using `pipx`:
+Alternatively, `ruff` and `codespell` checks can also be installed as pre-commit hooks. First, install [`pre-commit`](https://pre-commit.com/#install), e.g. using `pipx`:
 
 ```bash
 pipx install pre-commit
