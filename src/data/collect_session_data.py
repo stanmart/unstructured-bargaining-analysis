@@ -1,3 +1,5 @@
+import json
+
 import polars as pl
 import polars.selectors as cs
 
@@ -289,5 +291,4 @@ if __name__ == "__main__":
     survey_data.sink_csv(snakemake.output.survey_data)  # noqa F821 # type: ignore
 
     with open(snakemake.output.session_details, "w") as file:  # noqa F821 # type: ignore
-        for field, value in session_details.items():
-            file.write(f"{field}: {value}\n")
+        json.dump(session_details, file, indent=4)
