@@ -14,6 +14,7 @@ The project is set up so that [`pixi`](https://pixi.sh/latest/) handles the inst
 
 Furthermore, data exported from otree must be placed into the `data/raw` directory. First, navigate to the `Data` tab in the otree admin interface and export the following files to the desired location. Always chose the plain format.
 
+ - All apps → `data/raw/wide_data.csv`
  - Per-app: live_bargaining (custom_export) → `data/raw/live_data.csv`
  - Per-app: live_bargaining → `data/raw/bargaining_data.csv`
  - Per-app: survey → `data/raw/survey_data.csv`
