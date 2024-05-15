@@ -34,7 +34,7 @@ pyright = "*"
 [feature.checks.tasks]
 format = "ruff check --fix --select I; ruff format; exit 0"
 lint = "ruff check --extend-select I; exit 0"
-spellcheck = "codespell --ignore-words codespell-ignore-words.txt --skip '*.csv,playground'; exit 0"
+spellcheck = "codespell --ignore-words codespell-ignore-words.txt --skip '*.csv,playground,out'; exit 0"
 typecheck = "pyright; exit 0"
 
 [feature.build-graphs.dependencies]
