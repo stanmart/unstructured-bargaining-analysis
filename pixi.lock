@@ -153,7 +153,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/pycparser-2.22-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pygments-2.18.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pyparsing-3.1.2-pyhd8ed1ab_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/linux-64/pyright-1.1.362-py311h61187de_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/pyright-1.1.363-py311h61187de_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pysocks-1.7.1-pyha2e5f31_6.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/pytest-8.2.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/python-3.11.9-hb806964_0_cpython.conda
@@ -365,7 +365,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/pyobjc-core-10.2-py311h9b70068_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/pyobjc-framework-cocoa-10.2-py311h9b70068_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pyparsing-3.1.2-pyhd8ed1ab_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/pyright-1.1.362-py311h72ae277_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/pyright-1.1.363-py311h72ae277_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pysocks-1.7.1-pyha2e5f31_6.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/pytest-8.2.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/python-3.11.9-h657bba9_0_cpython.conda
@@ -577,7 +577,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pyobjc-core-10.2-py311h665608e_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pyobjc-framework-cocoa-10.2-py311h665608e_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pyparsing-3.1.2-pyhd8ed1ab_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pyright-1.1.362-py311hd3f4193_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pyright-1.1.363-py311hd3f4193_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pysocks-1.7.1-pyha2e5f31_6.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/pytest-8.2.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/python-3.11.9-h932a869_0_cpython.conda
@@ -6497,62 +6497,6 @@ packages:
 - kind: conda
   name: pyright
   version: 1.1.362
-  build: py311h61187de_0
-  subdir: linux-64
-  url: https://conda.anaconda.org/conda-forge/linux-64/pyright-1.1.362-py311h61187de_0.conda
-  sha256: 8e0a649c86d33986b85f2e6d0198c547150dcd8217cb01e010a5b9e16e036ce2
-  md5: 65849fb7a4fd11012717cbdddb1a33cb
-  depends:
-  - __glibc >=2.17,<3.0.a0
-  - libgcc-ng >=12
-  - nodeenv >=1.6.0
-  - nodejs
-  - python >=3.11,<3.12.0a0
-  - python_abi 3.11.* *_cp311
-  license: MIT
-  license_family: MIT
-  size: 41718
-  timestamp: 1715185617110
-- kind: conda
-  name: pyright
-  version: 1.1.362
-  build: py311h72ae277_0
-  subdir: osx-64
-  url: https://conda.anaconda.org/conda-forge/osx-64/pyright-1.1.362-py311h72ae277_0.conda
-  sha256: 0d807671a2ce974860be4dd723a77e3d144781b33c607ad865a15cfb80926618
-  md5: 598dd9476be74981805b452eb89a210e
-  depends:
-  - __osx >=10.13
-  - nodeenv >=1.6.0
-  - nodejs
-  - python >=3.11,<3.12.0a0
-  - python_abi 3.11.* *_cp311
-  license: MIT
-  license_family: MIT
-  size: 41893
-  timestamp: 1715185815322
-- kind: conda
-  name: pyright
-  version: 1.1.362
-  build: py311hd3f4193_0
-  subdir: osx-arm64
-  url: https://conda.anaconda.org/conda-forge/osx-arm64/pyright-1.1.362-py311hd3f4193_0.conda
-  sha256: d7473d3274da7cfa160042240ef5622c8637106e7ad4b0ee36f7be2826cce54c
-  md5: 17223d94a60a8b75dca9b616c3b77308
-  depends:
-  - __osx >=11.0
-  - nodeenv >=1.6.0
-  - nodejs
-  - python >=3.11,<3.12.0a0
-  - python >=3.11,<3.12.0a0 *_cpython
-  - python_abi 3.11.* *_cp311
-  license: MIT
-  license_family: MIT
-  size: 42344
-  timestamp: 1715185837010
-- kind: conda
-  name: pyright
-  version: 1.1.362
   build: py311he736701_0
   subdir: win-64
   url: https://conda.anaconda.org/conda-forge/win-64/pyright-1.1.362-py311he736701_0.conda
@@ -6570,6 +6514,59 @@ packages:
   license_family: MIT
   size: 58611
   timestamp: 1715186175953
+- kind: conda
+  name: pyright
+  version: 1.1.363
+  build: py311h61187de_0
+  subdir: linux-64
+  url: https://conda.anaconda.org/conda-forge/linux-64/pyright-1.1.363-py311h61187de_0.conda
+  sha256: 2323f8838aad4282ded5074622390b2255dedf36bf6a46831d3a529c1135caa5
+  md5: dfe215156dc208e0021b985c9d7196c2
+  depends:
+  - __glibc >=2.17,<3.0.a0
+  - libgcc-ng >=12
+  - nodeenv >=1.6.0
+  - nodejs
+  - python >=3.11,<3.12.0a0
+  - python_abi 3.11.* *_cp311
+  license: MIT
+  size: 41697
+  timestamp: 1715765882258
+- kind: conda
+  name: pyright
+  version: 1.1.363
+  build: py311h72ae277_0
+  subdir: osx-64
+  url: https://conda.anaconda.org/conda-forge/osx-64/pyright-1.1.363-py311h72ae277_0.conda
+  sha256: 3f5d2be8d14f63165c6bdec08c1d531c79c74ac0b2017b550281af6df5fdf5d6
+  md5: 66954d00d76a5355b82153dcdae15bbc
+  depends:
+  - __osx >=10.13
+  - nodeenv >=1.6.0
+  - nodejs
+  - python >=3.11,<3.12.0a0
+  - python_abi 3.11.* *_cp311
+  license: MIT
+  size: 41828
+  timestamp: 1715765997325
+- kind: conda
+  name: pyright
+  version: 1.1.363
+  build: py311hd3f4193_0
+  subdir: osx-arm64
+  url: https://conda.anaconda.org/conda-forge/osx-arm64/pyright-1.1.363-py311hd3f4193_0.conda
+  sha256: fc310e3903517ba789be18e2151fd92ddc519d9841d3072c9475a67b4b1851d4
+  md5: d7b43a11840bb77d1ccae9290ec4622e
+  depends:
+  - __osx >=11.0
+  - nodeenv >=1.6.0
+  - nodejs
+  - python >=3.11,<3.12.0a0
+  - python >=3.11,<3.12.0a0 *_cpython
+  - python_abi 3.11.* *_cp311
+  license: MIT
+  size: 42253
+  timestamp: 1715765985824
 - kind: conda
   name: pysocks
   version: 1.7.1
