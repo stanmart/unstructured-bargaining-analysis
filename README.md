@@ -23,8 +23,9 @@ Furthermore, data exported from otree must be placed into the `data/raw` directo
 
 ## Running the analysis
 
- - To create the collected datasets in `data/clean_collected`, run: `pixi run create_datasets`
- - To rerun the power analysis in `src/power_analysis/power.ipynb`, run `pixi run power_analysis`
+ - To create the collected datasets in `data/clean_collected`, run: `pixi run create-datasets`
+ - To rerun the power analysis in `src/power_analysis/power.ipynb`, run `pixi run power-analysis`
+ - To create a chart of the analysis steps in `build-graphs/filegraph.svg`, run `pixi run filegraph` (or similar commands for the `dag` or the `rulegraph`)
 
 ## Automated checks
 

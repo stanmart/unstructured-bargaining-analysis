@@ -7,13 +7,13 @@ channels = ["conda-forge", "bioconda"]
 platforms = ["linux-64", "win-64", "osx-64", "osx-arm64"]
 
 [tasks]
-create_datasets = "snakemake --cores 1 create_datasets"
-power_analysis = "snakemake --cores 1 power_analysis"
+create-datasets = "snakemake --cores 1 create_datasets"
+power-analysis = "snakemake --cores 1 power_analysis"
 checks = { depends_on = ["format", "lint", "typecheck", "spellcheck"] }
 
 [dependencies]
 python = "3.11.*"
-snakemake = {version = "8.0.*", channel = "bioconda"}
+snakemake = {version = "8.11.*", channel = "bioconda"}
 polars = "0.20.*"
 numpy = "1.26.*"
 scipy = "1.13.*"
@@ -23,7 +23,10 @@ nbconvert = "7.16.*"
 altair = "5.3.*"
 
 [environments]
-checks = {features = ["checks"]}
+default = { solve-group = "main"}
+checks = { features = ["checks"], solve-group = "main" }
+build-graphs = { features = ["build-graphs"], no-default-feature = true }
+
 [feature.checks.dependencies]
 ruff = "*"
 pyright = "*"
@@ -32,3 +35,12 @@ format = "ruff check --fix --select I; ruff format; exit 0"
 lint = "ruff check --extend-select I; exit 0"
 spellcheck = "codespell --ignore-words codespell-ignore-words.txt --skip '*.csv,playground'; exit 0"
 typecheck = "pyright; exit 0"
+
+[feature.build-graphs.dependencies]
+snakemake = {version = "8.11.*", channel = "bioconda"}
+graphviz = "*"
+[feature.build-graphs.tasks]
+create-build-graph-dir = "mkdir -p build-graphs"
+dag = { cmd = "snakemake --dag | dot -Tsvg > build-graphs/dag.svg", depends-on = ["create-build-graph-dir"] }
+rulegraph = "snakemake --rulegraph | dot -Tsvg > build-graphs/rulegraph.svg"
+filegraph = "snakemake --filegraph | dot -Tsvg > build-graphs/filegraph.svg"
