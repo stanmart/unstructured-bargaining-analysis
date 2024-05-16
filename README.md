@@ -25,14 +25,22 @@ Pixi also uses a lockfile. This lockfile is updated automatically when you add a
 
 ### Data requirements
 
-Data exported from otree must be placed into the `data/raw` directory. First, navigate to the `Data` tab in the otree admin interface and export the following files to the indicated location. Always chose the plain format.
+Data exported from otree is already placed into the `data/raw` directory. Please do not modify it under any circumstances. Automated checks are in place to ensure that the data is not modified.
+
+<details>
+<summary>Exporting data from otree</summary>
+The data in the `data/raw` directory is exported from the otree admin interface. The following steps describe how it can be obtained.
+First, navigate to the `Data` tab in the otree admin interface and export the following files to the indicated location. Always chose the plain format.
 
  - All apps → `data/raw/wide_data.csv`
  - Per-app: live_bargaining (custom_export) → `data/raw/live_data.csv`
+ - Per app: introduction → `data/raw/intro_data.csv`
  - Per-app: live_bargaining → `data/raw/bargaining_data.csv`
  - Per-app: survey → `data/raw/survey_data.csv`
  - Per-app: sliders: → `data/raw/slider_data.csv`
  - Chat logs → `data/raw/chat_data.csv`
+ - Page times → `data/raw/page_time_data.csv`
+</details>
 
 ## Running the analysis
 
