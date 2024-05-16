@@ -10,6 +10,17 @@ data/raw/*
 .snakemake/
 .envrc
 
+# Want to have raw data in the repo
+!data/raw/bargaining_data.csv
+!data/raw/chat_data.csv
+!data/raw/intro_data.csv
+!data/raw/live_data.csv
+!data/raw/page_time_data.csv
+!data/raw/slider_data.csv
+!data/raw/survey_data.csv
+!data/raw/wide_data.csv
+!data/raw/postgres_database.dump
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
