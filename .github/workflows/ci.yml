@@ -31,7 +31,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
+          echo "${{ vars.RAW_DATA_CHECKSUMS }}" > CHECKSUMS
+          echo "Raw data checksums:"
+          cat CHECKSUMS
           echo "Checking data raw integrity..."
-          echo "$RAW_DATA_CHECKSUMS" | shasum -a 256 --check
-        env:
-          RAW_DATA_CHECKSUMS: ${{ vars.RAW_DATA_CHECKSUMS }}
+          shasum -a 256 --check CHECKSUMS
