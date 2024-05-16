@@ -1,4 +1,4 @@
-SESSION_CODES = ["ykdzfw2h", "5r4374w0"]
+SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
 
 
 rule create_datasets:

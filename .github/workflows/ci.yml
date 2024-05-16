@@ -25,3 +25,14 @@ jobs:
         cache: true
         environments: default
     - uses: jakebailey/pyright-action@v2
+
+  data-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          echo "${{ vars.RAW_DATA_CHECKSUMS }}" > CHECKSUMS
+          echo "Raw data checksums:"
+          cat CHECKSUMS
+          echo "Checking data raw integrity..."
+          shasum -a 256 --check CHECKSUMS
