@@ -31,12 +31,14 @@ build-graphs = { features = ["build-graphs"], no-default-feature = true }
 ruff = "*"
 codespell = "*"
 pyright = "*"
+gh = "*"
 [feature.checks.tasks]
-checks = { depends_on = ["format", "lint", "typecheck", "spellcheck"] }
+checks = { depends_on = ["format", "lint", "typecheck", "spellcheck", "data-check"] }
 format = "ruff check --fix --select I; ruff format; exit 0"
 lint = "ruff check --extend-select I; exit 0"
-spellcheck = "codespell --ignore-words codespell-ignore-words.txt --skip '*.csv,playground,out'; exit 0"
+spellcheck = "codespell --ignore-words codespell-ignore-words.txt --skip '*.csv,playground,out' && echo 'Spellcheck passed!'; exit 0"
 typecheck = "pyright; exit 0"
+data-check = "gh variable list --json name --json value -q '.[] | select(.name | contains(\"RAW_DATA_CHECKSUMS\")) .value' | shasum -a 256 --check --quiet && echo 'Data integrity check passed!'"
 
 [feature.build-graphs.dependencies]
 snakemake = {version = "8.11.*", channel = "bioconda"}
