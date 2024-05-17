@@ -46,5 +46,5 @@ graphviz = "*"
 [feature.build-graphs.tasks]
 create-build-graph-dir = "mkdir -p build-graphs"
 dag = { cmd = "snakemake --dag | dot -Tsvg > build-graphs/dag.svg", depends-on = ["create-build-graph-dir"] }
-rulegraph = "snakemake --rulegraph | dot -Tsvg > build-graphs/rulegraph.svg"
-filegraph = "snakemake --filegraph | dot -Tsvg > build-graphs/filegraph.svg"
+rulegraph = { cmd = "snakemake --rulegraph | dot -Tsvg > build-graphs/rulegraph.svg", depends-on = ["create-build-graph-dir"] }
+filegraph = { cmd = "snakemake --filegraph | dot -Tsvg > build-graphs/filegraph.svg", depends-on = ["create-build-graph-dir"] }
