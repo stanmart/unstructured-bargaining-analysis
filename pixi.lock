@@ -725,6 +725,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/executing-2.0.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/fqdn-1.5.1-pyhd8ed1ab_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/linux-64/gflags-2.2.2-he1b5a44_1004.tar.bz2
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/gh-2.49.2-he0e2781_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitdb-4.0.11-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitpython-3.1.43-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/glog-0.7.0-hed5481d_0.conda
@@ -989,6 +990,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/executing-2.0.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/fqdn-1.5.1-pyhd8ed1ab_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-64/gflags-2.2.2-hb1e8313_1004.tar.bz2
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/gh-2.49.2-he13f2d6_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitdb-4.0.11-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitpython-3.1.43-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/glog-0.7.0-h31b1b29_0.conda
@@ -1248,6 +1250,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/executing-2.0.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/fqdn-1.5.1-pyhd8ed1ab_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/gflags-2.2.2-hc88da5d_1004.tar.bz2
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/gh-2.49.2-h163aea0_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitdb-4.0.11-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitpython-3.1.43-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/glog-0.7.0-hc6770e3_0.conda
@@ -1499,6 +1502,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/exceptiongroup-1.2.0-pyhd8ed1ab_2.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/executing-2.0.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/fqdn-1.5.1-pyhd8ed1ab_0.tar.bz2
+      - conda: https://conda.anaconda.org/conda-forge/win-64/gh-2.49.2-h36e2d1d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitdb-4.0.11-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitpython-3.1.43-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/glpk-5.0-h8ffe710_0.tar.bz2
@@ -5975,6 +5979,64 @@ packages:
   license_family: BSD
   size: 116549
   timestamp: 1594303828933
+- kind: conda
+  name: gh
+  version: 2.49.2
+  build: h163aea0_0
+  subdir: osx-arm64
+  url: https://conda.anaconda.org/conda-forge/osx-arm64/gh-2.49.2-h163aea0_0.conda
+  sha256: 89f8afba7b3bec850e033da6001814ed3bd376d8e7c64e0d54d013de40f6d941
+  md5: 8857b9e44a2435724669764082e83141
+  depends:
+  - __osx >=11.0
+  license: Apache-2.0
+  license_family: APACHE
+  size: 19995489
+  timestamp: 1715692064810
+- kind: conda
+  name: gh
+  version: 2.49.2
+  build: h36e2d1d_0
+  subdir: win-64
+  url: https://conda.anaconda.org/conda-forge/win-64/gh-2.49.2-h36e2d1d_0.conda
+  sha256: 4ddaa62af3503b38876ff485162352801dac171fb7712972dcca1ac6c114ebf6
+  md5: 2450fdd43ec0041d45fb4d8170f5ac07
+  depends:
+  - ucrt >=10.0.20348.0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.38.33130
+  license: Apache-2.0
+  license_family: APACHE
+  size: 21210055
+  timestamp: 1715692529530
+- kind: conda
+  name: gh
+  version: 2.49.2
+  build: he0e2781_0
+  subdir: linux-64
+  url: https://conda.anaconda.org/conda-forge/linux-64/gh-2.49.2-he0e2781_0.conda
+  sha256: e820b4be62633bd4ab281096270077f5cd5b330fd89ac48bf70523a7327f6228
+  md5: 6f669b0bb33b2e220527ede8e763ac80
+  license: Apache-2.0
+  license_family: APACHE
+  size: 21230691
+  timestamp: 1715691907163
+- kind: conda
+  name: gh
+  version: 2.49.2
+  build: he13f2d6_0
+  subdir: osx-64
+  url: https://conda.anaconda.org/conda-forge/osx-64/gh-2.49.2-he13f2d6_0.conda
+  sha256: a64d1ca6629787fd2e4424edf64793c4218af1d731a29f9d28769a68af82b1d8
+  md5: 90f96de87ad5b2d76f89a0d39547f537
+  depends:
+  - __osx >=10.13
+  constrains:
+  - __osx>=10.12
+  license: Apache-2.0
+  license_family: APACHE
+  size: 20953858
+  timestamp: 1715692068822
 - kind: conda
   name: giflib
   version: 5.2.2

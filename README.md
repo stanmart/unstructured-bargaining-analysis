@@ -40,6 +40,8 @@ First, navigate to the `Data` tab in the otree admin interface and export the fo
  - Per-app: sliders: → `data/raw/slider_data.csv`
  - Chat logs → `data/raw/chat_data.csv`
  - Page times → `data/raw/page_time_data.csv`
+
+Checksums for the raw data are stored in the `RAW_DATA_CHECKSUMS` repository variable.
 </details>
 
 ## Running the analysis
@@ -55,8 +57,9 @@ The project is set up with GitHub Actions to run automated checks on every push 
  - `ruff format` for Python code formatting
  - `codespell` for spell checking
  - `pyright` for static type checking
+ - Data integrity checks for the raw data based on the `RAW_DATA_CHECKSUMS` repository variable
 
-These checks can also be run locally using `pixi`. Simply run `pixi run checks` to run all checks. If you only want to run a specific check, you can do so by running `pixi run [CHECK]`, where `[CHECK]` is one of `ruff`, `format`, `codespell`, or `pyright`.
+These checks can also be run locally using `pixi`. Simply run `pixi run checks` to run all checks. If you only want to run a specific check, you can do so by running `pixi run [CHECK]`, where `[CHECK]` is one of `lint`, `format`, `spellcheck`, `typecheck` or `data-check`.
 
 Alternatively, `ruff` and `codespell` checks can also be installed as pre-commit hooks. First, install [`pre-commit`](https://pre-commit.com/#install), e.g. using `pipx`:
 
