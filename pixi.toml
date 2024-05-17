@@ -20,6 +20,7 @@ statsmodels = "0.14.*"
 jupyterlab = "4.1.*"
 nbconvert = "7.16.*"
 altair = "5.3.*"
+pyarrow = "16.0.*"
 
 [environments]
 default = { solve-group = "main"}
