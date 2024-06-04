@@ -1,6 +1,20 @@
 SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
 
 
+rule figures:
+    input:
+        "out/figures/payoff_scatterplot_8x6.pdf",
+
+
+rule create_payoff_plot:
+    input:
+        outcomes = "data/clean/_collected/outcomes.csv",
+    output:
+        figure = "out/figures/payoff_{plot}_{width}x{height}.pdf",
+    script:
+        "src/figures/payoff_plots.py"
+
+
 rule create_datasets:
     input:
         actions = "data/clean/_collected/actions.csv",
