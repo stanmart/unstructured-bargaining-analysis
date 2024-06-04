@@ -1,0 +1,170 @@
+import polars as pl
+import seaborn.objects as so
+
+
+def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame:
+    roles = {
+        1: "P1",
+        2: "P2",
+        3: "P3",
+    }
+
+    values = pl.from_dicts(
+        [
+            {
+                "treatment_name": "treatment_dummy_player",
+                "role": "P1",
+                "shapley_value": 50.0,
+                "nucleolus": 50.0,
+            },
+            {
+                "treatment_name": "treatment_dummy_player",
+                "role": "P2",
+                "shapley_value": 50.0,
+                "nucleolus": 50.0,
+            },
+            {
+                "treatment_name": "treatment_dummy_player",
+                "role": "P3",
+                "shapley_value": 0.0,
+                "nucleolus": 0.0,
+            },
+            {
+                "treatment_name": "treatment_y_10",
+                "role": "P1",
+                "shapley_value": 110 / 3,
+                "nucleolus": 100 / 3,
+            },
+            {
+                "treatment_name": "treatment_y_10",
+                "role": "P2",
+                "shapley_value": 95 / 3,
+                "nucleolus": 100 / 3,
+            },
+            {
+                "treatment_name": "treatment_y_10",
+                "role": "P3",
+                "shapley_value": 95 / 3,
+                "nucleolus": 100 / 3,
+            },
+            {
+                "treatment_name": "treatment_y_30",
+                "role": "P1",
+                "shapley_value": 130 / 3,
+                "nucleolus": 100 / 3,
+            },
+            {
+                "treatment_name": "treatment_y_30",
+                "role": "P2",
+                "shapley_value": 85 / 3,
+                "nucleolus": 100 / 3,
+            },
+            {
+                "treatment_name": "treatment_y_30",
+                "role": "P3",
+                "shapley_value": 85 / 3,
+                "nucleolus": 100 / 3,
+            },
+            {
+                "treatment_name": "treatment_y_90",
+                "role": "P1",
+                "shapley_value": 190 / 3,
+                "nucleolus": 90,
+            },
+            {
+                "treatment_name": "treatment_y_90",
+                "role": "P2",
+                "shapley_value": 55 / 3,
+                "nucleolus": 5,
+            },
+            {
+                "treatment_name": "treatment_y_90",
+                "role": "P3",
+                "shapley_value": 55 / 3,
+                "nucleolus": 5,
+            },
+        ]
+    )
+
+    df = (
+        outcomes.filter(
+            pl.col("round_number") > 1,
+        )
+        .with_columns(
+            role=pl.col("id_in_group").replace(roles),
+            agreement=(
+                pl.when(
+                    pl.col("payoff_this_round")
+                    .sum()
+                    .over(["session_code", "round_number", "group_id"])
+                    == 0
+                )
+                .then(pl.lit("Breakdown"))
+                .otherwise(
+                    pl.when(
+                        (pl.col("payoff_this_round") > 0)
+                        .all()
+                        .over(["session_code", "round_number", "group_id"])
+                    )
+                    .then(pl.lit("Full agreement"))
+                    .otherwise(pl.lit("Partial agreement"))
+                )
+            ),
+            treatment_name_nice=pl.col("treatment_name").replace(
+                {
+                    "treatment_dummy_player": "Dummy player",
+                    "treatment_y_10": "Y = 10",
+                    "treatment_y_30": "Y = 30",
+                    "treatment_y_90": "Y = 90",
+                }
+            ),
+        )
+        .join(
+            values,
+            on=["treatment_name", "role"],
+            how="left",
+        )
+    )
+
+    return df
+
+
+def payoff_scatterplot(
+    df: pl.DataFrame, width: float = 8, height: float = 6
+) -> so.Plot:
+    plot = (
+        so.Plot(df, x="treatment_name_nice")
+        .add(
+            so.Dot(alpha=0.5),
+            so.Jitter(),
+            so.Dodge(),
+            color="role",
+            y="payoff_this_round",
+        )
+        .add(
+            so.Dot(marker="^", pointsize=6, stroke=2, color="black"),
+            so.Dodge(),
+            y="nucleolus",
+            label="Nucleolus",
+        )
+        .add(
+            so.Dot(marker="_", pointsize=12, stroke=2, color="black"),
+            so.Dodge(),
+            y="shapley_value",
+            label="Shapley value",
+        )
+        .label(x="Treatment", y="Payoff", color="Player")
+    )
+    return plot
+
+
+if __name__ == "__main__":
+    outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
+    df = prepare_dataset(outcomes)
+    width = float(snakemake.wildcards.width)  # noqa F821 # type: ignore
+    height = float(snakemake.wildcards.height)  # noqa F821 # type: ignore
+
+    if snakemake.wildcards.plot == "scatterplot":  # noqa F821 # type: ignore
+        plot = payoff_scatterplot(df, width, height).layout(size=(width, height))
+
+    plot.save(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
