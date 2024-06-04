@@ -133,13 +133,11 @@ def add_nucleolus_and_shapley(plot: so.Plot) -> so.Plot:
     return plot.add(
         so.Dot(marker="^", pointsize=6, stroke=2, color="black"),
         so.Dodge(),
-        color="role",
         y="nucleolus",
         legend=False,
     ).add(
         so.Dot(marker="_", pointsize=12, stroke=2, color="black"),
         so.Dodge(),
-        color="role",
         y="shapley_value",
         legend=False,
     )
@@ -147,12 +145,11 @@ def add_nucleolus_and_shapley(plot: so.Plot) -> so.Plot:
 
 def payoff_average(df: pl.DataFrame) -> so.Plot:
     plot = (
-        so.Plot(df, x="treatment_name_nice")
+        so.Plot(df, x="treatment_name_nice", color="role")
         .add(
             so.Bar(),
             so.Agg(),
             so.Dodge(),
-            color="role",
             y="payoff_this_round",
             label="Payoff",
         )
@@ -163,16 +160,27 @@ def payoff_average(df: pl.DataFrame) -> so.Plot:
 
 def payoff_scatterplot(df: pl.DataFrame) -> so.Plot:
     plot = (
-        so.Plot(df, x="treatment_name_nice")
+        so.Plot(df, x="treatment_name_nice", color="role")
         .add(
             so.Dot(alpha=0.5),
             so.Jitter(),
             so.Dodge(),
-            color="role",
             y="payoff_this_round",
         )
         .scale(color=so.Nominal())
         .label(x="Treatment", y="Payoff", color="Player")
+    )
+    return add_nucleolus_and_shapley(plot)
+
+
+def payoff_by_agreement_type(df: pl.DataFrame) -> so.Plot:
+    plot = (
+        so.Plot(
+            df.filter(pl.col("role") == "P1"),
+            x="treatment_name_nice",
+        )
+        .add(so.Dot(alpha=0.5), so.Jitter(), y="payoff_this_round", color="agreement")
+        .label(x="Treatment", y="P1's payoff", color="Coordination outcome")
     )
     return add_nucleolus_and_shapley(plot)
 
@@ -187,5 +195,7 @@ if __name__ == "__main__":
         plot = payoff_scatterplot(df)
     elif snakemake.wildcards.plot == "average":  # noqa F821 # type: ignore
         plot = payoff_average(df)
+    elif snakemake.wildcards.plot == "by_agreement_type":  # noqa F821 # type: ignore
+        plot = payoff_by_agreement_type(df)
 
     plot.layout(size=(width, height)).save(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
