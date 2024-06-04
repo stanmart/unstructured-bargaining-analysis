@@ -151,7 +151,6 @@ def payoff_average(df: pl.DataFrame) -> so.Plot:
             so.Agg(),
             so.Dodge(),
             y="payoff_this_round",
-            label="Payoff",
         )
         .label(x="Treatment", y="Average payoff", color="Player")
     )
