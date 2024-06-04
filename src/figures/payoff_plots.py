@@ -129,9 +129,39 @@ def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame:
     return df
 
 
-def payoff_scatterplot(
-    df: pl.DataFrame, width: float = 8, height: float = 6
-) -> so.Plot:
+def add_nucleolus_and_shapley(plot: so.Plot) -> so.Plot:
+    return plot.add(
+        so.Dot(marker="^", pointsize=6, stroke=2, color="black"),
+        so.Dodge(),
+        color="role",
+        y="nucleolus",
+        legend=False,
+    ).add(
+        so.Dot(marker="_", pointsize=12, stroke=2, color="black"),
+        so.Dodge(),
+        color="role",
+        y="shapley_value",
+        legend=False,
+    )
+
+
+def payoff_average(df: pl.DataFrame) -> so.Plot:
+    plot = (
+        so.Plot(df, x="treatment_name_nice")
+        .add(
+            so.Bar(),
+            so.Agg(),
+            so.Dodge(),
+            color="role",
+            y="payoff_this_round",
+            label="Payoff",
+        )
+        .label(x="Treatment", y="Average payoff", color="Player")
+    )
+    return add_nucleolus_and_shapley(plot)
+
+
+def payoff_scatterplot(df: pl.DataFrame) -> so.Plot:
     plot = (
         so.Plot(df, x="treatment_name_nice")
         .add(
@@ -141,21 +171,10 @@ def payoff_scatterplot(
             color="role",
             y="payoff_this_round",
         )
-        .add(
-            so.Dot(marker="^", pointsize=6, stroke=2, color="black"),
-            so.Dodge(),
-            y="nucleolus",
-            label="Nucleolus",
-        )
-        .add(
-            so.Dot(marker="_", pointsize=12, stroke=2, color="black"),
-            so.Dodge(),
-            y="shapley_value",
-            label="Shapley value",
-        )
+        .scale(color=so.Nominal())
         .label(x="Treatment", y="Payoff", color="Player")
     )
-    return plot
+    return add_nucleolus_and_shapley(plot)
 
 
 if __name__ == "__main__":
@@ -165,6 +184,8 @@ if __name__ == "__main__":
     height = float(snakemake.wildcards.height)  # noqa F821 # type: ignore
 
     if snakemake.wildcards.plot == "scatterplot":  # noqa F821 # type: ignore
-        plot = payoff_scatterplot(df, width, height).layout(size=(width, height))
+        plot = payoff_scatterplot(df)
+    elif snakemake.wildcards.plot == "average":  # noqa F821 # type: ignore
+        plot = payoff_average(df)
 
-    plot.save(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
+    plot.layout(size=(width, height)).save(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
