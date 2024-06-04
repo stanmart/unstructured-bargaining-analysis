@@ -7,6 +7,17 @@ rule figures:
         "out/figures/payoff_average_8x6.pdf",
         "out/figures/payoff_by_agreement_type_8x6.pdf",
         "out/figures/payoff_share_of_agreement_types_8x6.pdf",
+        "out/figures/timing_until_decision_8x6.pdf",
+
+
+rule create_timing_plot:
+    input:
+        outcomes = "data/clean/_collected/outcomes.csv",
+        actions = "data/clean/_collected/actions.csv",
+    output:
+        figure = "out/figures/timing_{plot}_{width}x{height}.pdf",
+    script:
+        "src/figures/timing_plots.py"
 
 
 rule create_payoff_plot:
