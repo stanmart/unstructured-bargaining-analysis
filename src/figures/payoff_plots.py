@@ -185,6 +185,18 @@ def payoff_by_agreement_type(df: pl.DataFrame) -> so.Plot:
     return add_nucleolus_and_shapley(plot)
 
 
+def payoff_share_of_agreement_types(df: pl.DataFrame) -> so.Plot:
+    return (
+        so.Plot(
+            df.filter(pl.col("role") == "P1"),
+            x="treatment_name_nice",
+            color="agreement",
+        )
+        .add(so.Bar(), so.Count(), so.Stack())
+        .label(x="Treatment", y="Count", color="Coordination outcome")
+    )
+
+
 if __name__ == "__main__":
     outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
     df = prepare_dataset(outcomes)
@@ -197,5 +209,7 @@ if __name__ == "__main__":
         plot = payoff_average(df)
     elif snakemake.wildcards.plot == "by_agreement_type":  # noqa F821 # type: ignore
         plot = payoff_by_agreement_type(df)
+    elif snakemake.wildcards.plot == "share_of_agreement_types":  # noqa F821 # type: ignore
+        plot = payoff_share_of_agreement_types(df)
 
     plot.layout(size=(width, height)).save(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
