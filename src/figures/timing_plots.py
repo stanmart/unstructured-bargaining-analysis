@@ -113,6 +113,32 @@ def timing_until_decision(df: pl.DataFrame) -> so.Plot:
     return plot
 
 
+def timing_until_agreement_scatterplot(df: pl.DataFrame) -> so.Plot:
+    plot = (
+        so.Plot(df, y="treatment_name_nice")
+        .add(
+            so.Dot(),
+            so.Jitter(y=0.2),
+            x="time_until_final_agreement",
+            color="agreement",
+        )
+        .add(
+            so.Dot(marker="|", pointsize=20, stroke=2, color="black"),
+            so.Agg(),
+            x="time_until_final_agreement",
+        )
+        .label(x="Time (m)", y="", color="")
+        .scale(
+            x=so.Continuous()
+            .tick(at=[0, 60, 120, 180, 240, 300])
+            .label(like=lambda x, _: f"{x/60:.0f}"),  # type: ignore
+            color=so.Nominal(order=["Full agreement", "Partial agreement"]),
+            y=so.Nominal(order=["Dummy player", "Y = 10", "Y = 30", "Y = 90"]),
+        )
+    )
+    return plot
+
+
 if __name__ == "__main__":
     outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
     actions = pl.read_csv(snakemake.input.actions)  # noqa F821 # type: ignore
@@ -122,6 +148,8 @@ if __name__ == "__main__":
 
     if snakemake.wildcards.plot == "until_decision":  # noqa F821 # type: ignore
         plot = timing_until_decision(df)
+    elif snakemake.wildcards.plot == "until_agreement_scatterplot":  # noqa F821 # type: ignore
+        plot = timing_until_agreement_scatterplot(df)
     else:
         raise ValueError(f"Unknown plot: {snakemake.wildcards.plot}")  # noqa F821 # type: ignore
 
