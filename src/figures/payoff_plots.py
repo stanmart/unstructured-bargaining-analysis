@@ -211,5 +211,7 @@ if __name__ == "__main__":
         plot = payoff_by_agreement_type(df)
     elif snakemake.wildcards.plot == "share_of_agreement_types":  # noqa F821 # type: ignore
         plot = payoff_share_of_agreement_types(df)
+    else:
+        raise ValueError(f"Unknown plot: {snakemake.wildcards.plot}")  # noqa F821 # type: ignore
 
     plot.layout(size=(width, height)).save(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
