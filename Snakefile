@@ -4,6 +4,7 @@ SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
 rule figures:
     input:
         "out/figures/payoff_scatterplot_8x6.pdf",
+        "out/figures/payoff_average_8x6.pdf",
 
 
 rule create_payoff_plot:
