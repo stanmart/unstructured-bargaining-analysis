@@ -79,6 +79,7 @@ def prepare_dataset(actions: pl.DataFrame, outcomes: pl.DataFrame) -> pl.DataFra
             row_number=pl.col("time_until_winning_proposal")
             .rank(method="ordinal", descending=True)
             .over("treatment_name_nice"),
+            round_number_nice=pl.format("Round {}", pl.col("round_number") - 1),
         )
     )
 
@@ -139,6 +140,28 @@ def timing_until_agreement_scatterplot(df: pl.DataFrame) -> so.Plot:
     return plot
 
 
+def timing_until_agreement_by_round(df: pl.DataFrame) -> so.Plot:
+    plot = (
+        so.Plot(df, y="treatment_name_nice")
+        .add(
+            so.Bar(),
+            so.Agg(),
+            so.Dodge(),
+            x="time_until_final_agreement",
+            color="round_number_nice",
+        )
+        .label(x="Time (m)", y="", color="")
+        .scale(
+            x=so.Continuous()
+            .tick(at=[0, 60, 120, 180, 240, 300])
+            .label(like=lambda x, _: f"{x/60:.0f}"),  # type: ignore
+            y=so.Nominal(order=["Dummy player", "Y = 10", "Y = 30", "Y = 90"]),
+            color=so.Nominal(order=[f"Round {i + 1}" for i in range(5)]),
+        )
+    )
+    return plot
+
+
 if __name__ == "__main__":
     outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
     actions = pl.read_csv(snakemake.input.actions)  # noqa F821 # type: ignore
@@ -150,6 +173,8 @@ if __name__ == "__main__":
         plot = timing_until_decision(df)
     elif snakemake.wildcards.plot == "until_agreement_scatterplot":  # noqa F821 # type: ignore
         plot = timing_until_agreement_scatterplot(df)
+    elif snakemake.wildcards.plot == "until_agreement_by_round":  # noqa F821 # type: ignore
+        plot = timing_until_agreement_by_round(df)
     else:
         raise ValueError(f"Unknown plot: {snakemake.wildcards.plot}")  # noqa F821 # type: ignore
 

@@ -9,6 +9,7 @@ rule figures:
         "out/figures/payoff_share_of_agreement_types_8x6.pdf",
         "out/figures/timing_until_decision_8x6.pdf",
         "out/figures/timing_until_agreement_scatterplot_8x6.pdf",
+        "out/figures/timing_until_agreement_by_round_8x6.pdf",
 
 
 rule create_timing_plot:
