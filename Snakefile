@@ -6,6 +6,7 @@ rule figures:
         "out/figures/payoff_scatterplot_8x6.pdf",
         "out/figures/payoff_average_8x6.pdf",
         "out/figures/payoff_by_agreement_type_8x6.pdf",
+        "out/figures/payoff_share_of_agreement_types_8x6.pdf",
 
 
 rule create_payoff_plot:
