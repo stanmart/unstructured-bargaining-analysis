@@ -1,0 +1,57 @@
+import polars as pl 
+import numpy as np
+import seaborn as sns
+
+def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame: 
+    df = (
+        outcomes.filter(
+            pl.col("round_number") == 6
+        ) 
+        .with_columns( 
+            treatment_name_nice=pl.col("treatment_name").replace(
+                {
+                    "treatment_dummy_player": "Dummy player",
+                    "treatment_y_10": "Y = 10",
+                    "treatment_y_30": "Y = 30",
+                    "treatment_y_90": "Y = 90",
+                }
+            ),
+        )
+        )
+    return df
+
+def plot_axiom_survey(df: pl.DataFrame, axiom: str, axiom_nice: str) -> sns.axisgrid.FacetGrid:
+    order = ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree", "No opinion"]
+    order_axiom_dtype = pl.Enum(order)
+
+    g = sns.FacetGrid(df.with_columns(axiom_ordered = pl.Series(df.select(pl.col(f"{axiom}_axiom")), dtype = order_axiom_dtype)), 
+                    col = "treatment_name_nice", 
+                    )
+    g.map_dataframe(sns.histplot, 
+        x = "axiom_ordered", 
+        stat = "count", 
+        hue = "axiom_ordered", 
+        )
+
+    line_positions = np.arange(0, 25, 5)
+    for ax in g.axes.flat:
+        for pos in line_positions:
+            ax.axhline(y=pos, color='grey', linestyle='-', linewidth=0.25)
+        ax.tick_params(axis = "x", labelrotation = 90)
+
+    g.set_titles(col_template = "{col_name} treatment")
+    g.set_axis_labels("", "Count")
+    g.figure.suptitle(f"Survey: Agreement with the {axiom_nice} axiom", y = 1.1, verticalalignment = "top")
+
+    return g
+
+if __name__=="__main__": 
+    outcomes = pl.read_csv(snakemake.input.outcomes) # TODO: adjust to snakemake 
+    df = prepare_dataset(outcomes)
+    axioms_renamed = {"efficiency": "Efficiency", "symmetry": "Symmetry", "dummy_player": "Dummy Player", "linearity_HD1": "Linearity (HD1)", "linearity_additivity": "Linearity (Additivity)", "stability": "Stability"}  # noqa F821 # type: ignore
+
+    try:
+        plot = plot_axiom_survey(df = df, axiom = snakemake.wildcards.axiom, axiom_nice = axioms_renamed[snakemake.wildcards.axiom])
+        plot.savefig(snakemake.output.figure, bbox_inches = "tight") # noqa F821 # type: ignore 
+    except KeyError: 
+        raise ValueError(f"Unknown plot: {snakemake.wildcards.plot}")  # noqa F821 # type: ignore

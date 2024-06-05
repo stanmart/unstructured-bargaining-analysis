@@ -13,7 +13,20 @@ rule figures:
         "out/figures/timing_until_agreement_scatterplot_8x6.pdf",
         "out/figures/timing_until_agreement_by_round_8x6.pdf",
         "out/figures/proposal_number_per_round_8x6.pdf",
+        "out/figures/axioms_survey_efficiency.pdf",
+        "out/figures/axioms_survey_symmetry.pdf",
+        "out/figures/axioms_survey_dummy_player.pdf",
+        "out/figures/axioms_survey_linearity_HD1.pdf",
+        "out/figures/axioms_survey_linearity_additivity.pdf",
+        "out/figures/axioms_survey_stability.pdf",
 
+rule create_axiom_plot: 
+    input: 
+        outcomes = "data/clean/_collected/outcomes.csv",
+    output: 
+        figure = "out/figures/axioms_survey_{axiom}.pdf",
+    script: 
+        "src/figures/axiom_plots.py"
 
 rule create_proposal_plot:
     input:
