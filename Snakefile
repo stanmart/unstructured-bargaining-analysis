@@ -3,16 +3,16 @@ SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
 
 rule figures:
     input:
-        "out/figures/payoff_scatterplot_8x6.pdf",
-        "out/figures/payoff_average_8x6.pdf",
-        "out/figures/payoff_by_agreement_type_8x6.pdf",
-        "out/figures/payoff_share_of_agreement_types_8x6.pdf",
-        "out/figures/payoff_share_of_agreement_types_by_round_8x6.pdf",
-        "out/figures/payoff_equal_splits_by_round_8x6.pdf",
-        "out/figures/timing_until_decision_8x6.pdf",
-        "out/figures/timing_until_agreement_scatterplot_8x6.pdf",
-        "out/figures/timing_until_agreement_by_round_8x6.pdf",
-        "out/figures/proposal_number_per_round_8x6.pdf",
+        "out/figures/payoff_scatterplot.pdf",
+        "out/figures/payoff_average.pdf",
+        "out/figures/payoff_by_agreement_type.pdf",
+        "out/figures/payoff_share_of_agreement_types.pdf",
+        "out/figures/payoff_share_of_agreement_types_by_round.pdf",
+        "out/figures/payoff_equal_splits_by_round.pdf",
+        "out/figures/timing_until_decision.pdf",
+        "out/figures/timing_until_agreement_scatterplot.pdf",
+        "out/figures/timing_until_agreement_by_round.pdf",
+        "out/figures/proposal_number_per_round.pdf",
         "out/figures/axioms_survey_efficiency.pdf",
         "out/figures/axioms_survey_symmetry.pdf",
         "out/figures/axioms_survey_dummy_player.pdf",
@@ -32,7 +32,7 @@ rule create_proposal_plot:
     input:
         actions = "data/clean/_collected/actions.csv",
     output:
-        figure = "out/figures/proposal_{plot}_{width}x{height}.pdf",
+        figure = "out/figures/proposal_{plot}.pdf",
     script:
         "src/figures/proposal_plots.py"
 
@@ -42,7 +42,7 @@ rule create_timing_plot:
         outcomes = "data/clean/_collected/outcomes.csv",
         actions = "data/clean/_collected/actions.csv",
     output:
-        figure = "out/figures/timing_{plot}_{width}x{height}.pdf",
+        figure = "out/figures/timing_{plot}.pdf",
     script:
         "src/figures/timing_plots.py"
 
@@ -51,7 +51,7 @@ rule create_payoff_plot:
     input:
         outcomes = "data/clean/_collected/outcomes.csv",
     output:
-        figure = "out/figures/payoff_{plot}_{width}x{height}.pdf",
+        figure = "out/figures/payoff_{plot}.pdf",
     script:
         "src/figures/payoff_plots.py"
 
