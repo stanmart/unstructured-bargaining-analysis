@@ -169,13 +169,10 @@ if __name__ == "__main__":
     width = float(snakemake.wildcards.width)  # noqa F821 # type: ignore
     height = float(snakemake.wildcards.height)  # noqa F821 # type: ignore
 
-    if snakemake.wildcards.plot == "until_decision":  # noqa F821 # type: ignore
-        plot = timing_until_decision(df)
-    elif snakemake.wildcards.plot == "until_agreement_scatterplot":  # noqa F821 # type: ignore
-        plot = timing_until_agreement_scatterplot(df)
-    elif snakemake.wildcards.plot == "until_agreement_by_round":  # noqa F821 # type: ignore
-        plot = timing_until_agreement_by_round(df)
-    else:
+    try:
+        funcname = "timing_" + snakemake.wildcards.plot  # noqa F821 # type: ignore
+        plot = globals()[funcname](df)
+    except KeyError:
         raise ValueError(f"Unknown plot: {snakemake.wildcards.plot}")  # noqa F821 # type: ignore
 
     plot.layout(size=(width, height)).save(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore

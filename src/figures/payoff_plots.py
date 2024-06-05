@@ -3,6 +3,8 @@ import seaborn.objects as so
 
 
 def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame:
+    treatment_names = pl.Enum(["Dummy player", "Y = 10", "Y = 30", "Y = 90"])
+
     roles = {
         1: "P1",
         2: "P2",
@@ -110,14 +112,17 @@ def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame:
                     .otherwise(pl.lit("Partial agreement"))
                 )
             ),
-            treatment_name_nice=pl.col("treatment_name").replace(
+            treatment_name_nice=pl.col("treatment_name")
+            .replace(
                 {
                     "treatment_dummy_player": "Dummy player",
                     "treatment_y_10": "Y = 10",
                     "treatment_y_30": "Y = 30",
                     "treatment_y_90": "Y = 90",
                 }
-            ),
+            )
+            .cast(treatment_names),
+            round_number_corrected=pl.col("round_number") - 1,
         )
         .join(
             values,
@@ -196,21 +201,57 @@ def payoff_share_of_agreement_types(df: pl.DataFrame) -> so.Plot:
     )
 
 
+def payoff_share_of_agreement_types_by_round(df: pl.DataFrame) -> so.Plot:
+    return (
+        so.Plot(
+            df.filter(pl.col("role") == "P1"),
+            x="round_number_corrected",
+            color="agreement",
+        )
+        .add(so.Bar(), so.Count(), so.Stack())
+        .facet(col="treatment_name_nice")
+        .label(x="Round", y="Count", color="Coordination outcome")
+        .scale(x=so.Nominal(order=[i + 1 for i in range(5)]))
+    )
+
+
+def payoff_equal_splits_by_round(df: pl.DataFrame) -> so.Plot:
+    return (
+        so.Plot(
+            df.group_by(["treatment_name_nice", "round_number_corrected", "group_id"])
+            .agg(
+                min_payoff=pl.col("payoff_this_round").min(),
+                max_payoff=pl.col("payoff_this_round").max(),
+            )
+            .with_columns(equal_split=pl.col("max_payoff") - pl.col("min_payoff") <= 1)
+            .with_columns(
+                split_type=pl.when(pl.col("equal_split"))
+                .then(pl.lit("Equal split"))
+                .otherwise(pl.lit("Unequal split"))
+            ),
+            x="round_number_corrected",
+            color="split_type",
+        )
+        .add(so.Bar(), so.Count(), so.Stack())
+        .facet(col="treatment_name_nice")
+        .label(x="Round", y="Count")
+        .scale(
+            x=so.Nominal(order=[i + 1 for i in range(5)]),
+            color=so.Nominal(order=["Equal split", "Unequal split"]),
+        )
+    )
+
+
 if __name__ == "__main__":
     outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
     df = prepare_dataset(outcomes)
     width = float(snakemake.wildcards.width)  # noqa F821 # type: ignore
     height = float(snakemake.wildcards.height)  # noqa F821 # type: ignore
 
-    if snakemake.wildcards.plot == "scatterplot":  # noqa F821 # type: ignore
-        plot = payoff_scatterplot(df)
-    elif snakemake.wildcards.plot == "average":  # noqa F821 # type: ignore
-        plot = payoff_average(df)
-    elif snakemake.wildcards.plot == "by_agreement_type":  # noqa F821 # type: ignore
-        plot = payoff_by_agreement_type(df)
-    elif snakemake.wildcards.plot == "share_of_agreement_types":  # noqa F821 # type: ignore
-        plot = payoff_share_of_agreement_types(df)
-    else:
+    try:
+        funcname = "payoff_" + snakemake.wildcards.plot  # noqa F821 # type: ignore
+        plot = globals()[funcname](df)
+    except KeyError:
         raise ValueError(f"Unknown plot: {snakemake.wildcards.plot}")  # noqa F821 # type: ignore
 
     plot.layout(size=(width, height)).save(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
