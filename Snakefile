@@ -12,6 +12,16 @@ rule figures:
         "out/figures/timing_until_decision_8x6.pdf",
         "out/figures/timing_until_agreement_scatterplot_8x6.pdf",
         "out/figures/timing_until_agreement_by_round_8x6.pdf",
+        "out/figures/proposal_number_per_round_8x6.pdf",
+
+
+rule create_proposal_plot:
+    input:
+        actions = "data/clean/_collected/actions.csv",
+    output:
+        figure = "out/figures/proposal_{plot}_{width}x{height}.pdf",
+    script:
+        "src/figures/proposal_plots.py"
 
 
 rule create_timing_plot:
