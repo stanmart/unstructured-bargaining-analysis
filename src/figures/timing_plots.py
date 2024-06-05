@@ -187,6 +187,7 @@ if __name__ == "__main__":
     sns.set_style(
         "whitegrid",
         {
+            "axes.edgecolor": "black",
             "grid.color": "grey",
             "grid.linestyle": "-",
             "grid.linewidth": 0.25,

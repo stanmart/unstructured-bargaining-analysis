@@ -284,6 +284,9 @@ def payoff_share_of_agreement_types_by_round(df: pl.DataFrame) -> sns.FacetGrid:
         alpha=0.9,
     )
 
+    for ax in g.axes.flat:
+        ax.xaxis.grid(False)
+
     g.set_titles(col_template="{col_name} treatment")
     g.set_axis_labels("Round", "Count")
     g.legend.set_title("Coordination outcome")  # type: ignore
@@ -337,6 +340,7 @@ if __name__ == "__main__":
     sns.set_style(
         "whitegrid",
         {
+            "axes.edgecolor": "black",
             "grid.color": "grey",
             "grid.linestyle": "-",
             "grid.linewidth": 0.25,
