@@ -1,5 +1,5 @@
 import polars as pl
-import seaborn.objects as so
+import seaborn as sns
 
 
 def prepare_dataset(actions: pl.DataFrame) -> pl.DataFrame:
@@ -25,31 +25,42 @@ def prepare_dataset(actions: pl.DataFrame) -> pl.DataFrame:
     return proposals
 
 
-def proposal_number_per_round(df: pl.DataFrame) -> so.Plot:
-    plot = (
-        so.Plot(
-            df.group_by(
-                ["treatment_name_nice", "round_number_corrected", "group_id"]
-            ).agg(pl.len().alias("n"))
-        )
-        .add(
-            so.Bar(),
-            so.Agg("mean"),
-            y="n",
-            x="round_number_corrected",
-        )
-        .label(x="Round", y="Average number of proposals")
-        .facet(col="treatment_name_nice")
-        .scale(x=so.Nominal(order=[i + 1 for i in range(5)]))
+def proposal_number_per_round(df: pl.DataFrame) -> sns.FacetGrid:
+    g = sns.FacetGrid(
+        df.group_by(["treatment_name_nice", "round_number_corrected", "group_id"]).agg(
+            pl.len().alias("n")
+        ),
+        col="treatment_name_nice",
     )
-    return plot
+    g.map_dataframe(
+        sns.barplot,
+        x="round_number_corrected",
+        y="n",
+        estimator="mean",
+        errorbar=None,
+        alpha=0.9,
+    )
+    g.set_titles(col_template="{col_name} treatment")
+    g.set_axis_labels("Round", "Average number of proposals")
+
+    return g
 
 
 if __name__ == "__main__":
     actions = pl.read_csv(snakemake.input.actions)  # noqa F821 # type: ignore
     df = prepare_dataset(actions)
-    width = float(snakemake.wildcards.width)  # noqa F821 # type: ignore
-    height = float(snakemake.wildcards.height)  # noqa F821 # type: ignore
+    sns.set_style(
+        "whitegrid",
+        {
+            "grid.color": "grey",
+            "grid.linestyle": "-",
+            "grid.linewidth": 0.25,
+            "axes.spines.left": True,
+            "axes.spines.bottom": True,
+            "axes.spines.right": False,
+            "axes.spines.top": False,
+        },
+    )
 
     try:
         funcname = "proposal_" + snakemake.wildcards.plot  # noqa F821 # type: ignore
@@ -57,4 +68,4 @@ if __name__ == "__main__":
     except KeyError:
         raise ValueError(f"Unknown plot: {snakemake.wildcards.plot}")  # noqa F821 # type: ignore
 
-    plot.layout(size=(width, height)).save(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
+    plot.savefig(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
