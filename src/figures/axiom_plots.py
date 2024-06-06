@@ -21,21 +21,20 @@ def plot_axiom_survey(
     df: pl.DataFrame, axiom: str, axiom_nice: str
 ) -> sns.axisgrid.FacetGrid:
     order = [
-        "Strongly Agree",
-        "Agree",
-        "Neutral",
-        "Disagree",
         "Strongly Disagree",
+        "Disagree",
+        "Neutral",
+        "Agree",
+        "Strongly Agree",
         "No opinion",
     ]
     order_axiom_dtype = pl.Enum(order)
 
+    palette = sns.color_palette("Spectral", n_colors=5) + [(0.5, 0.5, 0.5)]
+    mapping = {cat: color for cat, color in zip(order, palette)}
+
     g = sns.FacetGrid(
-        df.with_columns(
-            axiom_ordered=pl.Series(
-                df.select(pl.col(f"{axiom}_axiom")), dtype=order_axiom_dtype
-            )
-        ),
+        df.with_columns(axiom_ordered=pl.col(f"{axiom}_axiom").cast(order_axiom_dtype)),
         col="treatment_name_nice",
     )
     g.map_dataframe(
@@ -43,12 +42,14 @@ def plot_axiom_survey(
         x="axiom_ordered",
         stat="count",
         hue="axiom_ordered",
+        alpha=0.9,
+        palette=mapping,
     )
 
     line_positions = np.arange(0, 25, 5)
     for ax in g.axes.flat:
-        for pos in line_positions:
-            ax.axhline(y=pos, color="grey", linestyle="-", linewidth=0.25)
+        ax.set_yticks(line_positions)
+        ax.xaxis.grid(False)
         ax.tick_params(axis="x", labelrotation=90)
 
     g.set_titles(col_template="{col_name} treatment")
@@ -72,6 +73,19 @@ if __name__ == "__main__":
         "stability": "Stability",
     }
 
+    sns.set_style(
+        "whitegrid",
+        {
+            "axes.edgecolor": "black",
+            "grid.color": "grey",
+            "grid.linestyle": "-",
+            "grid.linewidth": 0.25,
+            "axes.spines.left": True,
+            "axes.spines.bottom": True,
+            "axes.spines.right": False,
+            "axes.spines.top": False,
+        },
+    )
     try:
         plot = plot_axiom_survey(
             df=df,

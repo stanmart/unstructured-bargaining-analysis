@@ -1,5 +1,8 @@
+import matplotlib.pyplot as plt
 import polars as pl
+import seaborn as sns
 import seaborn.objects as so
+from matplotlib.figure import Figure
 from matplotlib.ticker import FixedFormatter
 
 
@@ -62,14 +65,16 @@ def prepare_dataset(actions: pl.DataFrame, outcomes: pl.DataFrame) -> pl.DataFra
             how="left",
         )
         .with_columns(
-            treatment_name_nice=pl.col("treatment_name").replace(
+            treatment_name_nice=pl.col("treatment_name")
+            .replace(
                 {
                     "treatment_dummy_player": "Dummy player",
                     "treatment_y_10": "Y = 10",
                     "treatment_y_30": "Y = 30",
                     "treatment_y_90": "Y = 90",
                 }
-            ),
+            )
+            .cast(pl.Enum(["Dummy player", "Y = 10", "Y = 30", "Y = 90"])),
             time_until_winning_proposal=pl.col("time_of_winning_proposal")
             - pl.col("start_time"),
             time_until_final_agreement=pl.col("time_of_final_agreement")
@@ -79,7 +84,9 @@ def prepare_dataset(actions: pl.DataFrame, outcomes: pl.DataFrame) -> pl.DataFra
             row_number=pl.col("time_until_winning_proposal")
             .rank(method="ordinal", descending=True)
             .over("treatment_name_nice"),
-            round_number_nice=pl.format("Round {}", pl.col("round_number") - 1),
+            round_number_nice=pl.format("Round {}", pl.col("round_number") - 1)
+            .cast(pl.String)
+            .cast(pl.Enum(["Round 1", "Round 2", "Round 3", "Round 4", "Round 5"])),
         )
     )
 
@@ -114,60 +121,82 @@ def timing_until_decision(df: pl.DataFrame) -> so.Plot:
     return plot
 
 
-def timing_until_agreement_scatterplot(df: pl.DataFrame) -> so.Plot:
-    plot = (
-        so.Plot(df, y="treatment_name_nice")
-        .add(
-            so.Dot(),
-            so.Jitter(y=0.2),
-            x="time_until_final_agreement",
-            color="agreement",
-        )
-        .add(
-            so.Dot(marker="|", pointsize=20, stroke=2, color="black"),
-            so.Agg(),
-            x="time_until_final_agreement",
-        )
-        .label(x="Time (m)", y="", color="")
-        .scale(
-            x=so.Continuous()
-            .tick(at=[0, 60, 120, 180, 240, 300])
-            .label(like=lambda x, _: f"{x/60:.0f}"),  # type: ignore
-            color=so.Nominal(order=["Full agreement", "Partial agreement"]),
-            y=so.Nominal(order=["Dummy player", "Y = 10", "Y = 30", "Y = 90"]),
-        )
+def timing_until_agreement_scatterplot(df: pl.DataFrame) -> Figure:
+    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.stripplot(
+        data=df,
+        x="time_until_final_agreement",
+        y="treatment_name_nice",
+        hue="agreement",
+        dodge=False,
+        jitter=True,
+        alpha=0.8,
+        ax=ax,
     )
-    return plot
+    sns.pointplot(
+        data=df,
+        x="time_until_final_agreement",
+        y="treatment_name_nice",
+        hue="agreement",
+        estimator="mean",
+        errorbar=None,
+        dodge=False,
+        marker="|",
+        linestyle="none",
+        markersize=16,
+        ax=ax,
+        legend=False,
+    )
+
+    ax.set_xlabel("Time until agreement (m)")
+    ax.set_ylabel("Treatment")
+    ax.legend(title="")
+    ax.set_xticks([0, 60, 120, 180, 240, 300])
+    ax.set_xticklabels(["0", "1", "2", "3", "4", "5"])
+
+    return fig
 
 
-def timing_until_agreement_by_round(df: pl.DataFrame) -> so.Plot:
-    plot = (
-        so.Plot(df, y="treatment_name_nice")
-        .add(
-            so.Bar(),
-            so.Agg(),
-            so.Dodge(),
-            x="time_until_final_agreement",
-            color="round_number_nice",
-        )
-        .label(x="Time (m)", y="", color="")
-        .scale(
-            x=so.Continuous()
-            .tick(at=[0, 60, 120, 180, 240, 300])
-            .label(like=lambda x, _: f"{x/60:.0f}"),  # type: ignore
-            y=so.Nominal(order=["Dummy player", "Y = 10", "Y = 30", "Y = 90"]),
-            color=so.Nominal(order=[f"Round {i + 1}" for i in range(5)]),
-        )
+def timing_until_agreement_by_round(df: pl.DataFrame) -> Figure:
+    fig, ax = plt.subplots()
+    sns.barplot(
+        data=df,
+        x="time_until_final_agreement",
+        y="treatment_name_nice",
+        hue="round_number_nice",
+        dodge=True,
+        alpha=0.9,
+        estimator="mean",
+        errorbar=None,
+        ax=ax,
     )
-    return plot
+
+    ax.set_xlabel("Average time until agreement (m)")
+    ax.set_ylabel("Treatment")
+    ax.set_xticks([0, 60, 120, 180, 240, 300])
+    ax.set_xticklabels(["0", "1", "2", "3", "4", "5"])
+    ax.legend(title="")
+
+    return fig
 
 
 if __name__ == "__main__":
     outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
     actions = pl.read_csv(snakemake.input.actions)  # noqa F821 # type: ignore
     df = prepare_dataset(actions, outcomes)
-    width = float(snakemake.wildcards.width)  # noqa F821 # type: ignore
-    height = float(snakemake.wildcards.height)  # noqa F821 # type: ignore
+    sns.set_style(
+        "whitegrid",
+        {
+            "axes.edgecolor": "black",
+            "grid.color": "grey",
+            "grid.linestyle": "-",
+            "grid.linewidth": 0.25,
+            "axes.spines.left": True,
+            "axes.spines.bottom": True,
+            "axes.spines.right": False,
+            "axes.spines.top": False,
+        },
+    )
 
     try:
         funcname = "timing_" + snakemake.wildcards.plot  # noqa F821 # type: ignore
@@ -175,4 +204,10 @@ if __name__ == "__main__":
     except KeyError:
         raise ValueError(f"Unknown plot: {snakemake.wildcards.plot}")  # noqa F821 # type: ignore
 
-    plot.layout(size=(width, height)).save(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
+    if isinstance(plot, so.Plot):
+        plot.theme(sns.axes_style() | {"grid.linestyle": "None"}).save(
+            snakemake.output.figure,  # noqa F821 # type: ignore
+            bbox_inches="tight",
+        )
+    elif isinstance(plot, (Figure, sns.FacetGrid)):
+        plot.savefig(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
