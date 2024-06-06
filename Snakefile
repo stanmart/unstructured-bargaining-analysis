@@ -19,14 +19,27 @@ rule figures:
         "out/figures/axioms_survey_linearity_HD1.pdf",
         "out/figures/axioms_survey_linearity_additivity.pdf",
         "out/figures/axioms_survey_stability.pdf",
+        "out/figures/axioms_outcomes_efficiency.pdf",
+        "out/figures/axioms_outcomes_symmetry.pdf",
+        "out/figures/axioms_outcomes_dummy_player.pdf",
+        "out/figures/axioms_outcomes_linearity_additivity.pdf",
+        "out/figures/axioms_outcomes_stability.pdf",
 
-rule create_axiom_plot: 
+rule create_axiom_survey_plot: 
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",
     output: 
         figure = "out/figures/axioms_survey_{axiom}.pdf",
     script: 
         "src/figures/axiom_plots.py"
+
+rule create_axiom_outcomes_plot: 
+    input: 
+        outcomes = "data/clean/_collected/outcomes.csv",
+    output: 
+        figure = "out/figures/axioms_outcomes_{axiom}.pdf",
+    script: 
+        "src/figures/axiom_outcomes_plots.py"
 
 rule create_proposal_plot:
     input:
