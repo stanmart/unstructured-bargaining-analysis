@@ -9,6 +9,7 @@ rule figures:
         "out/figures/payoff_share_of_agreement_types.pdf",
         "out/figures/payoff_share_of_agreement_types_by_round.pdf",
         "out/figures/payoff_equal_splits_by_round.pdf",
+        "out/figures/payoff_matching_group_average.pdf",
         "out/figures/timing_until_decision.pdf",
         "out/figures/timing_until_agreement_scatterplot.pdf",
         "out/figures/timing_until_agreement_by_round.pdf",
