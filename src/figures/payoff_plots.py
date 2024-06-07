@@ -132,6 +132,7 @@ def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame:
             )
             .cast(treatment_names),
             round_number_corrected=pl.col("round_number") - 1,
+            matching_group=(pl.col("participant_id") - 1) // 6,
         )
         .join(
             values,
@@ -330,6 +331,54 @@ def payoff_equal_splits_by_round(df: pl.DataFrame) -> sns.FacetGrid:
     g.set_axis_labels("Round", "Count")
     g.legend.set_title("Coordination outcome")  # type: ignore
 
+    return g
+
+
+def payoff_matching_group_average(df: pl.DataFrame) -> sns.axisgrid.FacetGrid:
+    g = sns.FacetGrid(
+        df.group_by(["treatment_name_nice", "matching_group", "role"]).mean(),
+        col="treatment_name_nice",
+        height=6,
+        aspect=0.65,
+    )
+
+    g.map_dataframe(
+        sns.scatterplot,
+        x="role",
+        y="payoff_this_round",
+        hue="matching_group",
+        alpha=1,
+        palette="deep",
+    ).add_legend(title="Matching group")
+
+    g.map_dataframe(
+        sns.lineplot,
+        x="role",
+        y="payoff_this_round",
+        hue="matching_group",
+        alpha=1,
+        palette="deep",
+        linestyle="dashed",
+    )
+
+    g.map_dataframe(
+        sns.scatterplot, x="role", y="nucleolus", color="black", linewidth=2, marker="1"
+    )
+
+    g.map_dataframe(
+        sns.scatterplot,
+        x="role",
+        y="shapley_value",
+        color="black",
+        linewidth=2,
+        marker="2",
+    )
+
+    g.set_titles(col_template="{col_name} treatment")
+    g.set_axis_labels("Player role", "Average payoff")
+    g.figure.suptitle(
+        "Average payoff by matching group", y=1.1, verticalalignment="top"
+    )
     return g
 
 
