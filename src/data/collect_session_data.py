@@ -166,6 +166,7 @@ def load_survey_data(path: str, session_code: str) -> pl.LazyFrame:
         .filter(pl.col("session.code") == session_code)
         .select(
             [
+                "participant.id_in_session",
                 "participant.code",
                 "player.age",
                 "player.gender",
@@ -195,6 +196,7 @@ def load_survey_data(path: str, session_code: str) -> pl.LazyFrame:
         )
         .rename(
             {
+                "participant.id_in_session": "participant_id",
                 "participant.code": "participant_code",
                 "player.age": "age",
                 "player.gender": "gender",
