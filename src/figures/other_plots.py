@@ -19,16 +19,19 @@ def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame:
 
 def plot_difficulty_rating(df: pl.DataFrame) -> sns.axisgrid.FacetGrid:
     order = [
+        "Very difficult",
+        "Difficult",
+        "Medium difficulty",
         "Easy",
         "Very easy",
-        "Medium difficulty",
-        "Difficult",
-        "Very difficult",
         "No opinion",
     ]
     order_diff_dtype = pl.Enum(order)
 
     df_diff = df.filter(pl.col("round_number") == 6)
+
+    palette = sns.color_palette("Spectral", n_colors=5) + [(0.5, 0.5, 0.5)]
+    mapping = {cat: color for cat, color in zip(order, palette)}
 
     g = sns.FacetGrid(
         df_diff.with_columns(
@@ -43,11 +46,15 @@ def plot_difficulty_rating(df: pl.DataFrame) -> sns.axisgrid.FacetGrid:
         x="difficulty_ordered",
         stat="count",
         hue="difficulty_ordered",
+        alpha=0.9,
+        palette=mapping,
     )
 
     line_positions = np.arange(0, 25, 5)
     for ax in g.axes.flat:
         for pos in line_positions:
+            ax.set_yticks(line_positions)
+            ax.xaxis.grid(False)
             ax.axhline(y=pos, color="grey", linestyle="-", linewidth=0.25)
         ax.tick_params(axis="x", labelrotation=90)
 
@@ -64,6 +71,20 @@ def plot_difficulty_rating(df: pl.DataFrame) -> sns.axisgrid.FacetGrid:
 if __name__ == "__main__":
     outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
     df = prepare_dataset(outcomes)
+
+    sns.set_style(
+        "whitegrid",
+        {
+            "axes.edgecolor": "black",
+            "grid.color": "grey",
+            "grid.linestyle": "-",
+            "grid.linewidth": 0.25,
+            "axes.spines.left": True,
+            "axes.spines.bottom": True,
+            "axes.spines.right": False,
+            "axes.spines.top": False,
+        },
+    )
 
     try:
         funcname = "plot_" + snakemake.wildcards.plot  # noqa F821 # type: ignore
