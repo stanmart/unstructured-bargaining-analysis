@@ -153,7 +153,7 @@ def prepare_for_mw(df: pl.DataFrame) -> pl.DataFrame:
     return df
 
 
-def prepare_for_reg(df: pl.DataFrame) -> pl.DataFrame:
+def prepare_for_reg(df: pl.DataFrame) -> pd.DataFrame:
     df = (
         df.with_columns(
             Y=df.to_series(df.get_column_index("treatment_name_nice"))
@@ -196,7 +196,7 @@ def compute_one_sided_mw(
     return res
 
 
-def run_reg(df: pd.DataFrame) -> sm.regression.linear_model.RegressionResults:
+def run_reg(df: pd.DataFrame) -> sm.regression.linear_model.RegressionResultsWrapper:
     res = sm.regression.linear_model.OLS(
         df.payoff_this_round, sm.add_constant(df.Y)
     ).fit(cov_type="cluster", cov_kwds={"groups": df.matching_group})
