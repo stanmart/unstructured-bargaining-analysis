@@ -1,6 +1,5 @@
 import polars as pl
 import seaborn as sns
-import seaborn.objects as so
 
 
 def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame:
@@ -24,91 +23,98 @@ def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame:
     return df
 
 
-def plot_outcomes_dummy_player(df: pl.DataFrame) -> so.Plot:
-    return (
-        so.Plot(
-            df.filter(pl.col("treatment_name_nice") == "Dummy player").with_columns(
-                satisfies_dummy_player_axiom=(pl.col("3") == 0)
-            ),
-            x="treatment_name_nice",
-            color="satisfies_dummy_player_axiom",
-        )
-        .add(so.Bar(), so.Count(), so.Stack())
-        .label(
-            x="Treatment",
-            y="Number of bargaining outcomes",
-            title="Bargaining outcomes: Agreement with the dummy player axiom",
-        )
+def plot_outcomes_dummy_player(df: pl.DataFrame) -> sns.FacetGrid:
+    df_plot = df.filter(pl.col("treatment_name_nice") == "Dummy player").with_columns(
+        satisfies_dummy_player_axiom=(pl.col("3") == 0)
     )
 
+    g = sns.displot(
+        df_plot,
+        x="treatment_name_nice",
+        multiple="stack",
+        hue="satisfies_dummy_player_axiom",
+        alpha=0.9,
+    )
+    for ax in g.axes.flat:
+        ax.xaxis.grid(False)
 
-def plot_outcomes_efficiency(df: pl.DataFrame) -> so.Plot:
-    return (
-        so.Plot(
-            df.with_columns(
-                satisfies_efficiency=(pl.col("1") + pl.col("2") + pl.col("3") == 100)
-            ),
-            x="treatment_name_nice",
-            color="satisfies_efficiency",
-        )
-        .add(so.Bar(), so.Count(), so.Stack())
-        .label(
-            x="Treatment",
-            y="Number of bargaining outcomes",
-            title="Bargaining outcomes: Agreement with the efficiency axiom",
-        )
+    g.set_axis_labels("", "Count")
+    g.legend.set_title("Satisfies Dummy player axiom")  # type: ignore
+
+    return g
+
+
+def plot_outcomes_efficiency(df: pl.DataFrame) -> sns.FacetGrid:
+    df_plot = df.with_columns(
+        satisfies_efficiency=(pl.col("1") + pl.col("2") + pl.col("3") == 100)
     )
 
+    g = sns.displot(
+        df_plot,
+        x="treatment_name_nice",
+        multiple="stack",
+        hue="satisfies_efficiency",
+        alpha=0.9,
+    )
+    for ax in g.axes.flat:
+        ax.xaxis.grid(False)
 
-def plot_outcomes_symmetry(df: pl.DataFrame) -> so.Plot:
-    return (
-        so.Plot(
-            df.with_columns(
-                satisfies_symmetry=pl.when(
-                    pl.col("treatment_name_nice") == "Dummy player"
-                )
-                .then((pl.col("1") == pl.col("2")))
-                .otherwise((pl.col("2") == pl.col("3")))
-            ),
-            x="treatment_name_nice",
-            color="satisfies_symmetry",
-        )
-        .add(so.Bar(), so.Count(), so.Stack())
-        .label(
-            x="Treatment",
-            y="Number of bargaining outcomes",
-            title="Bargaining outcomes: Agreement with the symmetry axiom",
-        )
+    g.set_axis_labels("Treatment", "Count")
+    g.legend.set_title("Satisfies efficiency axiom")  # type: ignore
+
+    return g
+
+
+def plot_outcomes_symmetry(df: pl.DataFrame) -> sns.FacetGrid:
+    df_plot = df.with_columns(
+        satisfies_symmetry=pl.when(pl.col("treatment_name_nice") == "Dummy player")
+        .then((pl.col("1") == pl.col("2")))
+        .otherwise((pl.col("2") == pl.col("3")))
     )
 
+    g = sns.displot(
+        df_plot,
+        x="treatment_name_nice",
+        multiple="stack",
+        hue="satisfies_symmetry",
+        alpha=0.9,
+    )
+    for ax in g.axes.flat:
+        ax.xaxis.grid(False)
 
-def plot_outcomes_stability(df: pl.DataFrame) -> so.Plot:
-    df_stab = df.with_columns(
+    g.set_axis_labels("Treatment", "Count")
+    g.legend.set_title("Satisfies symmetry axiom")  # type: ignore
+
+    return g
+
+
+def plot_outcomes_stability(df: pl.DataFrame) -> sns.FacetGrid:
+    df_plot = df.with_columns(
         Y=df.to_series(0).str.strip_chars("Y = ").str.to_integer(strict=False)
-    )
-    return (
-        so.Plot(
-            df_stab.with_columns(
-                satisfies_stability=pl.when(
-                    pl.col("treatment_name_nice") == "Dummy player"
-                )
-                .then(pl.col("1") + pl.col("2") == 100)
-                .otherwise(
-                    (pl.col("1") + pl.col("2") >= pl.col("Y"))
-                    & (pl.col("1") + pl.col("3") >= pl.col("Y"))
-                    & (pl.col("1") + pl.col("2") + pl.col("3") == 100)
-                )
-            ),
-            x="treatment_name_nice",
-            color="satisfies_stability",
-        )
-        .add(so.Bar(), so.Count(), so.Stack())
-        .label(
-            x="Treatment",
-            y="Number of bargaining outcomes",
-            title="Bargaining outcomes: Agreement with the stability axiom",
+    ).with_columns(
+        satisfies_stability=pl.when(pl.col("treatment_name_nice") == "Dummy player")
+        .then(pl.col("1") + pl.col("2") == 100)
+        .otherwise(
+            (pl.col("1") + pl.col("2") >= pl.col("Y"))
+            & (pl.col("1") + pl.col("3") >= pl.col("Y"))
+            & (pl.col("1") + pl.col("2") + pl.col("3") == 100)
         )
     )
+
+    g = sns.displot(
+        df_plot,
+        x="treatment_name_nice",
+        multiple="stack",
+        hue="satisfies_stability",
+        alpha=0.9,
+    )
+    for ax in g.axes.flat:
+        ax.xaxis.grid(False)
+
+    g.set_axis_labels("Treatment", "Count")
+    g.legend.set_title("Satisfies stability axiom")  # type: ignore
+
+    return g
 
 
 def plot_outcomes_linearity_additivity(df: pl.DataFrame) -> sns.axisgrid.FacetGrid:
@@ -187,12 +193,24 @@ if __name__ == "__main__":
     outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
     df = prepare_dataset(outcomes)
 
+    sns.set_style(
+        "whitegrid",
+        {
+            "axes.edgecolor": "black",
+            "grid.color": "grey",
+            "grid.linestyle": "-",
+            "grid.linewidth": 0.25,
+            "axes.spines.left": True,
+            "axes.spines.bottom": True,
+            "axes.spines.right": False,
+            "axes.spines.top": False,
+        },
+    )
+
     try:
         funcname = "plot_outcomes_" + snakemake.wildcards.axiom  # noqa F821 # type: ignore
         plot = globals()[funcname](df)
-        if snakemake.wildcards.axiom == "linearity_additivity":  # noqa F821 # type: ignore
-            plot.savefig(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
-        else:
-            plot.save(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
     except KeyError:
         raise ValueError(f"Unknown plot: {snakemake.wildcards.axiom}")  # noqa F821 # type: ignore
+
+    plot.savefig(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
