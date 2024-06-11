@@ -1,3 +1,4 @@
+import re
 import string
 
 import nltk
@@ -108,10 +109,15 @@ def train_idf(df: pl.DataFrame, vectorizer_args={}) -> TfidfVectorizer:
         def __init__(self):
             self.wnl = WordNetLemmatizer()
             self.ignore = set(stopwords.words("english")) | set(string.punctuation)
+            self.exclude_re = re.compile(r"[0-9]+\.?[0-9]*")
 
         def __call__(self, doc):
             lemmas = [self.wnl.lemmatize(t) for t in word_tokenize(doc)]
-            return [t for t in lemmas if t not in self.ignore]
+            return [
+                t
+                for t in lemmas
+                if t not in self.ignore and not self.exclude_re.match(t)
+            ]
 
     vectorizer = TfidfVectorizer(
         tokenizer=LemmaTokenizer(),
