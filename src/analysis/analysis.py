@@ -1,3 +1,6 @@
+import json
+import pickle
+
 import numpy as np
 import pandas as pd
 import polars as pl
@@ -174,10 +177,9 @@ def prepare_for_reg(df: pl.DataFrame) -> pd.DataFrame:
                 "matching_group",
             ]
         )
-        .to_pandas()
     )
 
-    return df
+    return df.to_pandas()
 
 
 def compute_one_sided_mw(
@@ -209,22 +211,32 @@ if __name__ == "__main__":
     df_mw = prepare_for_mw(df)
     df_reg = prepare_for_reg(df)
 
-    f = open("out/analysis/analysis_results.txt", "w")
-    f.write("Analysis results \n")
-    f = open("out/analysis/analysis_results.txt", "a")
+    with open(snakemake.output.summary, "w") as f:  # noqa F821 # type: ignore
+        f.write("Analysis results \n")
 
     # Mann-Whitney U: Y=10 vs Y=90 (main analysis), Y=30 vs Y=90 (robustness check), Y=10 vs Y=30 (exploratory analysis)
-    for Y1, Y2 in [(10, 90), (30, 90), (10, 30)]:
-        res = compute_one_sided_mw(df_mw, Y1, Y2)
-        f.write(
-            f"The p-value of the one-sided Mann-Whitney U test comparing Y = {Y1} and Y = {Y2} on the matching-group average of player A is {res.pvalue}."
-        )
+    mann_whitney_results = {}
+    with open(snakemake.output.summary, "a") as f:  # noqa F821 # type: ignore
+        for Y1, Y2 in [(10, 90), (30, 90), (10, 30)]:
+            res = compute_one_sided_mw(df_mw, Y1, Y2)
+            mann_whitney_results[f"{Y1}-{Y2}"] = {
+                "statistic": res.statistic.item(),
+                "pvalue": res.pvalue.item(),
+            }
+            f.write(
+                f"The p-value of the one-sided Mann-Whitney U test comparing Y = {Y1} and Y = {Y2} on the matching-group average of player A is {res.pvalue}."
+            )
+    with open(snakemake.output.mann_whitney, "w") as f:  # noqa F821 # type: ignore
+        json.dump(mann_whitney_results, f)
 
     # regression (robustness check)
     reg_res = run_reg(df_reg)
-    f.write("\n\nRegression results: \n")
-    for table in reg_res.summary().tables[:2]:
-        f.write(table.as_latex_tabular())
+    with open(snakemake.output.summary, "a") as f:  # noqa F821 # type: ignore
+        f.write("\n\nRegression results: \n")
+        for table in reg_res.summary().tables[:2]:
+            f.write(table.as_latex_tabular())
+    with open(snakemake.output.regression, "wb") as f:  # noqa F821 # type: ignore
+        pickle.dump(reg_res, f)
 
     # mean squared error (exploratory analysis)
     mse_nuc = mean_squared_error(
@@ -237,8 +249,16 @@ if __name__ == "__main__":
         df.select(pl.col("payoff_this_round")),
         np.ones(len(df.select(pl.col("payoff_this_round")))) * 33,
     )
-    f.write(
-        f"\n\n Mean squared error of the nucleolus, Shapley value, and equal split: {mse_nuc, mse_shap, mse_es}. \n"
-    )
 
-    f.close()
+    with open(snakemake.output.summary, "a") as f:  # noqa F821 # type: ignore
+        f.write(
+            f"\n\n Mean squared error of the nucleolus, Shapley value, and equal split: {mse_nuc, mse_shap, mse_es}. \n"
+        )
+
+    mse_dict = {
+        "nucleolus": mse_nuc,
+        "shapley_value": mse_shap,
+        "equal_split": mse_es,
+    }
+    with open(snakemake.output.mse, "w") as f:  # noqa F821 # type: ignore
+        json.dump(mse_dict, f)
