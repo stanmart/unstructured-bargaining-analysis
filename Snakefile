@@ -32,7 +32,10 @@ rule run_analysis:
     input: 
         outcomes = "data/clean/_collected/outcomes.csv", 
     output: 
-        "out/analysis/analysis_results.txt"
+        summary = "out/analysis/analysis_results.txt",
+        mann_whitney = "out/analysis/mann_whitney.json",
+        regression = "out/analysis/regression.pkl",
+        mse = "out/analysis/mse.json",
     script: 
         "src/analysis/analysis.py"
 
