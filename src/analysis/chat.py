@@ -114,7 +114,7 @@ def train_idf(df: pl.DataFrame, vectorizer_args={}) -> TfidfVectorizer:
             return [t for t in lemmas if t not in self.ignore]
 
     vectorizer = TfidfVectorizer(
-        stop_words="english",
+        tokenizer=LemmaTokenizer(),
         **vectorizer_args,
     )
     vectorizer.fit(df["message"])
