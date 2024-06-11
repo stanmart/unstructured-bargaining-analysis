@@ -26,6 +26,19 @@ rule figures:
         "out/figures/axioms_outcomes_linearity_additivity.pdf",
         "out/figures/axioms_outcomes_stability.pdf",
         "out/figures/misc_difficulty_rating.pdf",
+        "out/analysis/analysis_results.txt",
+
+rule run_analysis: 
+    input: 
+        outcomes = "data/clean/_collected/outcomes.csv", 
+    output: 
+        summary = "out/analysis/analysis_results.txt",
+        mann_whitney = "out/analysis/mann_whitney.json",
+        regression = "out/analysis/regression.pkl",
+        regression_dummies = "out/analysis/regression_dummies.pkl",
+        mse = "out/analysis/mse.json",
+    script: 
+        "src/analysis/analysis.py"
 
 rule create_other_plot: 
     input: 
