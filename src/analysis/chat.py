@@ -139,7 +139,7 @@ def get_top_k_words(
     df: pl.DataFrame, vectorizer: TfidfVectorizer, group_var: str, k: int
 ):
     tfidf_matrix, groups = get_tfidf_matrix(df, vectorizer, group_var)
-    top_k_word_indices = np.argsort(tfidf_matrix, axis=1)[:, -k:][::-1]
+    top_k_word_indices = np.argsort(tfidf_matrix, axis=1)[:, -k:][:, ::-1]
 
     words = vectorizer.get_feature_names_out()
     top_k_words = words[top_k_word_indices]
