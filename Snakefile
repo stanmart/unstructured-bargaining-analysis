@@ -35,6 +35,7 @@ rule run_analysis:
         summary = "out/analysis/analysis_results.txt",
         mann_whitney = "out/analysis/mann_whitney.json",
         regression = "out/analysis/regression.pkl",
+        regression_dummies = "out/analysis/regression_dummies.pkl",
         mse = "out/analysis/mse.json",
     script: 
         "src/analysis/analysis.py"
