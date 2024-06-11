@@ -198,10 +198,27 @@ def compute_one_sided_mw(
     return res
 
 
-def run_reg(df: pd.DataFrame) -> sm.regression.linear_model.RegressionResultsWrapper:
-    res = sm.regression.linear_model.OLS(
-        df.payoff_this_round, sm.add_constant(df.Y)
-    ).fit(cov_type="cluster", cov_kwds={"groups": df.matching_group})
+def run_reg(
+    df: pd.DataFrame, dummies: bool = False
+) -> sm.regression.linear_model.RegressionResultsWrapper:
+    if dummies:
+        df = pd.get_dummies(
+            df,
+            columns=["treatment_name_nice"],
+            prefix="",
+            prefix_sep="",
+            drop_first=True,
+            dtype=np.float64,
+        )
+        model = sm.regression.linear_model.OLS(
+            df.payoff_this_round,
+            sm.add_constant(df[["Y = 30", "Y = 90"]]),
+        )
+    else:
+        model = sm.regression.linear_model.OLS(
+            df.payoff_this_round, sm.add_constant(df.Y)
+        )
+    res = model.fit(cov_type="cluster", cov_kwds={"groups": df.matching_group})
     return res
 
 
@@ -237,6 +254,15 @@ if __name__ == "__main__":
             f.write(table.as_latex_tabular())
     with open(snakemake.output.regression, "wb") as f:  # noqa F821 # type: ignore
         pickle.dump(reg_res, f)
+
+    # regression with dummies (robustness check)
+    reg_res_dummies = run_reg(df_reg, dummies=True)
+    with open(snakemake.output.summary, "a") as f:  # noqa F821 # type: ignore
+        f.write("\n\nRegression (dummies) results: \n")
+        for table in reg_res_dummies.summary().tables[:2]:
+            f.write(table.as_latex_tabular())
+    with open(snakemake.output.regression_dummies, "wb") as f:  # noqa F821 # type: ignore
+        pickle.dump(reg_res_dummies, f)
 
     # mean squared error (exploratory analysis)
     mse_nuc = mean_squared_error(
