@@ -25,7 +25,12 @@ rule figures:
         "out/figures/axioms_outcomes_dummy_player.pdf",
         "out/figures/axioms_outcomes_linearity_additivity.pdf",
         "out/figures/axioms_outcomes_stability.pdf",
-        "out/figures/misc_difficulty_rating.pdf",
+        "out/figures/survey_difficulty_rating.pdf", 
+        "out/figures/survey_age.pdf",
+        "out/figures/survey_gender.pdf",
+        "out/figures/survey_degree.pdf",
+        "out/figures/survey_study_fields.pdf",
+        "out/figures/survey_nationality.pdf",
         "out/analysis/analysis_results.txt",
 
 rule run_analysis: 
@@ -40,13 +45,13 @@ rule run_analysis:
     script: 
         "src/analysis/analysis.py"
 
-rule create_other_plot: 
+rule create_survey_plot: 
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",
     output: 
-        figure = "out/figures/misc_{plot}.pdf",
+        figure = "out/figures/survey_{plot}.pdf",
     script: 
-        "src/figures/other_plots.py"
+        "src/figures/survey_plots.py"
 
 rule create_axiom_survey_plot: 
     input: 
