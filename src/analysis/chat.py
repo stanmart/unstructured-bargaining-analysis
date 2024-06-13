@@ -3,6 +3,7 @@ import string
 from typing import Callable
 
 import nltk
+import pandas as pd
 import polars as pl
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -72,9 +73,7 @@ def prepare_dataset(outcomes: pl.DataFrame, actions: pl.DataFrame) -> pl.DataFra
             equal_split=(
                 (pl.col("payoff_this_round").max() - pl.col("payoff_this_round").min())
                 <= 1
-            )
-            & pl.col("payoff_this_round").sum()
-            != 0,
+            ),
         )
     )
 
@@ -124,14 +123,19 @@ def fit_classifier(df: pl.DataFrame, group_var: str) -> tuple[Pipeline, LabelEnc
     return pipeline, label_encoder
 
 
-def create_explainer(pipeline: Pipeline) -> Callable:
+def create_explainer(pipeline: Pipeline) -> tuple[Callable, TreeExplainer]:
     shap_explainer = TreeExplainer(pipeline[-1])
 
     def explainer(X):
-        X_transformed = pipeline[:-1].transform(X)
+        X_transformed = pd.DataFrame(
+            data=pipeline[:-1].transform(X).toarray(),
+            columns=pipeline[:-1]
+            .named_steps["tfidfvectorizer"]
+            .get_feature_names_out(),
+        )
         return shap_explainer.shap_values(X_transformed)
 
-    return explainer
+    return explainer, shap_explainer
 
 
 def setup_nltk() -> None:
