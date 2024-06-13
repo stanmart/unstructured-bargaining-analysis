@@ -1,11 +1,13 @@
 import re
 import string
+from typing import Callable
 
 import nltk
 import polars as pl
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+from shap import TreeExplainer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import LabelEncoder
@@ -120,6 +122,16 @@ def fit_classifier(df: pl.DataFrame, group_var: str) -> tuple[Pipeline, LabelEnc
     y = label_encoder.fit_transform(df[group_var])
     pipeline.fit(df["message"], y)  # type: ignore
     return pipeline, label_encoder
+
+
+def create_explainer(pipeline: Pipeline) -> Callable:
+    shap_explainer = TreeExplainer(pipeline[-1])
+
+    def explainer(X):
+        X_transformed = pipeline[:-1].transform(X)
+        return shap_explainer.shap_values(X_transformed)
+
+    return explainer
 
 
 def setup_nltk() -> None:
