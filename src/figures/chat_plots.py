@@ -129,20 +129,21 @@ def count_words(
 
     exclude_words = set(string.punctuation) | {"a", "a1", "a2", "b", "b1", "b2"}
 
+    word_counts = df.filter(
+        pl.col("lemma").is_in(exclude_words).not_(),
+        pl.col("lemma").str.contains(r"\d+$").not_(),
+        pl.col("lemma").str.contains(r"id\d+$").not_(),
+    ).with_columns(
+        group_var=predicament,
+    )
+
     word_counts = (
-        df.filter(
-            pl.col("lemma").is_in(exclude_words).not_(),
-            pl.col("lemma").str.contains(r"^\d+$").not_(),
-        )
-        .with_columns(
-            group_var=predicament,
-        )
-        .groupby(["group_var", "lemma"])
+        word_counts.groupby(["group_var", "lemma"])
         .agg(
             count=pl.count("lemma"),
         )
         .with_columns(
-            total_count=pl.count("lemma").over("group_var"),
+            total_count=pl.sum("count").over("group_var"),
         )
         .with_columns(
             freq=pl.col("count") / pl.col("total_count"),
@@ -152,6 +153,9 @@ def count_words(
         .with_columns(
             relative_freq=pl.col("true") - pl.col("false"),
             total_freq=pl.col("true") + pl.col("false"),
+        )
+        .with_columns(
+            relative_freq_to_total=pl.col("relative_freq") / pl.col("total_freq")
         )
     )
 
