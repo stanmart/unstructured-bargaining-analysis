@@ -202,16 +202,16 @@ def create_plot(
 ) -> Figure:
     freq_table = (
         count_words(df, predicament, word_type)
-        .sort(pl.col("relative_freq_true_minus_false"), descending=True)
         .filter(pl.col("freq_total") > total_freq_threshold)
+        .with_columns(
+            relative_freq_false=-pl.col("relative_freq_false"),
+        )
     )
     plot_data = (
         pl.concat(
             [
-                freq_table.head(top_k),
-                freq_table.tail(top_k).with_columns(
-                    relative_freq_false=-pl.col("relative_freq_false"),
-                ),
+                freq_table.sort("relative_freq_true", descending=True).head(top_k),
+                freq_table.sort("relative_freq_false", descending=True).tail(top_k),
             ]
         )
         .rename(
