@@ -1,3 +1,5 @@
+import string
+
 import polars as pl
 import spacy
 
@@ -125,8 +127,14 @@ def count_words(
     if word_type is not None:
         df = df.filter(pl.col("pos") == word_type)
 
+    exclude_words = set(string.punctuation) | {"a", "a1", "a2", "b", "b1", "b2"}
+
     word_counts = (
-        df.with_columns(
+        df.filter(
+            pl.col("lemma").is_in(exclude_words).not_(),
+            pl.col("lemma").str.contains(r"^\d+$").not_(),
+        )
+        .with_columns(
             group_var=predicament,
         )
         .groupby(["group_var", "lemma"])
