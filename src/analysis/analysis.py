@@ -182,6 +182,23 @@ def prepare_for_reg(df: pl.DataFrame) -> pd.DataFrame:
     return df.to_pandas()
 
 
+def prepare_for_axiom_tests(df: pl.DataFrame) -> pl.DataFrame:
+    df = df.pivot(
+        index=["treatment_name_nice", "round_number", "group_id"],
+        columns="id_in_group",
+        values="payoff_this_round",
+    )
+
+    df = df.with_columns(
+        Y=df.to_series(0).str.strip_chars("Y = ").str.to_integer(strict=False)
+    ).with_columns(
+        coal12=pl.col("1") + pl.col("2"),
+        coal13=pl.col("1") + pl.col("3"),
+        grand_coal=pl.col("1") + pl.col("2") + pl.col("3"),
+    )
+    return df
+
+
 def compute_one_sided_mw(
     df: pl.DataFrame, Y1: int, Y2: int
 ) -> scipy.stats._mannwhitneyu.MannwhitneyuResult:
@@ -222,11 +239,134 @@ def run_reg(
     return res
 
 
+def test_efficiency(df: pl.DataFrame, df_test: pl.DataFrame) -> pl.DataFrame:
+    df_tmp = df_test.clone()
+    for treatment in df["treatment_name_nice"].unique():
+        vals = df.filter(pl.col("treatment_name_nice") == treatment)["grand_coal"]
+        res = scipy.stats.mannwhitneyu(
+            vals, np.ones(len(vals)) * 100, alternative="two-sided", method="auto"
+        )
+        df_res = pl.DataFrame(
+            {
+                "axiom": "efficiency",
+                "treatment_name_nice": f"{treatment}",
+                "details": "",
+                "statistic": res.statistic.item(),
+                "pvalue": res.pvalue.item(),
+            }
+        )
+        df_tmp = pl.concat([df_tmp, df_res])
+    return df_tmp
+
+
+def test_symmetry(df: pl.DataFrame, df_test: pl.DataFrame) -> pl.DataFrame:
+    df_tmp = df_test.clone()
+    for treatment in df["treatment_name_nice"].unique():
+        if treatment == "Dummy player":
+            res = scipy.stats.mannwhitneyu(
+                df.filter((df["treatment_name_nice"] == treatment))["1"],
+                df.filter((df["treatment_name_nice"] == treatment))["2"],
+                alternative="two-sided",
+                method="auto",
+            )
+        else:
+            res = scipy.stats.mannwhitneyu(
+                df.filter((df["treatment_name_nice"] == treatment))["2"],
+                df.filter((df["treatment_name_nice"] == treatment))["3"],
+                alternative="two-sided",
+                method="auto",
+            )
+
+        df_res = pl.DataFrame(
+            {
+                "axiom": "symmetry",
+                "treatment_name_nice": f"{treatment}",
+                "details": "",
+                "statistic": res.statistic.item(),
+                "pvalue": res.pvalue.item(),
+            }
+        )
+        df_tmp = pl.concat([df_tmp, df_res])
+    return df_tmp
+
+
+def test_stability(df: pl.DataFrame, df_test: pl.DataFrame) -> pl.DataFrame:
+    df_tmp = df_test.clone()
+    for treatment in df["treatment_name_nice"].unique():
+        if treatment == "Dummy player":
+            res = scipy.stats.mannwhitneyu(
+                df.filter(df["treatment_name_nice"] == treatment)["coal12"],
+                np.ones(60) * 100,
+                alternative="two-sided",
+                method="auto",
+            )
+
+            df_res = pl.DataFrame(
+                {
+                    "axiom": "stability",
+                    "treatment_name_nice": f"{treatment}",
+                    "details": "",
+                    "statistic": res.statistic.item(),
+                    "pvalue": res.pvalue.item(),
+                }
+            )
+            df_tmp = pl.concat([df_tmp, df_res])
+        else:
+            # sum of payoffs of small coalition of P1 and P2 >= Y
+            res_12 = scipy.stats.mannwhitneyu(
+                df.filter(pl.col("treatment_name_nice") == treatment)["coal12"],
+                df.filter(pl.col("treatment_name_nice") == treatment)["Y"],
+                alternative="greater",
+                method="auto",
+            )
+
+            # sum of payoffs of small coalition of P1 and P3 >= Y
+            res_13 = scipy.stats.mannwhitneyu(
+                df.filter(pl.col("treatment_name_nice") == treatment)["coal13"],
+                df.filter(pl.col("treatment_name_nice") == treatment)["Y"],
+                alternative="greater",
+                method="auto",
+            )
+
+            # grand coalition payoffs == 100
+            # same as efficiency above
+            res_grand = scipy.stats.mannwhitneyu(
+                df.filter(pl.col("treatment_name_nice") == treatment)["grand_coal"],
+                np.ones(60) * 100,
+                alternative="two-sided",
+                method="auto",
+            )
+
+            coal_names = {res_12: "coal_12", res_13: "coal_13", res_grand: "grand_coal"}
+            for res in [res_12, res_13, res_grand]:
+                df_res = pl.DataFrame(
+                    {
+                        "axiom": "stability",
+                        "treatment_name_nice": f"{treatment}",
+                        "details": coal_names[res],
+                        "statistic": res.statistic.item(),
+                        "pvalue": res.pvalue.item(),
+                    }
+                )
+                df_tmp = pl.concat([df_tmp, df_res])
+    return df_tmp
+
+
 if __name__ == "__main__":
     outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
     df = prepare_dataset(outcomes)
     df_mw = prepare_for_mw(df)
     df_reg = prepare_for_reg(df)
+    df_ax = prepare_for_axiom_tests(df)
+    df_res_ax = pl.DataFrame(
+        schema={
+            "axiom": str,
+            "treatment_name_nice": str,
+            "details": str,
+            "statistic": float,
+            "pvalue": float,
+        }
+    )
 
     with open(snakemake.output.summary, "w") as f:  # noqa F821 # type: ignore
         f.write("Analysis results \n")
@@ -288,3 +428,12 @@ if __name__ == "__main__":
     }
     with open(snakemake.output.mse, "w") as f:  # noqa F821 # type: ignore
         json.dump(mse_dict, f)
+
+    # test axioms on bargaining outcomes (exploratory analysis)
+    df_ax_eff = test_efficiency(df_ax, df_res_ax)
+    df_ax_symm = test_symmetry(df_ax, df_res_ax)
+    df_ax_stab = test_stability(df_ax, df_res_ax)
+    df_res_ax = pl.concat([df_res_ax, df_ax_eff, df_ax_symm, df_ax_stab])
+
+    with open(snakemake.output.axiom_results, "wb") as f:  # noqa F821 # type: ignore
+        pickle.dump(df_res_ax.to_pandas(), f)
