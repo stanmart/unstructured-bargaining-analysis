@@ -1,7 +1,10 @@
 import string
 
+import matplotlib.pyplot as plt
 import polars as pl
+import seaborn as sns
 import spacy
+from matplotlib.figure import Figure
 
 
 def prepare_dataset(outcomes: pl.DataFrame, actions: pl.DataFrame) -> pl.DataFrame:
@@ -173,14 +176,71 @@ def count_words(
     freq_table = (
         freq_in_group.join(freq_total, on="lemma", how="left")
         .with_columns(
-            relative_freq=pl.col("freq_true") - pl.col("freq_false"),
+            freq_true_minus_false=pl.col("freq_true") - pl.col("freq_false"),
+            relative_freq_true=pl.col("freq_true") / pl.col("freq_total"),
+            relative_freq_false=pl.col("freq_false") / pl.col("freq_total"),
         )
         .with_columns(
-            relative_freq_to_total=pl.col("relative_freq") / pl.col("freq_total")
+            relative_freq_true_minus_false=pl.col("freq_true_minus_false")
+            / pl.col("freq_total"),
+            log_relative_freq_true=(pl.col("relative_freq_true") + 1).log(),
+            log_relative_freq_false=(pl.col("relative_freq_false") + 1).log(),
         )
     )
 
     return freq_table
+
+
+def create_plot(
+    df: pl.DataFrame,
+    predicament: pl.Expr,
+    group_true_name: str,
+    group_false_name: str,
+    word_type: str | None = None,
+    top_k: int = 5,
+    total_freq_threshold: float = 0.002,
+) -> Figure:
+    freq_table = (
+        count_words(df, predicament, word_type)
+        .sort(pl.col("relative_freq_true_minus_false"), descending=True)
+        .filter(pl.col("freq_total") > total_freq_threshold)
+    )
+    plot_data = (
+        pl.concat(
+            [
+                freq_table.head(top_k),
+                freq_table.tail(top_k).with_columns(
+                    relative_freq_false=-pl.col("relative_freq_false"),
+                ),
+            ]
+        )
+        .rename(
+            {
+                "relative_freq_true": group_true_name,
+                "relative_freq_false": group_false_name,
+            }
+        )
+        .melt(
+            id_vars="lemma",
+            value_vars=[
+                group_true_name,
+                group_false_name,
+            ],
+            value_name="Relative frequency",
+            variable_name="group_var",
+        )
+    )
+
+    fig, ax = plt.subplots()
+    sns.barplot(
+        data=plot_data,
+        x="Relative frequency",
+        hue="group_var",
+        y="lemma",
+        ax=ax,
+    )
+
+    return fig
 
 
 def setup_spacy(model_name) -> spacy.Language:  # type: ignore
