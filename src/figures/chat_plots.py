@@ -129,20 +129,23 @@ def count_words(
 
     exclude_words = set(string.punctuation) | {"a", "a1", "a2", "b", "b1", "b2"}
 
-    word_counts = df.filter(
-        pl.col("lemma").is_in(exclude_words).not_(),
-        pl.col("lemma").str.contains(r"\d+$").not_(),
-        pl.col("lemma").str.contains(r"id\d+$").not_(),
-    ).with_columns(
-        group_var=predicament,
-    )
-
     word_counts = (
-        word_counts.groupby(["group_var", "lemma"])
+        df.filter(
+            pl.col("lemma").is_in(exclude_words).not_(),
+            pl.col("lemma").str.contains(r"\d+$").not_(),
+            pl.col("lemma").str.contains(r"id\d+$").not_(),
+        )
+        .with_columns(
+            group_var=predicament,
+        )
+        .groupby(["group_var", "lemma"])
         .agg(
             count=pl.count("lemma"),
         )
-        .with_columns(
+    )
+
+    freq_in_group = (
+        word_counts.with_columns(
             total_count=pl.sum("count").over("group_var"),
         )
         .with_columns(
@@ -150,16 +153,34 @@ def count_words(
         )
         .pivot(values="freq", index="lemma", columns="group_var")
         .fill_null(0)
-        .with_columns(
-            relative_freq=pl.col("true") - pl.col("false"),
-            total_freq=pl.col("true") + pl.col("false"),
+        .select(pl.col("lemma"), pl.all().exclude("lemma").name.prefix("freq_"))
+    )
+
+    freq_total = (
+        word_counts.group_by("lemma")
+        .agg(
+            count=pl.sum("count"),
         )
         .with_columns(
-            relative_freq_to_total=pl.col("relative_freq") / pl.col("total_freq")
+            total_count=pl.sum("count"),
+        )
+        .with_columns(
+            freq_total=pl.col("count") / pl.col("total_count"),
+        )
+        .select("lemma", "freq_total")
+    )
+
+    freq_table = (
+        freq_in_group.join(freq_total, on="lemma", how="left")
+        .with_columns(
+            relative_freq=pl.col("freq_true") - pl.col("freq_false"),
+        )
+        .with_columns(
+            relative_freq_to_total=pl.col("relative_freq") / pl.col("freq_total")
         )
     )
 
-    return word_counts
+    return freq_table
 
 
 def setup_spacy(model_name) -> spacy.Language:  # type: ignore
