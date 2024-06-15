@@ -4,6 +4,86 @@ import polars as pl
 import seaborn as sns
 
 
+def prepare_dataset(outcomes: pl.DataFrame, lemmas: pl.DataFrame) -> pl.DataFrame:
+    player_roles = pl.Enum(["A", "B"])
+    split_types = pl.Enum(["Equal split", "Unequal split / breakdown"])
+    agreement_types = pl.Enum(["Full agreement", "Partial agreement / breakdown"])
+
+    roles = pl.DataFrame(
+        [
+            {"treatment_name": "treatment_dummy_player", "id_in_group": 1, "role": "A"},
+            {"treatment_name": "treatment_dummy_player", "id_in_group": 2, "role": "A"},
+            {"treatment_name": "treatment_dummy_player", "id_in_group": 3, "role": "B"},
+            {"treatment_name": "treatment_y_10", "id_in_group": 1, "role": "A"},
+            {"treatment_name": "treatment_y_10", "id_in_group": 2, "role": "A"},
+            {"treatment_name": "treatment_y_10", "id_in_group": 3, "role": "B"},
+            {"treatment_name": "treatment_y_30", "id_in_group": 1, "role": "A"},
+            {"treatment_name": "treatment_y_30", "id_in_group": 2, "role": "A"},
+            {"treatment_name": "treatment_y_30", "id_in_group": 3, "role": "B"},
+            {"treatment_name": "treatment_y_90", "id_in_group": 1, "role": "A"},
+            {"treatment_name": "treatment_y_90", "id_in_group": 2, "role": "A"},
+            {"treatment_name": "treatment_y_90", "id_in_group": 3, "role": "B"},
+        ]
+    ).with_columns(
+        role=pl.col("role").cast(player_roles),
+    )
+
+    outcome_properties = (
+        outcomes.filter(
+            pl.col("round_number") > 1,
+        )
+        .with_columns(
+            max_payoff=pl.col("payoff_this_round")
+            .max()
+            .over(["session_code", "round_number", "group_id"]),
+            min_payoff=pl.col("payoff_this_round")
+            .min()
+            .over(["session_code", "round_number", "group_id"]),
+            total_payoff=pl.col("payoff_this_round")
+            .sum()
+            .over(["session_code", "round_number", "group_id"]),
+        )
+        .with_columns(
+            agreement=(
+                pl.when(pl.col("min_payoff") > 0)
+                .then(pl.lit("Full agreement"))
+                .otherwise(pl.lit("Partial agreement / breakdown"))
+            ).cast(agreement_types),
+            equal_split=(
+                pl.when(
+                    (pl.col("max_payoff") - pl.col("min_payoff") <= 1)
+                    & (pl.col("total_payoff") > 0)
+                )
+                .then(pl.lit("Equal split"))
+                .otherwise(pl.lit("Unequal split / breakdown"))
+            ).cast(split_types),
+        )
+    ).join(
+        roles,
+        on=["treatment_name", "id_in_group"],
+        how="left",
+    )
+
+    chat_with_outcomes = lemmas.filter(pl.col("round_number") > 1).join(
+        outcome_properties.select(
+            [
+                "session_code",
+                "round_number",
+                "group_id",
+                "id_in_group",
+                "payoff_this_round",
+                "agreement",
+                "equal_split",
+                "role",
+            ]
+        ),
+        on=["session_code", "round_number", "group_id", "id_in_group"],
+        how="left",
+    )
+
+    return chat_with_outcomes
+
+
 def count_words(
     df: pl.DataFrame, group_var: str, word_type: str | None = None
 ) -> pl.DataFrame:
@@ -139,7 +219,10 @@ def create_plot(
 
 
 if __name__ == "__main__":
-    df_processed = pl.read_csv(snakemake.input.lemmas)  # noqa F821 # type: ignore
+    outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
+    lemmas = pl.read_csv(snakemake.input.lemmas)  # noqa F821 # type: ignore
+
+    df = prepare_dataset(outcomes, lemmas)
 
     word_type = snakemake.wildcards.word_type  # noqa F821 # type: ignore
     if word_type == "all":
@@ -147,12 +230,10 @@ if __name__ == "__main__":
     group_var = snakemake.wildcards.group_var  # noqa F821 # type: ignore
     dummy = snakemake.wildcards.dummy  # noqa F821 # type: ignore
     if dummy == "nodummy":
-        df_processed = df_processed.filter(
-            pl.col("treatment_name") != "treatment_dummy_player"
-        )
+        df = df.filter(pl.col("treatment_name") != "treatment_dummy_player")
 
     fig = create_plot(
-        df_processed.filter(pl.col("treatment_name") != "treatment_dummy_player"),
+        df,
         group_var=group_var,
         word_type=word_type,
         top_k=10,
