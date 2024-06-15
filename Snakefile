@@ -47,12 +47,20 @@ rule run_analysis:
 
 rule create_chat_plot: 
     input:
-        actions = "data/clean/_collected/actions.csv",
-        outcomes = "data/clean/_collected/outcomes.csv",
+        lemmas = "out/analysis/lemmas.csv",
     output: 
         figure = "out/figures/chat_top_{group_var}_{word_type}_{dummy}.pdf",
     script: 
         "src/figures/chat_plots.py"
+
+rule lemmatize_chat_data:
+    input:
+        actions = "data/clean/_collected/actions.csv",
+        outcomes = "data/clean/_collected/outcomes.csv",
+    output:
+        lemmas = "out/analysis/lemmas.csv",
+    script:
+        "src/analysis/lemmatize_chat.py"
 
 rule create_other_plot: 
     input: 
