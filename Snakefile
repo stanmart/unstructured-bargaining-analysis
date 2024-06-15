@@ -31,7 +31,6 @@ rule figures:
         "out/figures/survey_degree.pdf",
         "out/figures/survey_study_fields.pdf",
         "out/figures/survey_nationality.pdf",
-        "out/analysis/analysis_results.txt",
 
 rule run_analysis: 
     input: 
@@ -42,6 +41,7 @@ rule run_analysis:
         regression = "out/analysis/regression.pkl",
         regression_dummies = "out/analysis/regression_dummies.pkl",
         mse = "out/analysis/mse.json",
+        axiom_results =  "out/analysis/axiom_test_results.pkl",
     script: 
         "src/analysis/analysis.py"
 
