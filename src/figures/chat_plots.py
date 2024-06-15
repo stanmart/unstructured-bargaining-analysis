@@ -129,7 +129,7 @@ def lemmatize_chat(chat: pl.DataFrame, model: spacy.Language) -> pl.DataFrame:  
 
     return (
         chat.with_columns(
-            words=pl.col("message").apply(
+            words=pl.col("message").map_elements(
                 lemmatize,
                 return_dtype=pl.List(pl.Struct({"lemma": pl.Utf8, "pos": pl.Utf8})),
             ),
@@ -154,7 +154,7 @@ def count_words(
             pl.col("lemma").str.contains(r"\d+$").not_(),
             pl.col("lemma").str.contains(r"id\d+$").not_(),
         )
-        .groupby([group_var, "lemma"])
+        .group_by([group_var, "lemma"])
         .agg(
             count=pl.count("lemma"),
         )
@@ -250,6 +250,7 @@ def create_plot(
         legend_out=True,
         aspect=1.3,
         height=2.8,
+        col_wrap=2,
     )
     g.map_dataframe(
         sns.barplot,
@@ -263,7 +264,7 @@ def create_plot(
     g.set_ylabels("")
     g.add_legend(title="")
     g.set_titles(
-        col_template=f"Top {top_k} {word_type_nice[word_type]} in '{{col_name}}'"
+        col_template=f"Top {top_k} {word_type_nice[word_type]} for '{{col_name}}'"
     )
 
     if type == "relative":
@@ -287,6 +288,25 @@ if __name__ == "__main__":
     outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
     actions = pl.read_csv(snakemake.input.actions)  # noqa F821 # type: ignore
 
+    word_type = snakemake.wildcards.word_type  # noqa F821 # type: ignore
+    if word_type == "all":
+        word_type = None
+    group_var = snakemake.wildcards.group_var  # noqa F821 # type: ignore
+    dummy = snakemake.wildcards.dummy  # noqa F821 # type: ignore
+
     model = setup_spacy("en_core_web_sm")
     df = prepare_dataset(outcomes, actions)
+    if dummy == "nodummy":
+        df = df.filter(pl.col("treatment_name") != "treatment_dummy_player")
     df_processed = lemmatize_chat(df, model)
+
+    fig = create_plot(
+        df_processed.filter(pl.col("treatment_name") != "treatment_dummy_player"),
+        group_var=group_var,
+        word_type=word_type,
+        top_k=10,
+        total_freq_threshold=0.002,
+        type="relative",
+    )
+
+    fig.savefig(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore

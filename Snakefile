@@ -1,4 +1,5 @@
 SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
+WORD_TYPES = ["all", "VERB", "ADJ", "NOUN"]
 
 
 rule figures:
@@ -26,6 +27,10 @@ rule figures:
         "out/figures/axioms_outcomes_linearity_additivity.pdf",
         "out/figures/axioms_outcomes_stability.pdf",
         "out/figures/misc_difficulty_rating.pdf",
+        expand("out/figures/chat_top_equal_split_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
+        expand("out/figures/chat_top_agreement_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
+        expand("out/figures/chat_top_role_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
+        expand("out/figures/chat_top_treatment_name_nice_{word_type}_withdummy.pdf", word_type=WORD_TYPES),
         "out/analysis/analysis_results.txt",
 
 rule run_analysis: 
@@ -39,6 +44,15 @@ rule run_analysis:
         mse = "out/analysis/mse.json",
     script: 
         "src/analysis/analysis.py"
+
+rule create_chat_plot: 
+    input:
+        actions = "data/clean/_collected/actions.csv",
+        outcomes = "data/clean/_collected/outcomes.csv",
+    output: 
+        figure = "out/figures/chat_top_{group_var}_{word_type}_{dummy}.pdf",
+    script: 
+        "src/figures/chat_plots.py"
 
 rule create_other_plot: 
     input: 
