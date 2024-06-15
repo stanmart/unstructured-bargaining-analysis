@@ -31,7 +31,12 @@ rule figures:
         expand("out/figures/chat_top_agreement_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
         expand("out/figures/chat_top_role_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
         expand("out/figures/chat_top_treatment_name_nice_{word_type}_withdummy.pdf", word_type=WORD_TYPES),
-        "out/analysis/analysis_results.txt",
+        "out/figures/survey_difficulty_rating.pdf", 
+        "out/figures/survey_age.pdf",
+        "out/figures/survey_gender.pdf",
+        "out/figures/survey_degree.pdf",
+        "out/figures/survey_study_fields.pdf",
+        "out/figures/survey_nationality.pdf",
 
 rule run_analysis: 
     input: 
@@ -42,6 +47,7 @@ rule run_analysis:
         regression = "out/analysis/regression.pkl",
         regression_dummies = "out/analysis/regression_dummies.pkl",
         mse = "out/analysis/mse.json",
+        axiom_results =  "out/analysis/axiom_test_results.pkl",
     script: 
         "src/analysis/analysis.py"
 
@@ -63,12 +69,13 @@ rule lemmatize_chat_data:
         "src/analysis/lemmatize_chat.py"
 
 rule create_other_plot: 
+rule create_survey_plot: 
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",
     output: 
-        figure = "out/figures/misc_{plot}.pdf",
+        figure = "out/figures/survey_{plot}.pdf",
     script: 
-        "src/figures/other_plots.py"
+        "src/figures/survey_plots.py"
 
 rule create_axiom_survey_plot: 
     input: 
