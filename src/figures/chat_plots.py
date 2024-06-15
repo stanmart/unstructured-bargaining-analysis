@@ -1,20 +1,14 @@
 import string
 
-import matplotlib.pyplot as plt
 import polars as pl
 import seaborn as sns
 import spacy
-from matplotlib.figure import Figure
 
 
 def prepare_dataset(outcomes: pl.DataFrame, actions: pl.DataFrame) -> pl.DataFrame:
-    player_names = pl.Enum(["P1", "P2", "P3"])
-    agreement_types = pl.Enum(["Breakdown", "Partial agreement", "Full agreement"])
-    roles = {
-        1: "P1",
-        2: "P2",
-        3: "P3",
-    }
+    player_roles = pl.Enum(["A", "B"])
+    split_types = pl.Enum(["Equal split", "Unequal split / breakdown"])
+    agreement_types = pl.Enum(["Full agreement", "Partial agreement / breakdown"])
     treatment_names = pl.Enum(
         [
             "Dummy player",
@@ -22,6 +16,25 @@ def prepare_dataset(outcomes: pl.DataFrame, actions: pl.DataFrame) -> pl.DataFra
             "Y = 30",
             "Y = 90",
         ]
+    )
+
+    roles = pl.DataFrame(
+        [
+            {"treatment_name": "treatment_dummy_player", "id_in_group": 1, "role": "A"},
+            {"treatment_name": "treatment_dummy_player", "id_in_group": 2, "role": "A"},
+            {"treatment_name": "treatment_dummy_player", "id_in_group": 3, "role": "B"},
+            {"treatment_name": "treatment_y_10", "id_in_group": 1, "role": "A"},
+            {"treatment_name": "treatment_y_10", "id_in_group": 2, "role": "A"},
+            {"treatment_name": "treatment_y_10", "id_in_group": 3, "role": "B"},
+            {"treatment_name": "treatment_y_30", "id_in_group": 1, "role": "A"},
+            {"treatment_name": "treatment_y_30", "id_in_group": 2, "role": "A"},
+            {"treatment_name": "treatment_y_30", "id_in_group": 3, "role": "B"},
+            {"treatment_name": "treatment_y_90", "id_in_group": 1, "role": "A"},
+            {"treatment_name": "treatment_y_90", "id_in_group": 2, "role": "A"},
+            {"treatment_name": "treatment_y_90", "id_in_group": 3, "role": "B"},
+        ]
+    ).with_columns(
+        role=pl.col("role").cast(player_roles),
     )
 
     chat = (
@@ -64,21 +77,24 @@ def prepare_dataset(outcomes: pl.DataFrame, actions: pl.DataFrame) -> pl.DataFra
             .over(["session_code", "round_number", "group_id"]),
         )
         .with_columns(
-            role=pl.col("id_in_group").replace(roles).cast(player_names),
             agreement=(
-                pl.when(pl.col("total_payoff") == 0)
-                .then(pl.lit("Breakdown"))
-                .otherwise(
-                    pl.when(pl.col("min_payoff") > 0)
-                    .then(pl.lit("Full agreement"))
-                    .otherwise(pl.lit("Partial agreement"))
-                )
+                pl.when(pl.col("min_payoff") > 0)
+                .then(pl.lit("Full agreement"))
+                .otherwise(pl.lit("Partial agreement / breakdown"))
             ).cast(agreement_types),
             equal_split=(
-                (pl.col("max_payoff") - pl.col("min_payoff") <= 1)
-                & (pl.col("total_payoff") > 0)
-            ),
+                pl.when(
+                    (pl.col("max_payoff") - pl.col("min_payoff") <= 1)
+                    & (pl.col("total_payoff") > 0)
+                )
+                .then(pl.lit("Equal split"))
+                .otherwise(pl.lit("Unequal split / breakdown"))
+            ).cast(split_types),
         )
+    ).join(
+        roles,
+        on=["treatment_name", "id_in_group"],
+        how="left",
     )
 
     chat_with_outcomes = chat.filter(pl.col("round_number") > 1).join(
@@ -125,7 +141,7 @@ def lemmatize_chat(chat: pl.DataFrame, model: spacy.Language) -> pl.DataFrame:  
 
 
 def count_words(
-    df: pl.DataFrame, predicament: pl.Expr, word_type: str | None = None
+    df: pl.DataFrame, group_var: str, word_type: str | None = None
 ) -> pl.DataFrame:
     if word_type is not None:
         df = df.filter(pl.col("pos") == word_type)
@@ -138,10 +154,7 @@ def count_words(
             pl.col("lemma").str.contains(r"\d+$").not_(),
             pl.col("lemma").str.contains(r"id\d+$").not_(),
         )
-        .with_columns(
-            group_var=predicament,
-        )
-        .groupby(["group_var", "lemma"])
+        .groupby([group_var, "lemma"])
         .agg(
             count=pl.count("lemma"),
         )
@@ -149,14 +162,13 @@ def count_words(
 
     freq_in_group = (
         word_counts.with_columns(
-            total_count=pl.sum("count").over("group_var"),
+            total_count=pl.sum("count").over(group_var),
         )
         .with_columns(
             freq=pl.col("count") / pl.col("total_count"),
         )
-        .pivot(values="freq", index="lemma", columns="group_var")
+        .pivot(values="freq", index="lemma", columns=group_var)
         .fill_null(0)
-        .select(pl.col("lemma"), pl.all().exclude("lemma").name.prefix("freq_"))
     )
 
     freq_total = (
@@ -173,74 +185,92 @@ def count_words(
         .select("lemma", "freq_total")
     )
 
-    freq_table = (
-        freq_in_group.join(freq_total, on="lemma", how="left")
-        .with_columns(
-            freq_true_minus_false=pl.col("freq_true") - pl.col("freq_false"),
-            relative_freq_true=pl.col("freq_true") / pl.col("freq_total"),
-            relative_freq_false=pl.col("freq_false") / pl.col("freq_total"),
-        )
-        .with_columns(
-            relative_freq_true_minus_false=pl.col("freq_true_minus_false")
-            / pl.col("freq_total"),
-            log_relative_freq_true=(pl.col("relative_freq_true") + 1).log(),
-            log_relative_freq_false=(pl.col("relative_freq_false") + 1).log(),
-        )
+    freq_table = freq_in_group.join(freq_total, on="lemma", how="left")
+
+    freq_table_long = pl.concat(
+        [
+            freq_table.with_columns(type=pl.lit("absolute")),
+            freq_table.with_columns(
+                (pl.all().exclude("lemma", "freq_total") / pl.col("freq_total")),
+                type=pl.lit("relative"),
+            ),
+        ],
+        how="diagonal",
     )
 
-    return freq_table
+    return freq_table_long
 
 
 def create_plot(
     df: pl.DataFrame,
-    predicament: pl.Expr,
-    group_true_name: str,
-    group_false_name: str,
+    group_var: str,
     word_type: str | None = None,
     top_k: int = 5,
     total_freq_threshold: float = 0.002,
-) -> Figure:
-    freq_table = (
-        count_words(df, predicament, word_type)
-        .filter(pl.col("freq_total") > total_freq_threshold)
-        .with_columns(
-            relative_freq_false=-pl.col("relative_freq_false"),
-        )
+    type="relative",
+) -> sns.FacetGrid:
+    value_name = (
+        "Relative frequency (group / total)"
+        if type == "relative"
+        else "Frequency (group / total)"
     )
-    plot_data = (
-        pl.concat(
-            [
-                freq_table.sort("relative_freq_true", descending=True).head(top_k),
-                freq_table.sort("relative_freq_false", descending=True).tail(top_k),
-            ]
-        )
-        .rename(
-            {
-                "relative_freq_true": group_true_name,
-                "relative_freq_false": group_false_name,
-            }
-        )
-        .melt(
-            id_vars="lemma",
-            value_vars=[
-                group_true_name,
-                group_false_name,
-            ],
-            value_name="Relative frequency",
-            variable_name="group_var",
-        )
+    freq_table = (
+        count_words(df, group_var, word_type)
+        .filter(pl.col("freq_total") > total_freq_threshold, pl.col("type") == type)
+        .select(pl.all().exclude("freq_total", "type"))
+    )
+    group_levels = [col for col in freq_table.columns if col not in ["lemma", "facet"]]
+    plot_data = pl.concat(
+        [
+            freq_table.sort(level, descending=True)
+            .head(top_k)
+            .with_columns(facet=pl.lit(level))
+            for level in group_levels
+        ]
+    ).melt(
+        id_vars=["lemma", "facet"],
+        value_vars=group_levels,
+        value_name=value_name,
+        variable_name="group_var",
     )
 
-    fig, ax = plt.subplots()
-    sns.barplot(
-        data=plot_data,
-        x="Relative frequency",
+    word_type_nice = {
+        "NOUN": "nouns",
+        "VERB": "verbs",
+        "ADJ": "adjectives",
+        None: "words",
+    }
+
+    palette = {level: color for level, color in zip(group_levels, sns.color_palette())}
+
+    g = sns.FacetGrid(
+        plot_data,
+        col="facet",
+        sharey=False,
+        legend_out=True,
+        aspect=1.3,
+        height=2.8,
+    )
+    g.map_dataframe(
+        sns.barplot,
+        x=value_name,
         hue="group_var",
         y="lemma",
-        ax=ax,
+        alpha=0.9,
+        palette=palette,
     )
 
-    return fig
+    g.set_ylabels("")
+    g.add_legend(title="")
+    g.set_titles(
+        col_template=f"Top {top_k} {word_type_nice[word_type]} in '{{col_name}}'"
+    )
+
+    if type == "relative":
+        for ax in g.axes.flat:
+            ax.axvline(1, color="black", linestyle=":")
+
+    return g
 
 
 def setup_spacy(model_name) -> spacy.Language:  # type: ignore
