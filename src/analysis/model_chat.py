@@ -14,7 +14,6 @@ from transformers import (
 
 
 def prepare_dataset(outcomes: pl.DataFrame, actions: pl.DataFrame) -> pl.DataFrame:
-    player_roles = pl.Enum(["A", "B"])
     split_types = pl.Enum(["Equal split", "Unequal split / breakdown"])
     agreement_types = pl.Enum(["Full agreement", "Partial agreement / breakdown"])
     treatment_names = pl.Enum(
@@ -26,61 +25,44 @@ def prepare_dataset(outcomes: pl.DataFrame, actions: pl.DataFrame) -> pl.DataFra
         ]
     )
 
-    roles = pl.DataFrame(
-        [
-            {"treatment_name": "treatment_dummy_player", "id_in_group": 1, "role": "A"},
-            {"treatment_name": "treatment_dummy_player", "id_in_group": 2, "role": "A"},
-            {"treatment_name": "treatment_dummy_player", "id_in_group": 3, "role": "B"},
-            {"treatment_name": "treatment_y_10", "id_in_group": 1, "role": "A"},
-            {"treatment_name": "treatment_y_10", "id_in_group": 2, "role": "A"},
-            {"treatment_name": "treatment_y_10", "id_in_group": 3, "role": "B"},
-            {"treatment_name": "treatment_y_30", "id_in_group": 1, "role": "A"},
-            {"treatment_name": "treatment_y_30", "id_in_group": 2, "role": "A"},
-            {"treatment_name": "treatment_y_30", "id_in_group": 3, "role": "B"},
-            {"treatment_name": "treatment_y_90", "id_in_group": 1, "role": "A"},
-            {"treatment_name": "treatment_y_90", "id_in_group": 2, "role": "A"},
-            {"treatment_name": "treatment_y_90", "id_in_group": 3, "role": "B"},
-        ]
-    ).with_columns(
-        role=pl.col("role").cast(player_roles),
-    )
-
     chat = (
-        actions.filter(pl.col("action").eq("chat")).select(
-            "session_code",
-            "treatment_name",
-            "round_number",
-            "group_id",
-            "id_in_group",
-            message="body",
+        (
+            actions.filter(pl.col("action").eq("chat")).select(
+                "session_code",
+                "treatment_name",
+                "round_number",
+                "group_id",
+                message="body",
+            )
         )
-    ).with_columns(
-        treatment_name_nice=pl.col("treatment_name")
-        .replace(
-            {
-                "treatment_dummy_player": "Dummy player",
-                "treatment_y_10": "Y = 10",
-                "treatment_y_30": "Y = 30",
-                "treatment_y_90": "Y = 90",
-            }
+        .group_by(["session_code", "round_number", "group_id"])
+        .agg(
+            treatment_name=pl.col("treatment_name").first(),
+            message=pl.col("message").str.concat(" "),
         )
-        .cast(treatment_names),
+        .with_columns(
+            treatment_name_nice=pl.col("treatment_name")
+            .replace(
+                {
+                    "treatment_dummy_player": "Dummy player",
+                    "treatment_y_10": "Y = 10",
+                    "treatment_y_30": "Y = 30",
+                    "treatment_y_90": "Y = 90",
+                }
+            )
+            .cast(treatment_names),
+        )
     )
 
     outcome_properties = (
         outcomes.filter(
             pl.col("round_number") > 1,
         )
-        .with_columns(
-            max_payoff=pl.col("payoff_this_round")
-            .max()
-            .over(["session_code", "round_number", "group_id"]),
-            min_payoff=pl.col("payoff_this_round")
-            .min()
-            .over(["session_code", "round_number", "group_id"]),
-            total_payoff=pl.col("payoff_this_round")
-            .sum()
-            .over(["session_code", "round_number", "group_id"]),
+        .group_by(["session_code", "round_number", "group_id"])
+        .agg(
+            max_payoff=pl.col("payoff_this_round").max(),
+            min_payoff=pl.col("payoff_this_round").min(),
+            total_payoff=pl.col("payoff_this_round").sum(),
         )
         .with_columns(
             agreement=(
@@ -97,10 +79,6 @@ def prepare_dataset(outcomes: pl.DataFrame, actions: pl.DataFrame) -> pl.DataFra
                 .otherwise(pl.lit("Unequal split / breakdown"))
             ).cast(split_types),
         )
-    ).join(
-        roles,
-        on=["treatment_name", "id_in_group"],
-        how="left",
     )
 
     chat_with_outcomes = chat.filter(pl.col("round_number") > 1).join(
@@ -109,14 +87,11 @@ def prepare_dataset(outcomes: pl.DataFrame, actions: pl.DataFrame) -> pl.DataFra
                 "session_code",
                 "round_number",
                 "group_id",
-                "id_in_group",
-                "payoff_this_round",
                 "agreement",
                 "equal_split",
-                "role",
             ]
         ),
-        on=["session_code", "round_number", "group_id", "id_in_group"],
+        on=["session_code", "round_number", "group_id"],
         how="left",
     )
 
@@ -126,7 +101,9 @@ def prepare_dataset(outcomes: pl.DataFrame, actions: pl.DataFrame) -> pl.DataFra
 def train_test_split_dataset(
     df: pl.DataFrame, outcome: str, test_size: float = 0.2
 ) -> tuple[pl.Series, pl.Series, pl.Series, pl.Series]:
-    stratify_column = df[outcome] if outcome is not None else None
+    stratify_column = df.select(
+        strata=pl.concat_str(["treatment_name", outcome], separator="+")
+    )["strata"]
     train_df, test_df = train_test_split(  # type: ignore
         df, test_size=test_size, stratify=stratify_column, random_state=8001
     )
@@ -227,7 +204,9 @@ if __name__ == "__main__":
     model_dir = os.path.dirname(model_path)
     model_name = "distilbert-base-uncased"
 
-    df = prepare_dataset(outcomes, actions)
+    df = prepare_dataset(outcomes, actions).filter(
+        pl.col("treatment_name") != "treatment_dummy_player"
+    )
     X_train, X_test, y_train, y_test = train_test_split_dataset(
         df, test_size=0.2, outcome=outcome_var
     )
