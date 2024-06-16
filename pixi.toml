@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Data analysis scripts for the unstructured bargaining experiment."
 authors = ["Mia Lu <mia.lu@econ.uzh.ch>", "Martin Stancsics <martin.stancsics@gmail.com>"]
 channels = ["conda-forge", "bioconda"]
-platforms = ["linux-64", "win-64", "osx-64", "osx-arm64"]
+platforms = ["linux-64", "osx-64", "osx-arm64"]
 
 [tasks]
 create-figures = "snakemake --cores 1 figures"
@@ -14,7 +14,7 @@ run-analysis = "snakemake --cores 1 run_analysis"
 
 [dependencies]
 python = "3.11.*"
-snakemake = {version = "8.11.*", channel = "bioconda"}
+snakemake = {version = "7.*.*", channel = "bioconda"}
 polars = "0.20.*"
 numpy = "1.26.*"
 scipy = "1.13.*"
@@ -22,11 +22,14 @@ statsmodels = "0.14.*"
 jupyterlab = "4.1.*"
 nbconvert = "7.16.*"
 altair = "5.3.*"
-pyarrow = "16.0.*"
+pyarrow = ">=15.0.0"
 seaborn = ">=0.13.2,<0.14"
 scikit-learn = ">=1.5.0,<1.6"
 spacy = ">=3.7.4,<3.8"
 pip = ">=24.0,<25"
+transformers = ">=4.41.2,<4.42"
+tensorflow = "==2.15"
+shap = ">=0.45.1,<0.46"
 
 [environments]
 default = { solve-group = "main"}
@@ -47,7 +50,7 @@ typecheck = "pyright; exit 0"
 data-check = "gh variable list --json name --json value -q '.[] | select(.name | contains(\"RAW_DATA_CHECKSUMS\")) .value' | shasum -a 256 --check --quiet && echo 'Data integrity check passed!'"
 
 [feature.build-graphs.dependencies]
-snakemake = {version = "8.11.*", channel = "bioconda"}
+snakemake = {version = "7.*.*", channel = "bioconda"}
 graphviz = "*"
 [feature.build-graphs.tasks]
 create-build-graph-dir = "mkdir -p build-graphs"
