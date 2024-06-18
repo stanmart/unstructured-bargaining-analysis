@@ -1,0 +1,5 @@
+{
+    "ignore": [
+        "src/analysis/model_chat.py"
+    ]
+}
