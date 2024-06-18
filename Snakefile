@@ -38,6 +38,35 @@ rule figures:
         "out/figures/survey_study_fields.pdf",
         "out/figures/survey_nationality.pdf",
 
+rule shap_contributions:
+    input:
+        "out/shap/equal_split__bert-base-uncased.pkl",
+        "out/shap/agreement__bert-base-uncased.pkl",
+
+
+rule calculate_shap_contributions:
+    input:
+        actions = "data/clean/_collected/actions.csv",
+        outcomes = "data/clean/_collected/outcomes.csv",
+        model = "out/model/{outcome_var}__{model_name}/model.safetensors",
+    output:
+        shap_values = "out/shap/{outcome_var}__{model_name}.pkl",
+    params:
+        task = "shap",
+    script:
+        "src/analysis/model_chat.py"
+
+rule train_nlp_model:
+    input:
+        actions = "data/clean/_collected/actions.csv",
+        outcomes = "data/clean/_collected/outcomes.csv",
+    output:
+        model = "out/model/{outcome_var}__{model_name}/model.safetensors",
+    params:
+        task = "train",
+    script:
+        "src/analysis/model_chat.py"
+
 rule run_analysis: 
     input: 
         outcomes = "data/clean/_collected/outcomes.csv", 

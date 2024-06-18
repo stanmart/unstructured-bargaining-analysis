@@ -1,8 +1,10 @@
 import os
+import pickle
 
 import evaluate
 import numpy as np
 import polars as pl
+import shap
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset
 from transformers import (
@@ -12,6 +14,7 @@ from transformers import (
     PreTrainedTokenizer,
     Trainer,
     TrainingArguments,
+    pipeline,
 )
 
 
@@ -187,10 +190,7 @@ if __name__ == "__main__":
     outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
     outcome_var = snakemake.wildcards.outcome_var  # noqa F821 # type: ignore
     task = snakemake.params.task  # noqa F821 # type: ignore
-    model_path = snakemake.output.model  # noqa F821 # type: ignore
-    model_name = snakemake.params.model_name  # noqa F821 # type: ignore
-
-    model_dir = os.path.dirname(model_path)
+    model_name = snakemake.wildcards.model_name  # noqa F821 # type: ignore
 
     df = prepare_dataset(outcomes, actions).filter(
         pl.col("treatment_name") != "treatment_dummy_player"
@@ -201,13 +201,16 @@ if __name__ == "__main__":
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     if task == "train":
+        model_path = snakemake.output.model  # noqa F821 # type: ignore
+        model_dir = os.path.dirname(model_path)
+
         training_args = TrainingArguments(
             output_dir=model_dir,
-            learning_rate=1e-5,
+            learning_rate=2e-5,
             per_device_train_batch_size=32,
             per_device_eval_batch_size=32,
-            num_train_epochs=2,
-            evaluation_strategy="steps",
+            num_train_epochs=4,
+            eval_strategy="epoch",
         )
 
         train_dataset = ChatDataset(X_train, y_train, tokenizer)
@@ -225,3 +228,26 @@ if __name__ == "__main__":
 
         trainer.train()
         trainer.save_model(model_dir)
+
+    elif task == "shap":
+        model_path = snakemake.input.model  # noqa F821 # type: ignore
+        model_dir = os.path.dirname(model_path)
+
+        model = AutoModelForSequenceClassification.from_pretrained(model_dir)
+        prediction_pipeline = pipeline(
+            "text-classification",
+            model=model,
+            tokenizer=tokenizer,
+            return_all_scores=True,
+            max_length=64,
+            truncation=True,
+            device=0,
+        )
+
+        explainer = shap.Explainer(prediction_pipeline)
+        shap_values = explainer(df["message"])
+        with open(snakemake.output.shap_values, "wb") as f:  # noqa F821 # type: ignore
+            pickle.dump(shap_values, f)
+
+    else:
+        raise ValueError(f"Task {task} not recognized")
