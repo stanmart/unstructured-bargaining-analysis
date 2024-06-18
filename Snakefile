@@ -26,7 +26,6 @@ rule figures:
         "out/figures/axioms_outcomes_dummy_player.pdf",
         "out/figures/axioms_outcomes_linearity_additivity.pdf",
         "out/figures/axioms_outcomes_stability.pdf",
-        "out/figures/misc_difficulty_rating.pdf",
         expand("out/figures/chat_top_equal_split_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
         expand("out/figures/chat_top_agreement_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
         expand("out/figures/chat_top_role_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
