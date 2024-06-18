@@ -1,16 +1,33 @@
 import os
-from typing import Any
 
+import evaluate
 import numpy as np
 import polars as pl
-from keras.metrics import CategoricalAccuracy
-from keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
+from torch.utils.data import Dataset
 from transformers import (
-    BatchEncoding,
-    DistilBertTokenizer,
-    TFDistilBertForSequenceClassification,
+    AutoModelForSequenceClassification,
+    AutoTokenizer,
+    PreTrainedModel,
+    PreTrainedTokenizer,
+    Trainer,
+    TrainingArguments,
 )
+
+
+class ChatDataset(Dataset):
+    def __init__(self, X, y, tokenizer, max_length: int = 64):
+        self.tokens = [
+            tokenizer(msg, max_length=max_length, truncation=True, padding="max_length")
+            for msg in X
+        ]
+        self.labels = y
+
+    def __getitem__(self, idx):
+        return self.tokens[idx] | {"labels": self.labels[idx]}
+
+    def __len__(self):
+        return len(self.labels)
 
 
 def prepare_dataset(outcomes: pl.DataFrame, actions: pl.DataFrame) -> pl.DataFrame:
@@ -139,82 +156,30 @@ def train_test_split_dataset(
     return X_train, X_test, y_train, y_test
 
 
-def tokenize_series(
-    df: pl.Series, tokenizer: DistilBertTokenizer, max_length: int = 50
-) -> BatchEncoding:
-    return tokenizer(
-        text=df.to_list(),
-        add_special_tokens=True,
-        max_length=max_length,
-        truncation=True,
-        padding=True,
-        return_tensors="tf",
-        return_token_type_ids=False,
-        return_attention_mask=True,
+def compile_trainer(
+    model: PreTrainedModel,
+    training_args: TrainingArguments,
+    train_dataset: Dataset,
+    eval_dataset: Dataset,
+    tokenizer: PreTrainedTokenizer,
+) -> Trainer:
+    metric = evaluate.load("f1")
+
+    def compute_metrics(eval_pred):
+        logits, labels = eval_pred
+        predictions = np.argmax(logits, axis=-1)
+        return metric.compute(predictions=predictions, references=labels)
+
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        eval_dataset=eval_dataset,
+        compute_metrics=compute_metrics,  # type: ignore
+        tokenizer=tokenizer,
     )
 
-
-def prepare_data_for_training(
-    X_train: pl.Series,
-    X_test: pl.Series,
-    y_train: pl.Series,
-    y_test: pl.Series,
-    tokenizer: DistilBertTokenizer,
-    max_tokens: int = 100,
-) -> tuple[BatchEncoding, BatchEncoding, np.ndarray, np.ndarray]:
-    train_tokens = tokenize_series(X_train, tokenizer, max_length=max_tokens)
-    test_tokens = tokenize_series(X_test, tokenizer, max_length=max_tokens)
-    train_outcome = y_train.to_numpy()
-    test_outcome = y_test.to_numpy()
-
-    return train_tokens, test_tokens, train_outcome, test_outcome
-
-
-def compile_model(
-    model_name: str, learning_rate: float = 1e-5, max_tokens: int = 100
-) -> TFDistilBertForSequenceClassification:
-    model = TFDistilBertForSequenceClassification.from_pretrained(
-        model_name, num_labels=2, max_length=max_tokens
-    )
-
-    optimizer = Adam(learning_rate=5e-5)
-    metric = CategoricalAccuracy("balanced_accuracy")
-
-    model.compile(  # type: ignore
-        optimizer=optimizer, metrics=[metric]
-    )
-
-    return model  # type: ignore
-
-
-def fit_model(
-    model: TFDistilBertForSequenceClassification,
-    train_tokens: BatchEncoding,
-    test_tokens: BatchEncoding,
-    train_outcome: np.ndarray,
-    test_outcome: np.ndarray,
-    epochs: int = 1,
-    batch_size: int = 32,
-) -> Any:
-    history = model.fit(  # type: ignore
-        x={
-            "input_ids": train_tokens["input_ids"],
-            "attention_mask": train_tokens["attention_mask"],
-        },
-        y=train_outcome,
-        validation_data=(
-            {
-                "input_ids": test_tokens["input_ids"],
-                "attention_mask": test_tokens["attention_mask"],
-            },
-            test_outcome,
-        ),
-        epochs=epochs,
-        batch_size=batch_size,
-        verbose=True,
-    )
-
-    return history
+    return trainer
 
 
 if __name__ == "__main__":
@@ -223,35 +188,40 @@ if __name__ == "__main__":
     outcome_var = snakemake.wildcards.outcome_var  # noqa F821 # type: ignore
     task = snakemake.params.task  # noqa F821 # type: ignore
     model_path = snakemake.output.model  # noqa F821 # type: ignore
+    model_name = snakemake.params.model_name  # noqa F821 # type: ignore
 
     model_dir = os.path.dirname(model_path)
-    model_name = "distilbert-base-uncased"
 
-    df = prepare_dataset(outcomes, actions)
+    df = prepare_dataset(outcomes, actions).filter(
+        pl.col("treatment_name") != "treatment_dummy_player"
+    )
     X_train, X_test, y_train, y_test = train_test_split_dataset(
         df, test_size=0.2, outcome=outcome_var
     )
-
-    max_tokens = 50
-    tokenizer = DistilBertTokenizer.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     if task == "train":
-        (
-            train_tokens,
-            test_tokens,
-            train_outcome,
-            test_outcome,
-        ) = prepare_data_for_training(
-            X_train, X_test, y_train, y_test, tokenizer=tokenizer, max_tokens=max_tokens
+        training_args = TrainingArguments(
+            output_dir=model_dir,
+            learning_rate=1e-5,
+            per_device_train_batch_size=32,
+            per_device_eval_batch_size=32,
+            num_train_epochs=2,
+            evaluation_strategy="steps",
         )
-        model = compile_model(model_name, max_tokens=max_tokens)
-        fit_model(
-            model,
-            train_tokens,
-            test_tokens,
-            train_outcome,
-            test_outcome,
-            epochs=1,
-            batch_size=32,
+
+        train_dataset = ChatDataset(X_train, y_train, tokenizer)
+        eval_dataset = ChatDataset(X_test, y_test, tokenizer)
+        model = AutoModelForSequenceClassification.from_pretrained(
+            model_name, num_labels=2
         )
-        model.save_pretrained(model_dir)
+        trainer = compile_trainer(
+            model=model,
+            training_args=training_args,
+            train_dataset=train_dataset,
+            eval_dataset=eval_dataset,
+            tokenizer=tokenizer,  # type: ignore
+        )
+
+        trainer.train()
+        trainer.save_model(model_dir)
