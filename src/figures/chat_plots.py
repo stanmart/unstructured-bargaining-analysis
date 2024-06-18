@@ -9,6 +9,14 @@ def prepare_dataset(outcomes: pl.DataFrame, lemmas: pl.DataFrame) -> pl.DataFram
     player_roles = pl.Enum(["A", "B"])
     split_types = pl.Enum(["Equal split", "Unequal split / breakdown"])
     agreement_types = pl.Enum(["Full agreement", "Partial agreement / breakdown"])
+    treatment_names = pl.Enum(
+        [
+            "Dummy player",
+            "Y = 10",
+            "Y = 30",
+            "Y = 90",
+        ]
+    )
 
     roles = pl.DataFrame(
         [
@@ -65,23 +73,27 @@ def prepare_dataset(outcomes: pl.DataFrame, lemmas: pl.DataFrame) -> pl.DataFram
         how="left",
     )
 
-    chat_with_outcomes = lemmas.filter(
-        pl.col("round_number") > 1, pl.col("before_final_agreement")
-    ).join(
-        outcome_properties.select(
-            [
-                "session_code",
-                "round_number",
-                "group_id",
-                "id_in_group",
-                "payoff_this_round",
-                "agreement",
-                "equal_split",
-                "role",
-            ]
-        ),
-        on=["session_code", "round_number", "group_id", "id_in_group"],
-        how="left",
+    chat_with_outcomes = (
+        lemmas.filter(pl.col("round_number") > 1, pl.col("before_final_agreement"))
+        .with_columns(
+            treatment_name_nice=pl.col("treatment_name_nice").cast(treatment_names),
+        )
+        .join(
+            outcome_properties.select(
+                [
+                    "session_code",
+                    "round_number",
+                    "group_id",
+                    "id_in_group",
+                    "payoff_this_round",
+                    "agreement",
+                    "equal_split",
+                    "role",
+                ]
+            ),
+            on=["session_code", "round_number", "group_id", "id_in_group"],
+            how="left",
+        )
     )
 
     return chat_with_outcomes
@@ -89,7 +101,7 @@ def prepare_dataset(outcomes: pl.DataFrame, lemmas: pl.DataFrame) -> pl.DataFram
 
 def count_words(
     df: pl.DataFrame, group_var: str, word_type: str | None = None
-) -> pl.DataFrame:
+) -> tuple[pl.DataFrame, pl.DataType]:
     if word_type is not None:
         df = df.filter(pl.col("pos") == word_type)
 
@@ -149,7 +161,9 @@ def count_words(
         how="diagonal",
     )
 
-    return freq_table_long
+    group_var_type = df[group_var].dtype
+
+    return freq_table_long, group_var_type
 
 
 def create_plot(
@@ -158,31 +172,37 @@ def create_plot(
     word_type: str | None = None,
     top_k: int = 5,
     total_freq_threshold: float = 0.002,
-    type="relative",
+    type: str = "relative",
 ) -> sns.FacetGrid:
     value_name = (
         "Relative frequency (group / total)"
         if type == "relative"
         else "Frequency (group / total)"
     )
-    freq_table = (
-        count_words(df, group_var, word_type)
-        .filter(pl.col("freq_total") > total_freq_threshold, pl.col("type") == type)
-        .select(pl.all().exclude("freq_total", "type"))
-    )
-    group_levels = [col for col in freq_table.columns if col not in ["lemma", "facet"]]
-    plot_data = pl.concat(
-        [
-            freq_table.sort(level, descending=True)
-            .head(top_k)
-            .with_columns(facet=pl.lit(level))
-            for level in group_levels
-        ]
-    ).melt(
-        id_vars=["lemma", "facet"],
-        value_vars=group_levels,
-        value_name=value_name,
-        variable_name="group_var",
+    freq_table, group_var_type = count_words(df, group_var, word_type)
+
+    freq_table_filtered = freq_table.filter(
+        pl.col("freq_total") > total_freq_threshold, pl.col("type") == type
+    ).select(pl.all().exclude("freq_total", "type"))
+    group_levels = [col for col in group_var_type.categories]  # type: ignore
+    plot_data = (
+        pl.concat(
+            [
+                freq_table_filtered.sort(level, descending=True)
+                .head(top_k)
+                .with_columns(facet=pl.lit(level))
+                for level in group_levels
+            ]
+        )
+        .melt(
+            id_vars=["lemma", "facet"],
+            value_vars=group_levels,
+            value_name=value_name,
+            variable_name="group_var",
+        )
+        .with_columns(
+            group_var=pl.col("group_var").cast(group_var_type),
+        )
     )
 
     word_type_nice = {
