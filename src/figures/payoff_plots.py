@@ -138,6 +138,7 @@ def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame:
             values,
             on=["treatment_name", "role"],
             how="left",
+            coalesce=True,
         )
     )
 
