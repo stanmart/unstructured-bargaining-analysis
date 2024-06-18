@@ -63,12 +63,12 @@ rule create_chat_plot:
 rule lemmatize_chat_data:
     input:
         actions = "data/clean/_collected/actions.csv",
+        outcomes = "data/clean/_collected/outcomes.csv",
     output:
         lemmas = "out/analysis/lemmas.csv",
     script:
         "src/analysis/lemmatize_chat.py"
 
-rule create_other_plot: 
 rule create_survey_plot: 
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",

@@ -2,6 +2,7 @@ import string
 
 import polars as pl
 import seaborn as sns
+from spacy.lang.en import stop_words
 
 
 def prepare_dataset(outcomes: pl.DataFrame, lemmas: pl.DataFrame) -> pl.DataFrame:
@@ -15,13 +16,13 @@ def prepare_dataset(outcomes: pl.DataFrame, lemmas: pl.DataFrame) -> pl.DataFram
             {"treatment_name": "treatment_dummy_player", "id_in_group": 2, "role": "A"},
             {"treatment_name": "treatment_dummy_player", "id_in_group": 3, "role": "B"},
             {"treatment_name": "treatment_y_10", "id_in_group": 1, "role": "A"},
-            {"treatment_name": "treatment_y_10", "id_in_group": 2, "role": "A"},
+            {"treatment_name": "treatment_y_10", "id_in_group": 2, "role": "B"},
             {"treatment_name": "treatment_y_10", "id_in_group": 3, "role": "B"},
             {"treatment_name": "treatment_y_30", "id_in_group": 1, "role": "A"},
-            {"treatment_name": "treatment_y_30", "id_in_group": 2, "role": "A"},
+            {"treatment_name": "treatment_y_30", "id_in_group": 2, "role": "B"},
             {"treatment_name": "treatment_y_30", "id_in_group": 3, "role": "B"},
             {"treatment_name": "treatment_y_90", "id_in_group": 1, "role": "A"},
-            {"treatment_name": "treatment_y_90", "id_in_group": 2, "role": "A"},
+            {"treatment_name": "treatment_y_90", "id_in_group": 2, "role": "B"},
             {"treatment_name": "treatment_y_90", "id_in_group": 3, "role": "B"},
         ]
     ).with_columns(
@@ -64,7 +65,9 @@ def prepare_dataset(outcomes: pl.DataFrame, lemmas: pl.DataFrame) -> pl.DataFram
         how="left",
     )
 
-    chat_with_outcomes = lemmas.filter(pl.col("round_number") > 1).join(
+    chat_with_outcomes = lemmas.filter(
+        pl.col("round_number") > 1, pl.col("before_final_agreement")
+    ).join(
         outcome_properties.select(
             [
                 "session_code",
@@ -90,7 +93,11 @@ def count_words(
     if word_type is not None:
         df = df.filter(pl.col("pos") == word_type)
 
-    exclude_words = set(string.punctuation) | {"a", "a1", "a2", "b", "b1", "b2"}
+    exclude_words = (
+        set(string.punctuation)
+        | {"a", "a1", "a2", "b", "b1", "b2"}
+        | stop_words.STOP_WORDS
+    )
 
     word_counts = (
         df.filter(
