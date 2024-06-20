@@ -1,4 +1,5 @@
 SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
+WORD_TYPES = ["all", "VERB", "ADJ", "NOUN"]
 
 
 rule figures:
@@ -25,6 +26,10 @@ rule figures:
         "out/figures/axioms_outcomes_dummy_player.pdf",
         "out/figures/axioms_outcomes_linearity_additivity.pdf",
         "out/figures/axioms_outcomes_stability.pdf",
+        expand("out/figures/chat_top_equal_split_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
+        expand("out/figures/chat_top_agreement_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
+        expand("out/figures/chat_top_role_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
+        expand("out/figures/chat_top_treatment_name_nice_{word_type}_withdummy.pdf", word_type=WORD_TYPES),
         "out/figures/survey_difficulty_rating.pdf", 
         "out/figures/survey_age.pdf",
         "out/figures/survey_gender.pdf",
@@ -44,6 +49,24 @@ rule run_analysis:
         axiom_results =  "out/analysis/axiom_test_results.pkl",
     script: 
         "src/analysis/analysis.py"
+
+rule create_chat_plot: 
+    input:
+        outcomes = "data/clean/_collected/outcomes.csv",
+        lemmas = "out/analysis/lemmas.csv",
+    output: 
+        figure = "out/figures/chat_top_{group_var}_{word_type}_{dummy}.pdf",
+    script: 
+        "src/figures/chat_plots.py"
+
+rule lemmatize_chat_data:
+    input:
+        actions = "data/clean/_collected/actions.csv",
+        outcomes = "data/clean/_collected/outcomes.csv",
+    output:
+        lemmas = "out/analysis/lemmas.csv",
+    script:
+        "src/analysis/lemmatize_chat.py"
 
 rule create_survey_plot: 
     input: 
