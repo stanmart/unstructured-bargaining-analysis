@@ -36,6 +36,7 @@ rule figures:
         "out/figures/survey_degree.pdf",
         "out/figures/survey_study_fields.pdf",
         "out/figures/survey_nationality.pdf",
+        "out/figures/values_theory.pdf",
 
 rule run_analysis: 
     input: 
@@ -49,6 +50,12 @@ rule run_analysis:
         axiom_results =  "out/analysis/axiom_test_results.pkl",
     script: 
         "src/analysis/analysis.py"
+
+rule create_values_theory_plot:
+    output:
+        figure = "out/figures/values_theory.pdf",
+    script:
+        "src/figures/values_theory_plot.py"
 
 rule create_chat_plot: 
     input:
