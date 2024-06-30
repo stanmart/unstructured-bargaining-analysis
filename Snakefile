@@ -53,7 +53,7 @@ rule run_analysis:
 
 rule create_values_theory_plot:
     output:
-        figure = "out/figures/values_theory.pdf",
+        figure = "out/figures/values_theory.{ext}",
     script:
         "src/figures/values_theory_plot.py"
 
@@ -62,7 +62,7 @@ rule create_chat_plot:
         outcomes = "data/clean/_collected/outcomes.csv",
         lemmas = "out/analysis/lemmas.csv",
     output: 
-        figure = "out/figures/chat_top_{group_var}_{word_type}_{dummy}.pdf",
+        figure = "out/figures/chat_top_{group_var}_{word_type}_{dummy}.{ext}",
     script: 
         "src/figures/chat_plots.py"
 
@@ -79,7 +79,7 @@ rule create_survey_plot:
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",
     output: 
-        figure = "out/figures/survey_{plot}.pdf",
+        figure = "out/figures/survey_{plot}.{ext}",
     script: 
         "src/figures/survey_plots.py"
 
@@ -87,7 +87,7 @@ rule create_axiom_survey_plot:
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",
     output: 
-        figure = "out/figures/axioms_survey_{axiom}.pdf",
+        figure = "out/figures/axioms_survey_{axiom}.{ext}",
     script: 
         "src/figures/axiom_plots.py"
 
@@ -95,7 +95,7 @@ rule create_axiom_outcomes_plot:
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",
     output: 
-        figure = "out/figures/axioms_outcomes_{axiom}.pdf",
+        figure = "out/figures/axioms_outcomes_{axiom}.{ext}",
     script: 
         "src/figures/axiom_outcomes_plots.py"
 
@@ -103,7 +103,7 @@ rule create_proposal_plot:
     input:
         actions = "data/clean/_collected/actions.csv",
     output:
-        figure = "out/figures/proposal_{plot}.pdf",
+        figure = "out/figures/proposal_{plot}.{ext}",
     script:
         "src/figures/proposal_plots.py"
 
@@ -113,7 +113,7 @@ rule create_timing_plot:
         outcomes = "data/clean/_collected/outcomes.csv",
         actions = "data/clean/_collected/actions.csv",
     output:
-        figure = "out/figures/timing_{plot}.pdf",
+        figure = "out/figures/timing_{plot}.{ext}",
     script:
         "src/figures/timing_plots.py"
 
@@ -122,7 +122,7 @@ rule create_payoff_plot:
     input:
         outcomes = "data/clean/_collected/outcomes.csv",
     output:
-        figure = "out/figures/payoff_{plot}.pdf",
+        figure = "out/figures/payoff_{plot}.{ext}",
     script:
         "src/figures/payoff_plots.py"
 
