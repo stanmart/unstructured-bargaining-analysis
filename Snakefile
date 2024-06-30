@@ -1,11 +1,24 @@
 SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
 WORD_TYPES = ["all", "VERB", "ADJ", "NOUN"]
+PRESENTATIONS, *_ = glob_wildcards("src/presentation/{presentation}.qmd")
 
+
+rule prepare_to_deploy:
+    input:
+        presentations = expand("out/presentation/{presentation}.html", presentation=PRESENTATIONS),
+    output:
+        presentations = expand("gh-pages/{presentation}.html", presentation=PRESENTATIONS),
+        nojekyll = "gh-pages/.nojekyll"
+    run:
+        from shutil import copy2
+        from pathlib import Path
+        for file in input.presentations:
+            copy2(file, "gh-pages")
+        Path(output.nojekyll).touch()
 
 rule presentations:
     input:
-        "out/presentation/blm.html",
-
+        expand("out/presentation/{presentation}.html", presentation=PRESENTATIONS)
 
 rule blm_presentation:
     input:

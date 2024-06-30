@@ -1,0 +1,38 @@
+name: publish
+
+on:
+  workflow_run:
+    workflows: ["checks"]
+    branches: [main]
+    types:
+      - completed
+
+jobs:
+  publish:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup pixi
+        uses: prefix-dev/setup-pixi@v0.7.0
+        with:
+          cache: true
+          environments: default
+      - name: Cache Output
+        id: cache-output
+        uses: actions/cache@v4
+        with:
+          path: |
+            out
+            .snakemake/metadata
+          key: ${{ runner.os }}-out
+      - name: Prepare materials to publish
+        run: "pixi run prepare-to-publish"
+      - name: Publish to GH Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: gh-pages
+          publish_branch: gh-pages
+          commit_message: "Deploy to GitHub Pages"
+          force_orphan: true
