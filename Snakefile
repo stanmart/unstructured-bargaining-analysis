@@ -9,9 +9,26 @@ rule presentations:
 
 rule blm_presentation:
     input:
-        "src/figures/values_theory_plot.py",
-        "out/figures/timing_until_decision.svg",
         "out/figures/values_theory.svg",
+        "out/figures/payoff_average.svg",
+        "out/figures/payoff_scatterplot.svg",
+        "out/figures/payoff_by_agreement_type.svg",
+        "out/figures/timing_until_decision.svg",
+        "out/figures/timing_until_agreement_scatterplot.svg",
+        "out/analysis/mann_whitney.json",
+        "out/analysis/regression.pkl",
+        "out/analysis/regression_dummies.pkl",
+        "out/figures/axioms_outcomes_efficiency.svg",
+        "out/figures/axioms_outcomes_symmetry.svg",
+        "out/figures/axioms_outcomes_dummy_player.svg",
+        "out/figures/axioms_outcomes_linearity_additivity.svg",
+        "out/figures/axioms_outcomes_stability.svg",
+        "out/figures/axioms_survey_efficiency-2col.svg",
+        "out/figures/axioms_survey_symmetry-2col.svg",
+        "out/figures/axioms_survey_dummy_player-2col.svg",
+        "out/figures/axioms_survey_linearity_HD1-2col.svg",
+        "out/figures/axioms_survey_linearity_additivity-2col.svg",
+        "out/figures/axioms_survey_stability-2col.svg",
         qmd = "src/presentation/blm.qmd",
         css = "src/presentation/include/custom.scss",
         marhjax_js = "src/presentation/include/mathjax-settings.html",
@@ -107,8 +124,11 @@ rule create_survey_plot:
 rule create_axiom_survey_plot: 
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",
+    wildcard_constraints:
+        ncol = r"\-?.*",
+        axiom = "\w+"
     output: 
-        figure = "out/figures/axioms_survey_{axiom}.{ext}",
+        figure = "out/figures/axioms_survey_{axiom}{ncol}.{ext}",
     script: 
         "src/figures/axiom_plots.py"
 
