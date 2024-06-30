@@ -2,6 +2,24 @@ SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
 WORD_TYPES = ["all", "VERB", "ADJ", "NOUN"]
 
 
+rule presentations:
+    input:
+        "out/presentation/blm.html",
+
+
+rule blm_presentation:
+    input:
+        "src/figures/values_theory.py",
+        qmd = "src/presentation/blm.qmd",
+        css = "src/presentation/include/custom.scss",
+        marhjax_js = "src/presentation/include/mathjax-settings.html",
+        section_js = "src/presentation/include/sections-in-footer.html",
+    output:
+        "out/presentation/blm.html",
+    shell:
+        "quarto render {input.qmd}"
+
+
 rule figures:
     input:
         "out/figures/payoff_scatterplot.pdf",
