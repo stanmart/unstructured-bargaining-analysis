@@ -14,3 +14,8 @@ format:
       - include/sections-in-footer.html
 ---
 
+## Predictions
+```{python}
+from src.figures.values_theory_plot import plot_values
+fig = plot_values()
+```
