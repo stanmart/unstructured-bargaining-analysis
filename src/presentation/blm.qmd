@@ -65,12 +65,200 @@ format:
 ![](/out/figures/values_theory.svg)
 
 
-## Predictions
+# Results
 
+# Main results
 
-## Time of proposing and accepting final proposal
+## Payoffs – aggregate
+:::: {.columns}
+
+::: {.column width="65%"}
+![](/out/figures/payoff_average.svg){width=100% height=100%}
+:::
+
+:::{.column width="35%" .smaller}
+- Dummy player gets something
+- $Y=10$ and $Y=30$ treatments look similar
+- Player A gets more in $Y=30$ treatment
+- Nucleolus better in terms of 'shape' but worse in terms of 'distance'
+:::
+
+::::
+
+## Payoff of Player A – regression
+
+::: {.smaller}
+```{python}
+import pickle
+from statsmodels.iolib.summary2 import summary_col
+
+with open("out/analysis/regression.pkl", "rb") as reg:
+    regression_continuous = pickle.load(reg)
+with open("out/analysis/regression_dummies.pkl", "rb") as reg:
+    regression_dummies = pickle.load(reg)
+
+table = summary_col(
+    [regression_continuous, regression_dummies],
+    stars=True,
+    float_format="%.2f",
+    model_names=["Model cont.", "Model ind."],
+    include_r2=False,
+    info_dict={"N": lambda reg: f"{int(reg.nobs):d}"}
+)
+table
+```
+
+:::
+
+## Payoffs – a deeper look
+:::: {.columns}
+
+::: {.column width="65%"}
+![](/out/figures/payoff_scatterplot.svg){width=100% height=100%}
+:::
+
+:::{.column width="35%" .smaller}
+- In all treatments, equal(ish) split is a frequent outcome
+  - Even in the dummy player treatment!
+- $Y=10$ and $Y=30$ treatments still look similar
+- In the $Y=90$ treatment, A can occasionally do much better
+:::
+
+::::
+
+## Payoff of Player A – non-parametrics
+
+Mann-Whitney test comparing Player A's payoff across groups
+
+::: {.smaller}
+```{python}
+import json
+import pandas as pd
+
+with open("out/analysis/mann_whitney.json", "r") as mw:
+    mw_results = json.load(mw)
+
+table = pd.DataFrame.from_records(mw_results).T
+table = table.rename(columns={
+    "statistic": "U statistic",
+    "pvalue": "p-value",
+})
+table = table.rename(
+    index=lambda s: " < ".join(f"[Y = {t}]" for t in s.split("-"))
+)
+table
+
+```
+
+:::
+
+- Qualitatively agrees with the nucleolus and disagrees with SV
+- Quantitatively disagrees with both (see regression)
+
+## Payoffs by coordination outcomes
+:::: {.columns}
+
+::: {.column width="65%"}
+![](/out/figures/payoff_by_agreement_type.svg){width=100% height=100%}
+:::
+
+:::{.column width="35%" .smaller}
+- In the $Y=90$ treatment, A only achieves significantly higher than ES by excluding one small player
+  - Not efficient
+  - Why doesn't the excluded player does not seem to want the remaining 10 points
+- The outcomes are still not stable
+  - excluded player could make a counter-offer
+:::
+
+::::
+
+# Timing of the acceptances
+
+## Time of proposing and accepting final allocation
 ![](/out/figures/timing_until_decision.svg)
 <!-- ↖ leading '/' is important...... -->
+
+## Time of proposing and accepting final allocation
+![](/out/figures/timing_until_agreement_scatterplot.svg)
+
+::: {.smaller}
+- In the $Y=90$ treatment, partial agreements come later
+- Otherwise, agreement times are broadly similar across the main treatments
+:::
+
+# Testing the axioms
+
+## Efficiency
+:::: {.columns}
+
+::: {.column width="60%"}
+![](/out/figures/axioms_outcomes_efficiency.svg){width=100% height=100%}
+:::
+
+:::{.column width="40%"}
+![](/out/figures/axioms_survey_efficiency-2col.svg){width=100% height=80%}
+:::
+
+::::
+
+## Symmetry
+:::: {.columns}
+
+::: {.column width="60%"}
+![](/out/figures/axioms_outcomes_symmetry.svg){width=100% height=100%}
+:::
+
+:::{.column width="40%"}
+![](/out/figures/axioms_survey_symmetry-2col.svg){width=100% height=80%}
+:::
+
+::::
+
+## Dummy player axiom
+:::: {.columns}
+
+::: {.column width="60%"}
+![](/out/figures/axioms_outcomes_dummy_player.svg){width=100% height=100%}
+:::
+
+:::{.column width="40%"}
+![](/out/figures/axioms_survey_dummy_player-2col.svg){width=100% height=80%}
+:::
+
+::::
+
+## Stability
+:::: {.columns}
+
+::: {.column width="60%"}
+![](/out/figures/axioms_outcomes_stability.svg){width=100% height=100%}
+:::
+
+:::{.column width="40%"}
+![](/out/figures/axioms_survey_stability-2col.svg){width=100% height=80%}
+:::
+
+::::
+
+## Linearity
+![](/out/figures/axioms_outcomes_linearity_additivity.svg)
+
+## Linearity
+:::: {.columns}
+
+::: {.column width="40%"}
+![](/out/figures/axioms_survey_linearity_HD1-2col.svg){width=100% height=100%}
+:::
+
+:::{.column width="40%"}
+![](/out/figures/axioms_survey_linearity_additivity-2col.svg){width=100% height=80%}
+:::
+
+::::
+
+# Terms used in the chat
+
+## Need to figiure out what to include here
 
 
 # Thank you {.unnumbered .unlisted}

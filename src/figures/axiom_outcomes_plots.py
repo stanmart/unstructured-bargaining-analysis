@@ -39,7 +39,7 @@ def plot_outcomes_dummy_player(df: pl.DataFrame) -> sns.FacetGrid:
         ax.xaxis.grid(False)
 
     g.set_axis_labels("", "Count")
-    g.legend.set_title("Satisfies Dummy player axiom")  # type: ignore
+    g.legend.set_title("Satisfies\nDummy player\naxiom")  # type: ignore
 
     return g
 
@@ -60,7 +60,7 @@ def plot_outcomes_efficiency(df: pl.DataFrame) -> sns.FacetGrid:
         ax.xaxis.grid(False)
 
     g.set_axis_labels("Treatment", "Count")
-    g.legend.set_title("Satisfies efficiency axiom")  # type: ignore
+    g.legend.set_title("Satisfies\nefficiency\naxiom")  # type: ignore
 
     return g
 
@@ -83,7 +83,7 @@ def plot_outcomes_symmetry(df: pl.DataFrame) -> sns.FacetGrid:
         ax.xaxis.grid(False)
 
     g.set_axis_labels("Treatment", "Count")
-    g.legend.set_title("Satisfies symmetry axiom")  # type: ignore
+    g.legend.set_title("Satisfies\nsymmetry\naxiom")  # type: ignore
 
     return g
 
@@ -112,7 +112,7 @@ def plot_outcomes_stability(df: pl.DataFrame) -> sns.FacetGrid:
         ax.xaxis.grid(False)
 
     g.set_axis_labels("Treatment", "Count")
-    g.legend.set_title("Satisfies stability axiom")  # type: ignore
+    g.legend.set_title("Satisfies\nstability\naxiom")  # type: ignore
 
     return g
 
