@@ -19,3 +19,7 @@ format:
 from src.figures.values_theory_plot import plot_values
 fig = plot_values()
 ```
+
+## Time of proposing and accepting final proposal
+![](/out/figures/timing_until_decision.svg)
+<!-- ↖ leading '/' is important...... -->
