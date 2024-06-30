@@ -1,6 +1,7 @@
 out/
 playground/
 build-graphs/
+gh-pages/
 
 data/*
 !data/raw/
