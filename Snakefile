@@ -9,7 +9,8 @@ rule presentations:
 
 rule blm_presentation:
     input:
-        "src/figures/values_theory.py",
+        "src/figures/values_theory_plot.py",
+        "out/figures/timing_until_decision.svg",
         qmd = "src/presentation/blm.qmd",
         css = "src/presentation/include/custom.scss",
         marhjax_js = "src/presentation/include/mathjax-settings.html",
