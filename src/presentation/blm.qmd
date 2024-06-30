@@ -17,11 +17,56 @@ format:
 ## Literature
 [see @shapley1953value]
 
+# Solution concepts
+
+## The game
+
+- Players: $N = \{A, B_1, B_2\}$
+- Value function:
+  - No one can create any value alone: $v(\{A\}) = v(\{B_i\}) = 0$
+  - Player $A$ is indispensable: $v(\{B_1, B_2\}) = 0$
+  - Small players contribute to the value: $v(\{A, B_i\}) = Y \in [0, 100]$
+  - The more small players the better: $v(\{A, B_1, B_2\}) = 100$
+- How to divide the value between the players?
+
+## Core
+
+- The set of payoff vectors such that no sub-coalition has a larger value than the sum of their payoffs
+  - Stability-based concept
+  - Similar idea to the Nash equilibrium, but for multi-player deviations
+- Very intuitive and plausible, but
+  - Can be empty (existence not guaranteed)
+  - Can be multi-valued (uniqueness not guaranteed)
+
+## Nucleolus
+
+- Maximizes the smallest excess (sum of payoffs minus value) across coalitions
+  - Not as nice intuition as for the core, but...
+  - if the core is non-empty, the nucleolus is in the core
+- Useful properties
+  - Always exists
+  - Always unique
+- Can be thought of as a way to mix the stability-based intuition behind the core with useful properties
+
+## Shapley value
+
+- Each players gets their average marginal contribution
+  - Fairness based motivation
+- Appealing characterization
+  - Efficient: whole pie is distributed
+  - Symmetric: identical (from the pov of $v$) players should get the same payoff
+  - Dummy player property: players contributing nothing get nothing
+  - Linearity (across games)
+- Useful properties
+  - Always exists
+  - Always unique
+
+## In our game
+![](/out/figures/values_theory.svg)
+
+
 ## Predictions
-```{python}
-from src.figures.values_theory_plot import plot_values
-fig = plot_values()
-```
+
 
 ## Time of proposing and accepting final proposal
 ![](/out/figures/timing_until_decision.svg)
