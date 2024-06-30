@@ -12,10 +12,16 @@ format:
     include-in-header:
       - include/mathjax-settings.html
       - include/sections-in-footer.html
+    toc: true
+    toc-depth: 1
+    toc-title: Agenda
 ---
+
+# Introduction
 
 ## Literature
 [see @shapley1953value]
+
 
 # Solution concepts
 
@@ -64,8 +70,6 @@ format:
 ## In our game
 ![](/out/figures/values_theory.svg)
 
-
-# Results
 
 # Main results
 
@@ -152,8 +156,11 @@ table
 
 :::
 
+
+# Exploratory observations
+
 - Qualitatively agrees with the nucleolus and disagrees with SV
-- Quantitatively disagrees with both (see regression)
+- Quantitatively disagrees with both (cf. plots)
 
 ## Payoffs by coordination outcomes
 :::: {.columns}
@@ -172,7 +179,7 @@ table
 
 ::::
 
-# Timing of the acceptances
+# Timing of the acceptances {.unlisted .unnumbered}
 
 ## Time of proposing and accepting final allocation
 ![](/out/figures/timing_until_decision.svg)
@@ -186,7 +193,7 @@ table
 - Otherwise, agreement times are broadly similar across the main treatments
 :::
 
-# Testing the axioms
+# Testing the axioms {.unlisted .unnumbered}
 
 ## Efficiency
 :::: {.columns}
@@ -256,9 +263,12 @@ table
 
 ::::
 
-# Terms used in the chat
+# Terms used in the chat {.unlisted .unnumbered}
 
 ## Need to figiure out what to include here
+
+
+# Conclusions
 
 
 # Thank you {.unnumbered .unlisted}
