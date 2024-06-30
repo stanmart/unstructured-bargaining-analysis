@@ -14,6 +14,9 @@ format:
       - include/sections-in-footer.html
 ---
 
+## Literature
+[see @shapley1953value]
+
 ## Predictions
 ```{python}
 from src.figures.values_theory_plot import plot_values
@@ -23,3 +26,11 @@ fig = plot_values()
 ## Time of proposing and accepting final proposal
 ![](/out/figures/timing_until_decision.svg)
 <!-- ↖ leading '/' is important...... -->
+
+
+# Thank you {.unnumbered .unlisted}
+
+## References
+
+::: {#refs}
+:::
