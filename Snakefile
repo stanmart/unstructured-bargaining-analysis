@@ -15,6 +15,7 @@ rule blm_presentation:
         css = "src/presentation/include/custom.scss",
         marhjax_js = "src/presentation/include/mathjax-settings.html",
         section_js = "src/presentation/include/sections-in-footer.html",
+        bibliography = "src/paper/references.bib",
     output:
         "out/presentation/blm.html",
     shell:
