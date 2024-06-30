@@ -1,0 +1,112 @@
+$highlight: #5692e4;
+
+
+/*-- scss:rules --*/
+
+#section-title {
+  color: #666666;
+  font-size: 16px;
+  bottom: 10px;
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0 0;
+  font-family: Helvetica, sans-serif;
+
+  @media screen and (max-width: 800px) {
+    font-size: 12px;
+    bottom: 7px;
+  }
+
+}
+
+.reveal .crossref {
+  text-align: right;
+  font-size: smaller;
+}
+
+.reveal div.slide-number {
+  font-size: 16px;
+  @media screen and (max-width: 800px) {
+    font-size: 12px;
+  }
+}
+
+h1.title {
+  font-size: calc(var(--r-heading1-size) * 0.7);
+}
+
+nav[role="doc-toc"] li {
+  margin: 20px 0;
+}
+
+nav[role="doc-toc"] a {
+  color: inherit;
+}
+
+nav[role="doc-toc"] a:hover {
+  color: $highlight;
+}
+
+.reveal .citation a[role="doc-biblioref"] {
+  color: inherit;
+}
+
+.reveal .citation a[role="doc-biblioref"][aria-expanded=true] {
+  color: $highlight;
+}
+
+.reveal .citation {
+  color: inherit;
+}
+
+.reveal ul li li {
+  font-size: 0.75em;
+  line-height: 1.2em;
+}
+
+.reveal strong {
+  color: $highlight;
+}
+
+.reveal strong .citation {
+  color: $highlight;
+}
+
+.reveal strong .citation a[role="doc-biblioref"] {
+  color: $highlight;
+}
+
+.reveal .smaller {
+  font-size: 0.75em;
+  line-height: 1.2em;
+}
+
+.reveal .highlight-block {
+  display: block;
+  text-align: left;
+  font-style: normal;
+  border-style: solid;
+  border-color: $highlight;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-left: 30px;
+  margin-right: 30px;
+  border-width: 5px;
+}
+
+.reveal .proposition:before {
+  content: "Proposition. ";
+  font-weight: bold;
+  color: $highlight;
+  font-style: normal;
+}
+
+.reveal .idea:before {
+  content: "Idea. ";
+  font-weight: bold;
+  color: $highlight;
+  font-style: normal;
+}
