@@ -1,0 +1,6 @@
+project:
+  output-dir: out/presentation
+  execute-dir: project
+  post-render: src/util/move_quarto_output.py
+
+bibliography: src/paper/references.bib

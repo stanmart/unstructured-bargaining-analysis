@@ -1,0 +1,16 @@
+---
+title: "Unstructured bargaining experiment"
+author:
+ - Mia Lu
+ - Martin Stancsics
+format:
+  revealjs:
+    embed-resources: true
+    theme:
+      - default
+      - include/custom.scss
+    include-in-header:
+      - include/mathjax-settings.html
+      - include/sections-in-footer.html
+---
+
