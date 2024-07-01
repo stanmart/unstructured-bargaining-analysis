@@ -18,7 +18,7 @@ def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame:
 
 
 def plot_axiom_survey(
-    df: pl.DataFrame, axiom: str, axiom_nice: str
+    df: pl.DataFrame, axiom: str, axiom_nice: str, col_wrap: int | None = None
 ) -> sns.axisgrid.FacetGrid:
     order = [
         "Strongly Disagree",
@@ -36,6 +36,7 @@ def plot_axiom_survey(
     g = sns.FacetGrid(
         df.with_columns(axiom_ordered=pl.col(f"{axiom}_axiom").cast(order_axiom_dtype)),
         col="treatment_name_nice",
+        col_wrap=col_wrap,
     )
     g.map_dataframe(
         sns.histplot,
@@ -63,6 +64,11 @@ def plot_axiom_survey(
 
 if __name__ == "__main__":
     outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
+    ncol_str = snakemake.wildcards.ncol  # noqa F821 # type: ignore
+    if ncol_str:
+        col_wrap = int(ncol_str.lstrip("-").rstrip("col"))
+    else:
+        col_wrap = None
     df = prepare_dataset(outcomes)
     axioms_renamed = {
         "efficiency": "Efficiency",
@@ -86,12 +92,10 @@ if __name__ == "__main__":
             "axes.spines.top": False,
         },
     )
-    try:
-        plot = plot_axiom_survey(
-            df=df,
-            axiom=snakemake.wildcards.axiom,  # noqa F821 # type: ignore
-            axiom_nice=axioms_renamed[snakemake.wildcards.axiom],  # noqa F821 # type: ignore
-        )
-        plot.savefig(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
-    except KeyError:
-        raise ValueError(f"Unknown plot: {snakemake.wildcards.plot}")  # noqa F821 # type: ignore
+    plot = plot_axiom_survey(
+        df=df,
+        axiom=snakemake.wildcards.axiom,  # noqa F821 # type: ignore
+        axiom_nice=axioms_renamed[snakemake.wildcards.axiom],  # noqa F821 # type: ignore
+        col_wrap=col_wrap,
+    )
+    plot.savefig(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore

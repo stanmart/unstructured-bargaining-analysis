@@ -1,6 +1,7 @@
 out/
 playground/
 build-graphs/
+gh-pages/
 
 data/*
 !data/raw/
@@ -180,3 +181,5 @@ cython_debug/
 
 # VS Code
 .vscode/
+
+/.quarto/

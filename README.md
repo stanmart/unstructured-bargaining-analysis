@@ -1,4 +1,5 @@
 [![checks](https://github.com/stanmart/unstructured-bargaining-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/stanmart/unstructured-bargaining-analysis/actions/workflows/ci.yml)
+[![publish](https://github.com/stanmart/unstructured-bargaining-analysis/actions/workflows/publish.yml/badge.svg)](https://github.com/stanmart/unstructured-bargaining-analysis/actions/workflows/publish.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/licenses/MIT)
 
 # Unstructured bargaining analysis

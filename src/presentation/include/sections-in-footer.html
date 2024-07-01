@@ -1,0 +1,69 @@
+<script>
+function add_sc_sb_title() {
+   
+    function get_title() {
+     var h1_arr = [];
+   
+     Reveal.getSlides().forEach(el => {
+       if (!el.matches('#title-slide')) {
+        var h1 = el.querySelector('.title-slide h1')?.innerText;
+        h1_arr.push(h1);
+       };
+     });
+     
+     return h1_arr
+   };
+     
+   function fill_array(ar) {
+     let last_val = ar[0] || " ";
+     for (let i = 1; i < ar.length; i++) {
+       if (typeof ar[i] === 'undefined') {
+         ar[i] = last_val;
+       } else {
+         last_val = ar[i];
+       }
+     }
+     return ar
+   };
+   
+   
+   if (Reveal.isReady()) {
+   
+     var h1_array = get_title();
+     var filled_h1_array = fill_array(h1_array);
+     
+     Reveal.getSlides().forEach((el, idx) => {
+       if (!el.matches('#title-slide')) {
+         el.setAttribute('data-sc-title', filled_h1_array[(idx - 1)])
+       }
+     });
+
+    var section_title = document.createElement("div");
+    section_title.id = "section-title";
+
+    slide_num = document.querySelector("div.slide-number");
+    slide_num.parentNode.insertBefore(section_title, slide_num);
+
+    function changeSectionTitle(event) {
+        let sp = Reveal.getSlidesElement().querySelector('.stack.present');
+        if (sp != null) {     
+            var section_text = event.currentSlide.getAttribute('data-sc-title') || " ";
+            if (event.currentSlide.matches('.title-slide.level1')) {
+                section_title.innerText = ""; 
+            } else if (event.currentSlide.matches('.title-slide.level2')) {
+                section_title.innerText = section_text;
+            } else {
+                section_title.innerText = section_text;       
+            };
+        };
+    }
+   
+    Reveal.on( 'slidechanged', changeSectionTitle);
+   };
+ };
+ 
+ 
+ window.addEventListener("load", (event) => {
+   add_sc_sb_title();
+ });
+</script>

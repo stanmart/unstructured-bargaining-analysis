@@ -7,6 +7,8 @@ channels = ["conda-forge", "bioconda"]
 platforms = ["linux-64", "win-64", "osx-64", "osx-arm64"]
 
 [tasks]
+prepare-to-publish = "snakemake --cores 1 prepare_to_deploy"
+create-presentations = "snakemake --cores 1 presentations"
 create-figures = "snakemake --cores 1 figures"
 create-datasets = "snakemake --cores 1 create_datasets"
 power-analysis = "snakemake --cores 1 power_analysis"
@@ -27,6 +29,7 @@ seaborn = ">=0.13.2,<0.14"
 scikit-learn = ">=1.5.0,<1.6"
 spacy = ">=3.7.4,<3.8"
 pip = ">=24.0,<25"
+quarto = ">=1.4.550,<1.5"
 
 [environments]
 default = { solve-group = "main"}

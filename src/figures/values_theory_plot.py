@@ -31,7 +31,7 @@ def plot_values(
     for treatment in treatments:
         ax.axvline(treatment, color="black", linestyle=":")
         t = ax.text(
-            treatment + multiplier * 0.01,
+            treatment + multiplier * 0.012,
             multiplier * 0.99,
             f"Treatment $Y={treatment}$",
             rotation=-90,
