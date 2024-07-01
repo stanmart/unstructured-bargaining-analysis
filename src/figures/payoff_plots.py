@@ -5,6 +5,7 @@ import polars as pl
 import seaborn as sns
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from matplotlib.lines import Line2D
 
 
 def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame:
@@ -185,26 +186,59 @@ def add_nucleolus_and_shapley(
             legend=False,
         )
 
+    nucleolus_marker = Line2D(
+        [0],
+        [0],
+        color="black",
+        markersize=10,
+        markeredgewidth=2,
+        marker="1",
+        linestyle="None",
+        label="Nucleolus",
+    )
+    shapley_marker = Line2D(
+        [0],
+        [0],
+        color="black",
+        markersize=10,
+        markeredgewidth=2,
+        marker="2",
+        linestyle="None",
+        label="Shapley value",
+    )
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles=[*handles, nucleolus_marker, shapley_marker])
+
     return ax
 
 
 def payoff_average(df: pl.DataFrame) -> Figure:
     fig, ax = plt.subplots()
     sns.barplot(
-        df,
+        df.with_columns(
+            role=pl.col("role").replace(
+                {
+                    "P1": "$A_1$ / $A$",
+                    "P2": "$A_2$ / $B_1$",
+                    "P3": "$B$ / $B_2$",
+                }
+            )
+        ),
         x="treatment_name_nice",
         y="payoff_this_round",
         hue="role",
         alpha=0.9,
         ax=ax,
-        errorbar=None,
+        errorbar="ci",
         dodge=True,
     )
+
+    for line in ax.get_lines():
+        line.set_xdata(line.get_xdata() + 0.07)
 
     add_nucleolus_and_shapley(df, ax)
     ax.set_xlabel("Treatment")
     ax.set_ylabel("Average payoff")
-    ax.legend(title="Player")
 
     return fig
 
@@ -225,7 +259,6 @@ def payoff_scatterplot(df: pl.DataFrame) -> Figure:
     add_nucleolus_and_shapley(df, ax)
     ax.set_xlabel("Treatment")
     ax.set_ylabel("Payoff")
-    ax.legend(title="Player")
 
     return fig
 

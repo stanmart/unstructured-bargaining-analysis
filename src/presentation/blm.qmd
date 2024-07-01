@@ -148,6 +148,7 @@ table = summary_col(
     include_r2=False,
     info_dict={"N": lambda reg: f"{int(reg.nobs):d}"}
 )
+table.extra_txt[0] = "Matching-group-level clustered standard errors in parentheses."
 table
 ```
 
@@ -211,7 +212,7 @@ table
 :::{.column width="35%" .smaller}
 - In the $Y=90$ treatment, A only achieves significantly higher than ES by excluding one small player
   - Not efficient
-  - Why doesn't the excluded player does not seem to want the remaining 10 points
+  - Why doesn't the excluded player seem to want the remaining 10 points
 - The outcomes are still not stable
   - excluded player could make a counter-offer
 :::
@@ -222,12 +223,16 @@ table
 
 ## Time of proposing and accepting final allocation
 ![](/out/figures/timing_until_decision.svg)
-<!-- ↖ leading '/' is important...... -->
+
+::: {.smaller}
+- Most final allocations are proposed within the first minute
+:::
 
 ## Time of proposing and accepting final allocation
 ![](/out/figures/timing_until_agreement_scatterplot.svg)
-
+:::
 ::: {.smaller}
+- Most agreement times are well before the end of the bargaining time
 - In the $Y=90$ treatment, partial agreements come later
 - Otherwise, agreement times are broadly similar across the main treatments
 :::
