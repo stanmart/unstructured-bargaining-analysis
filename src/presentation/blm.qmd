@@ -196,9 +196,6 @@ table
 
 :::
 
-
-# Exploratory observations
-
 - Qualitatively agrees with the nucleolus and disagrees with SV
 - Quantitatively disagrees with both (cf. plots)
 
@@ -330,6 +327,37 @@ table
 
 
 # Conclusions
+
+## What we did
+
+- **Free-form bargaining** is important to understand
+  - More realistic than strictly controlled designs
+  - NCGT have trouble describing it → check if CGT is predictive
+- Players could bargain for 5 minutes **without any binding actions**
+  - An interface for proposing and accepting allocations
+  - Group-level unrestricted **chat**
+- **Vary the necessity of including both small players** between treatments
+
+## Main takaways
+
+- **Nucleolus** gives **qualitatively correct** predictions, Shapley value does not
+  - People might think in terms of **stabililty** and profitable deviations
+- **Both fail quatitatively**, especially when the big player has lots of bargaining power
+  - **Fairness** considerations seem to be important
+  - Although not in the "marginal contribution" way that SV is based on
+- **Chat logs** are useful even in lieu of proper analysis
+  - Going through them reveals a lot about players' understanding of the game
+
+## Future research
+
+- We have a **rich dataset** (real time actions)
+  - Good for exploratory analysis and to inform study design in the future
+  - Not sure what aspects to look into more deeply – **ideas?**
+- People's **stated preferences** (axiom survey) **and actions disagree**
+  - What would happen if these axioms would mentioned before the bargaining?
+- Differences between matching groups
+  - Maybe just player heterogeneity
+  - Or norms / reference values determined in the first couple of rounds?
 
 
 # Thank you {.unnumbered .unlisted}
