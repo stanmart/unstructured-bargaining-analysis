@@ -202,6 +202,8 @@ table
 - Qualitatively agrees with the nucleolus and disagrees with SV
 - Quantitatively disagrees with both (cf. plots)
 
+# Exploratory observations
+
 ## Payoffs by coordination outcomes
 :::: {.columns}
 
@@ -219,23 +221,11 @@ table
 
 ::::
 
-# Timing of the acceptances {.unlisted .unnumbered}
+## Between matching group variance
+![](/out/figures/payoff_matching_group_average.svg)
 
-## Time of proposing and accepting final allocation
-![](/out/figures/timing_until_decision.svg)
-
-::: {.smaller}
-- Most final allocations are proposed within the first minute
-:::
-
-## Time of proposing and accepting final allocation
-![](/out/figures/timing_until_agreement_scatterplot.svg)
-:::
-::: {.smaller}
-- Most agreement times are well before the end of the bargaining time
-- In the $Y=90$ treatment, partial agreements come later
-- Otherwise, agreement times are broadly similar across the main treatments
-:::
+- Differences exist between matching groups
+- Player heterogeneity or learning?
 
 # Testing the axioms {.unlisted .unnumbered}
 
@@ -307,9 +297,36 @@ table
 
 ::::
 
-# Terms used in the chat {.unlisted .unnumbered}
+# Real-time interactions {.unlisted .unnumbered}
 
-## Need to figiure out what to include here
+## Time of proposing and accepting final allocation
+![](/out/figures/timing_until_decision.svg)
+
+::: {.smaller}
+- Most final allocations are proposed within the first minute
+:::
+
+## Time of proposing and accepting final allocation
+![](/out/figures/timing_until_agreement_scatterplot.svg)
+
+::: {.smaller}
+- Most agreement times are well before the end of the bargaining time
+- In the $Y=90$ treatment, partial agreements come later
+- Otherwise, agreement times are broadly similar across the main treatments
+:::
+
+## Chat logs
+
+- Have around 6000 chat messages in total
+  - Participants interacted intensively over chat
+  - Quality is rather messy (typos, slang, etc.)
+- What to do with it?
+  - Find words that are relatively more prevalent depending on the outcome
+  - Classify messages into categories (e.g. fairness-related, small talk, etc.) 
+    - Use an LLM through an API
+    - Manually classify some and finetune a BERT-like model to classify the rest
+  - Can also learn things like people's understanding of the game
+- In general, ideas would probably need *much* more data for proper NLP analysis
 
 
 # Conclusions
