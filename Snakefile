@@ -1,5 +1,56 @@
 SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
 WORD_TYPES = ["all", "VERB", "ADJ", "NOUN"]
+PRESENTATIONS, *_ = glob_wildcards("src/presentation/{presentation}.qmd")
+
+
+rule prepare_to_deploy:
+    input:
+        presentations = expand("out/presentation/{presentation}.html", presentation=PRESENTATIONS),
+    output:
+        presentations = expand("gh-pages/{presentation}.html", presentation=PRESENTATIONS),
+        nojekyll = "gh-pages/.nojekyll"
+    run:
+        from shutil import copy2
+        from pathlib import Path
+        for file in input.presentations:
+            copy2(file, "gh-pages")
+        Path(output.nojekyll).touch()
+
+rule presentations:
+    input:
+        expand("out/presentation/{presentation}.html", presentation=PRESENTATIONS)
+
+rule blm_presentation:
+    input:
+        "out/figures/values_theory.svg",
+        "out/figures/payoff_average.svg",
+        "out/figures/payoff_scatterplot.svg",
+        "out/figures/payoff_by_agreement_type.svg",
+        "out/figures/timing_until_decision.svg",
+        "out/figures/timing_until_agreement_scatterplot.svg",
+        "out/analysis/mann_whitney.json",
+        "out/analysis/regression.pkl",
+        "out/analysis/regression_dummies.pkl",
+        "out/figures/axioms_outcomes_efficiency.svg",
+        "out/figures/axioms_outcomes_symmetry.svg",
+        "out/figures/axioms_outcomes_dummy_player.svg",
+        "out/figures/axioms_outcomes_linearity_additivity.svg",
+        "out/figures/axioms_outcomes_stability.svg",
+        "out/figures/axioms_survey_efficiency-2col.svg",
+        "out/figures/axioms_survey_symmetry-2col.svg",
+        "out/figures/axioms_survey_dummy_player-2col.svg",
+        "out/figures/axioms_survey_linearity_HD1-2col.svg",
+        "out/figures/axioms_survey_linearity_additivity-2col.svg",
+        "out/figures/axioms_survey_stability-2col.svg",
+        qmd = "src/presentation/blm.qmd",
+        css = "src/presentation/include/custom.scss",
+        marhjax_js = "src/presentation/include/mathjax-settings.html",
+        section_js = "src/presentation/include/sections-in-footer.html",
+        bibliography = "src/paper/references.bib",
+    output:
+        "out/presentation/blm.html",
+    shell:
+        "quarto render {input.qmd}"
 
 
 rule figures:
@@ -53,7 +104,7 @@ rule run_analysis:
 
 rule create_values_theory_plot:
     output:
-        figure = "out/figures/values_theory.pdf",
+        figure = "out/figures/values_theory.{ext}",
     script:
         "src/figures/values_theory_plot.py"
 
@@ -62,7 +113,7 @@ rule create_chat_plot:
         outcomes = "data/clean/_collected/outcomes.csv",
         lemmas = "out/analysis/lemmas.csv",
     output: 
-        figure = "out/figures/chat_top_{group_var}_{word_type}_{dummy}.pdf",
+        figure = "out/figures/chat_top_{group_var}_{word_type}_{dummy}.{ext}",
     script: 
         "src/figures/chat_plots.py"
 
@@ -79,15 +130,18 @@ rule create_survey_plot:
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",
     output: 
-        figure = "out/figures/survey_{plot}.pdf",
+        figure = "out/figures/survey_{plot}.{ext}",
     script: 
         "src/figures/survey_plots.py"
 
 rule create_axiom_survey_plot: 
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",
+    wildcard_constraints:
+        ncol = r"\-?.*",
+        axiom = "\w+"
     output: 
-        figure = "out/figures/axioms_survey_{axiom}.pdf",
+        figure = "out/figures/axioms_survey_{axiom}{ncol}.{ext}",
     script: 
         "src/figures/axiom_plots.py"
 
@@ -95,7 +149,7 @@ rule create_axiom_outcomes_plot:
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",
     output: 
-        figure = "out/figures/axioms_outcomes_{axiom}.pdf",
+        figure = "out/figures/axioms_outcomes_{axiom}.{ext}",
     script: 
         "src/figures/axiom_outcomes_plots.py"
 
@@ -103,7 +157,7 @@ rule create_proposal_plot:
     input:
         actions = "data/clean/_collected/actions.csv",
     output:
-        figure = "out/figures/proposal_{plot}.pdf",
+        figure = "out/figures/proposal_{plot}.{ext}",
     script:
         "src/figures/proposal_plots.py"
 
@@ -113,7 +167,7 @@ rule create_timing_plot:
         outcomes = "data/clean/_collected/outcomes.csv",
         actions = "data/clean/_collected/actions.csv",
     output:
-        figure = "out/figures/timing_{plot}.pdf",
+        figure = "out/figures/timing_{plot}.{ext}",
     script:
         "src/figures/timing_plots.py"
 
@@ -122,7 +176,7 @@ rule create_payoff_plot:
     input:
         outcomes = "data/clean/_collected/outcomes.csv",
     output:
-        figure = "out/figures/payoff_{plot}.pdf",
+        figure = "out/figures/payoff_{plot}.{ext}",
     script:
         "src/figures/payoff_plots.py"
 

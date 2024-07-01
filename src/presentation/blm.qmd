@@ -1,0 +1,323 @@
+---
+title: "Unstructured bargaining experiment"
+author:
+ - Mia Lu
+ - Martin Stancsics
+format:
+  revealjs:
+    embed-resources: true
+    theme:
+      - default
+      - include/custom.scss
+    include-in-header:
+      - include/mathjax-settings.html
+      - include/sections-in-footer.html
+    toc: true
+    toc-depth: 1
+    toc-title: Agenda
+---
+
+# Introduction
+
+## Literature
+[see @shapley1953value]
+
+
+# Game and solution concepts
+
+## The game
+
+- Players: $N = \{A, B_1, B_2\}$
+- Value function:
+  - No one can create any value alone: $v(\{A\}) = v(\{B_i\}) = 0$
+  - Player $A$ is indispensable: $v(\{B_1, B_2\}) = 0$
+  - Small players contribute to the value: $v(\{A, B_i\}) = Y \in [0, 100]$
+  - The more small players the better: $v(\{A, B_1, B_2\}) = 100$
+- How to divide the value between the players?
+
+## Core
+
+- The set of payoff vectors such that no sub-coalition has a larger value than the sum of their payoffs
+  - Stability-based concept
+  - Similar idea to the Nash equilibrium, but for multi-player deviations
+- Very intuitive and plausible, but
+  - Can be empty (existence not guaranteed)
+  - Can be multi-valued (uniqueness not guaranteed)
+
+## Nucleolus
+
+- Maximizes the smallest excess (sum of payoffs minus value) across coalitions
+  - Not as nice intuition as for the core, but...
+  - if the core is non-empty, the nucleolus is in the core
+- Useful properties
+  - Always exists
+  - Always unique
+- Can be thought of as a way to mix the stability-based intuition behind the core with useful properties
+
+## Shapley value
+
+- Each players gets their average marginal contribution
+  - Fairness based motivation
+- Appealing characterization
+  - Efficient: whole pie is distributed
+  - Symmetric: identical (from the pov of $v$) players should get the same payoff
+  - Dummy player property: players contributing nothing get nothing
+  - Linearity (across games)
+- Useful properties
+  - Always exists
+  - Always unique
+
+## In our game
+![](/out/figures/values_theory.svg)
+
+# Experimental design 
+
+## General structure
+
+- 4 treatments: $Y=10$, $Y=30$, $Y=90$, dummy player
+- 4 experiment sessions (one treatment per session)
+- 144 subjects in total (36 subjects per session) 
+- Conducted in the BLU lab (May 2024)
+- Timing: 
+  - Instructions with comprehension checks
+  - Slider task
+  - Trial round + 5 bargaining rounds (5 minutes each)
+  - Survey (demographics, reasoning, axioms)
+- Payment: 
+  - Conversion: 1 point = 0.6CHF
+  - Subjects are paid their average payoff across all rounds + show-up fee
+
+## Role and group assignment
+
+- Player roles are assigned stochastically based on players' performance in the slider task
+  - the better they perform, the higher the likelihood of becoming Player A
+- Stranger matching for bargaining groups each round
+  - no set of subjects is matched twice
+- Split each session into 6 matching groups (à 6 players) in order to account for dependence between rounds in the analysis
+  - Bargaining groups are only redrawn within matching groups
+
+## Bargaining
+
+- Bargaining via public chat 
+- Interface for submitting proposals and current acceptances to facilitate bargaining
+- Free-form bargaining: 
+  - Unlimited number of proposals 
+  - No restrictions on the order of proposals and acceptances 
+  - Acceptances are not binding and can be changed any time
+- At the end of each bargaining round: 
+  - Current acceptances are taken as final decisions
+  - A proposal is successful only if all members of a coalition agree on it
+  
+
+
+# Main results
+
+## Payoffs – aggregate
+:::: {.columns}
+
+::: {.column width="65%"}
+![](/out/figures/payoff_average.svg){width=100% height=100%}
+:::
+
+:::{.column width="35%" .smaller}
+- Dummy player gets something
+- $Y=10$ and $Y=30$ treatments look similar
+- Player A gets more in $Y=30$ treatment
+- Nucleolus better in terms of 'shape' but worse in terms of 'distance'
+:::
+
+::::
+
+## Payoff of Player A – regression
+
+::: {.smaller}
+```{python}
+import pickle
+from statsmodels.iolib.summary2 import summary_col
+
+with open("out/analysis/regression.pkl", "rb") as reg:
+    regression_continuous = pickle.load(reg)
+with open("out/analysis/regression_dummies.pkl", "rb") as reg:
+    regression_dummies = pickle.load(reg)
+
+table = summary_col(
+    [regression_continuous, regression_dummies],
+    stars=True,
+    float_format="%.2f",
+    model_names=["Model cont.", "Model ind."],
+    include_r2=False,
+    info_dict={"N": lambda reg: f"{int(reg.nobs):d}"}
+)
+table.extra_txt[0] = "Matching-group-level clustered standard errors in parentheses."
+table
+```
+
+:::
+
+## Payoffs – a deeper look
+:::: {.columns}
+
+::: {.column width="65%"}
+![](/out/figures/payoff_scatterplot.svg){width=100% height=100%}
+:::
+
+:::{.column width="35%" .smaller}
+- In all treatments, equal(ish) split is a frequent outcome
+  - Even in the dummy player treatment!
+- $Y=10$ and $Y=30$ treatments still look similar
+- In the $Y=90$ treatment, A can occasionally do much better
+:::
+
+::::
+
+## Payoff of Player A – non-parametrics
+
+Mann-Whitney test comparing Player A's payoff across groups
+
+::: {.smaller}
+```{python}
+import json
+import pandas as pd
+
+with open("out/analysis/mann_whitney.json", "r") as mw:
+    mw_results = json.load(mw)
+
+table = pd.DataFrame.from_records(mw_results).T
+table = table.rename(columns={
+    "statistic": "U statistic",
+    "pvalue": "p-value",
+})
+table = table.rename(
+    index=lambda s: " < ".join(f"[Y = {t}]" for t in s.split("-"))
+)
+table
+
+```
+
+:::
+
+
+# Exploratory observations
+
+- Qualitatively agrees with the nucleolus and disagrees with SV
+- Quantitatively disagrees with both (cf. plots)
+
+## Payoffs by coordination outcomes
+:::: {.columns}
+
+::: {.column width="65%"}
+![](/out/figures/payoff_by_agreement_type.svg){width=100% height=100%}
+:::
+
+:::{.column width="35%" .smaller}
+- In the $Y=90$ treatment, A only achieves significantly higher than ES by excluding one small player
+  - Not efficient
+  - Why doesn't the excluded player seem to want the remaining 10 points
+- The outcomes are still not stable
+  - excluded player could make a counter-offer
+:::
+
+::::
+
+# Timing of the acceptances {.unlisted .unnumbered}
+
+## Time of proposing and accepting final allocation
+![](/out/figures/timing_until_decision.svg)
+
+::: {.smaller}
+- Most final allocations are proposed within the first minute
+:::
+
+## Time of proposing and accepting final allocation
+![](/out/figures/timing_until_agreement_scatterplot.svg)
+:::
+::: {.smaller}
+- Most agreement times are well before the end of the bargaining time
+- In the $Y=90$ treatment, partial agreements come later
+- Otherwise, agreement times are broadly similar across the main treatments
+:::
+
+# Testing the axioms {.unlisted .unnumbered}
+
+## Efficiency
+:::: {.columns}
+
+::: {.column width="60%"}
+![](/out/figures/axioms_outcomes_efficiency.svg){width=100% height=100%}
+:::
+
+:::{.column width="40%"}
+![](/out/figures/axioms_survey_efficiency-2col.svg){width=100% height=80%}
+:::
+
+::::
+
+## Symmetry
+:::: {.columns}
+
+::: {.column width="60%"}
+![](/out/figures/axioms_outcomes_symmetry.svg){width=100% height=100%}
+:::
+
+:::{.column width="40%"}
+![](/out/figures/axioms_survey_symmetry-2col.svg){width=100% height=80%}
+:::
+
+::::
+
+## Dummy player axiom
+:::: {.columns}
+
+::: {.column width="60%"}
+![](/out/figures/axioms_outcomes_dummy_player.svg){width=100% height=100%}
+:::
+
+:::{.column width="40%"}
+![](/out/figures/axioms_survey_dummy_player-2col.svg){width=100% height=80%}
+:::
+
+::::
+
+## Stability
+:::: {.columns}
+
+::: {.column width="60%"}
+![](/out/figures/axioms_outcomes_stability.svg){width=100% height=100%}
+:::
+
+:::{.column width="40%"}
+![](/out/figures/axioms_survey_stability-2col.svg){width=100% height=80%}
+:::
+
+::::
+
+## Linearity
+![](/out/figures/axioms_outcomes_linearity_additivity.svg)
+
+## Linearity
+:::: {.columns}
+
+::: {.column width="40%"}
+![](/out/figures/axioms_survey_linearity_HD1-2col.svg){width=100% height=100%}
+:::
+
+:::{.column width="40%"}
+![](/out/figures/axioms_survey_linearity_additivity-2col.svg){width=100% height=80%}
+:::
+
+::::
+
+# Terms used in the chat {.unlisted .unnumbered}
+
+## Need to figiure out what to include here
+
+
+# Conclusions
+
+
+# Thank you {.unnumbered .unlisted}
+
+## References
+
+::: {#refs}
+:::
