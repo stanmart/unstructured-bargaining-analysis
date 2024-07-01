@@ -415,6 +415,9 @@ def payoff_matching_group_average(df: pl.DataFrame) -> sns.axisgrid.FacetGrid:
         marker="2",
     )
 
+    for ax in g.axes.flat:
+        ax.xaxis.grid(False)
+
     g.set_titles(col_template="{col_name} treatment")
     g.set_axis_labels("Player role", "Average payoff")
     g.figure.suptitle(

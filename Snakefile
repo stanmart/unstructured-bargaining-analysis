@@ -42,6 +42,7 @@ rule blm_presentation:
         "out/figures/axioms_survey_linearity_HD1-2col.svg",
         "out/figures/axioms_survey_linearity_additivity-2col.svg",
         "out/figures/axioms_survey_stability-2col.svg",
+        "out/figures/payoff_matching_group_average.svg",
         qmd = "src/presentation/blm.qmd",
         css = "src/presentation/include/custom.scss",
         marhjax_js = "src/presentation/include/mathjax-settings.html",
