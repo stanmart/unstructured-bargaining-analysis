@@ -196,11 +196,10 @@ table
 
 :::
 
-
-# Exploratory observations
-
 - Qualitatively agrees with the nucleolus and disagrees with SV
 - Quantitatively disagrees with both (cf. plots)
+
+# Exploratory observations
 
 ## Payoffs by coordination outcomes
 :::: {.columns}
@@ -219,23 +218,11 @@ table
 
 ::::
 
-# Timing of the acceptances {.unlisted .unnumbered}
+## Between matching group variance
+![](/out/figures/payoff_matching_group_average.svg)
 
-## Time of proposing and accepting final allocation
-![](/out/figures/timing_until_decision.svg)
-
-::: {.smaller}
-- Most final allocations are proposed within the first minute
-:::
-
-## Time of proposing and accepting final allocation
-![](/out/figures/timing_until_agreement_scatterplot.svg)
-:::
-::: {.smaller}
-- Most agreement times are well before the end of the bargaining time
-- In the $Y=90$ treatment, partial agreements come later
-- Otherwise, agreement times are broadly similar across the main treatments
-:::
+- Differences exist between matching groups
+- Player heterogeneity or learning?
 
 # Testing the axioms {.unlisted .unnumbered}
 
@@ -307,12 +294,70 @@ table
 
 ::::
 
-# Terms used in the chat {.unlisted .unnumbered}
+# Real-time interactions {.unlisted .unnumbered}
 
-## Need to figiure out what to include here
+## Time of proposing and accepting final allocation
+![](/out/figures/timing_until_decision.svg)
+
+::: {.smaller}
+- Most final allocations are proposed within the first minute
+:::
+
+## Time of proposing and accepting final allocation
+![](/out/figures/timing_until_agreement_scatterplot.svg)
+
+::: {.smaller}
+- Most agreement times are well before the end of the bargaining time
+- In the $Y=90$ treatment, partial agreements come later
+- Otherwise, agreement times are broadly similar across the main treatments
+:::
+
+## Chat logs
+
+- Have around 6000 chat messages in total
+  - Participants interacted intensively over chat
+  - Quality is rather messy (typos, slang, etc.)
+- What to do with it?
+  - Find words that are relatively more prevalent depending on the outcome
+  - Classify messages into categories (e.g. fairness-related, small talk, etc.) 
+    - Use an LLM through an API
+    - Manually classify some and finetune a BERT-like model to classify the rest
+  - Can also learn things like people's understanding of the game
+- In general, would probably need *much* more data for proper NLP analysis
 
 
 # Conclusions
+
+## What we did
+
+- **Free-form bargaining** is important to understand
+  - More realistic than strictly controlled designs
+  - NCGT have trouble describing it → check if CGT is predictive
+- Players could bargain for 5 minutes **without any binding actions**
+  - An interface for proposing and accepting allocations
+  - Group-level unrestricted **chat**
+- **Vary the necessity of including both small players** between treatments
+
+## Main takeaways
+
+- **Nucleolus** gives **qualitatively correct** predictions, Shapley value does not
+  - People might think in terms of **stability** and profitable deviations
+- **Both fail quantitatively**, especially when the big player has lots of bargaining power
+  - **Fairness** considerations seem to be important
+  - Although not in the "marginal contribution" way that SV is based on
+- People's **stated preferences** (axiom survey) **and actions disagree**
+  - What would happen if these axioms were mentioned before the bargaining?
+
+## Future research
+
+- **Chat logs** are useful even in lieu of proper analysis
+  - Going through them reveals a lot about players' understanding of the game
+- We have a **rich dataset** (real time actions)
+  - Good for exploratory analysis and to inform study design in the future
+  - Not sure what aspects to look into more deeply – **ideas?**
+- Differences between matching groups
+  - Maybe just player heterogeneity
+  - Or norms / reference values determined in the first couple of rounds?
 
 
 # Thank you {.unnumbered .unlisted}
