@@ -20,8 +20,12 @@ format:
 # Introduction
 
 ## Literature
-[see @shapley1953value]
+[see @ShapleyLloydetal1953]
 
+- early unstructured bargaining papers (1950s-1990s): @Kalischetal1952, @Maschler1965, @NydeggerOwen1974, @RapoportKahan1976, **@MurnighanRoth1977**, @MurnighanRoth1978, @Micheneretal1979, @MichenerPotter1981, **@LeopoldWildburger1992**
+  - mostly face-to-face bargaining 
+- free-form bargaining: 
+- multiplayer bargaining
 
 # Game and solution concepts
 
@@ -231,6 +235,7 @@ table
 ## Time of proposing and accepting final allocation
 ![](/out/figures/timing_until_agreement_scatterplot.svg)
 :::
+
 ::: {.smaller}
 - Most agreement times are well before the end of the bargaining time
 - In the $Y=90$ treatment, partial agreements come later
