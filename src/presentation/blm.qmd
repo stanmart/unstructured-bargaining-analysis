@@ -86,10 +86,9 @@ format:
 
 ## General structure
 
-- 4 treatments: $Y=10$, $Y=30$, $Y=90$, dummy player
-- 4 experiment sessions (one treatment per session)
-- 144 subjects in total (36 subjects per session) 
 - Conducted in the BLU lab (May 2024)
+  - 4 treatments/sessions: $Y=10$, $Y=30$, $Y=90$, dummy player
+  - 144 subjects in total (36 subjects per session) 
 - Timing: 
   - Instructions with comprehension checks
   - Slider task
