@@ -20,12 +20,20 @@ format:
 # Introduction
 
 ## Literature
-[see @ShapleyLloydetal1953]
 
-- early unstructured bargaining papers (1950s-1990s): @Kalischetal1952, @Maschler1965, @NydeggerOwen1974, @RapoportKahan1976, **@MurnighanRoth1977**, @MurnighanRoth1978, @Micheneretal1979, @MichenerPotter1981, **@LeopoldWildburger1992**
-  - mostly face-to-face bargaining 
-- free-form bargaining: 
-- multiplayer bargaining
+::: {.smaller}
+- early unstructured bargaining papers (1950s-1990s):  
+  - @Kalischetal1952, @Maschler1965, @NydeggerOwen1974, @RapoportKahan1976, **@MurnighanRoth1977**, @MurnighanRoth1978, @Micheneretal1979, @MichenerPotter1981, **@LeopoldWildburger1992** 
+    - free-form bargaining is face-to-face, different experimental standards
+- most more recent bargaining papers are on bilateral and structured/semi-structured bargaining
+  - e.g. @Isonietal2014, @KaragözoğluRiedl2015, @EmbreyFrechetteLehrer2015, @MitsutsuneTakanori2014
+  - free-form bargaining: @LuhanPoulsenRoos2019, @Schwaninger2022, @Galeottietal2018, @HossainLyonsSiow2020, **@NavarroVeszteg2020**, @Diermeieretal2008
+    - almost all bilateral 
+  - bargaining with at least three players: @MonteroSeftonZhang2008, @TremewanVanberg2016, **@ShinodaFunaki2022**
+    - structured/semi-structured bargaining 
+- fairness views: 
+  - @BochetKhannaSiegenthaler2023, @Schwaninger2022, @LuhanPoulsenRoos2019, **@ClippelRozen2022**
+:::
 
 # Game and solution concepts
 
