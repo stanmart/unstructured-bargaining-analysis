@@ -20,8 +20,20 @@ format:
 # Introduction
 
 ## Literature
-[see @shapley1953value]
 
+::: {.smaller}
+- Early unstructured bargaining papers (1950s-1990s):  
+  - @Kalischetal1952, @Maschler1965, @NydeggerOwen1974, @RapoportKahan1976, **@MurnighanRoth1977**, @MurnighanRoth1978, @Micheneretal1979, @MichenerPotter1981, **@LeopoldWildburger1992** 
+    - Free-form bargaining is face-to-face, different experimental standards
+- Most more recent bargaining papers are on bilateral and structured/semi-structured bargaining
+  - E.g. @Isonietal2014, @KaragözoğluRiedl2015, @EmbreyFrechetteLehrer2015, @MitsutsuneTakanori2014
+  - Free-form bargaining: @LuhanPoulsenRoos2019, @Schwaninger2022, @Galeottietal2018, @HossainLyonsSiow2020, **@NavarroVeszteg2020**, @Diermeieretal2008
+    - Almost all bilateral 
+  - Bargaining with at least three players: @MonteroSeftonZhang2008, @TremewanVanberg2016, **@ShinodaFunaki2022**
+    - Structured/semi-structured bargaining 
+- Fairness views: 
+  - @BochetKhannaSiegenthaler2023, @Schwaninger2022, @LuhanPoulsenRoos2019, **@ClippelRozen2022**
+:::
 
 # Game and solution concepts
 
@@ -221,8 +233,22 @@ table
 ## Between matching group variance
 ![](/out/figures/payoff_matching_group_average.svg)
 
-- Differences exist between matching groups
-- Player heterogeneity or learning?
+## Time of proposing and accepting final allocation
+![](/out/figures/timing_until_decision.svg)
+
+::: {.smaller}
+- Most final allocations are proposed within the first minute
+:::
+
+## Time of accepting final allocation
+![](/out/figures/timing_until_agreement_scatterplot.svg)
+:::
+
+::: {.smaller}
+- Most agreement times are well before the end of the bargaining time
+- In the $Y=90$ treatment, partial agreements come later
+- Otherwise, agreement times are broadly similar across the main treatments
+:::
 
 # Testing the axioms {.unlisted .unnumbered}
 
