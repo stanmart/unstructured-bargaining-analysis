@@ -323,7 +323,7 @@ table
     - Use an LLM through an API
     - Manually classify some and finetune a BERT-like model to classify the rest
   - Can also learn things like people's understanding of the game
-- In general, ideas would probably need *much* more data for proper NLP analysis
+- In general, would probably need *much* more data for proper NLP analysis
 
 
 # Conclusions
@@ -338,23 +338,23 @@ table
   - Group-level unrestricted **chat**
 - **Vary the necessity of including both small players** between treatments
 
-## Main takaways
+## Main takeaways
 
 - **Nucleolus** gives **qualitatively correct** predictions, Shapley value does not
-  - People might think in terms of **stabililty** and profitable deviations
-- **Both fail quatitatively**, especially when the big player has lots of bargaining power
+  - People might think in terms of **stability** and profitable deviations
+- **Both fail quantitatively**, especially when the big player has lots of bargaining power
   - **Fairness** considerations seem to be important
   - Although not in the "marginal contribution" way that SV is based on
-- **Chat logs** are useful even in lieu of proper analysis
-  - Going through them reveals a lot about players' understanding of the game
+- People's **stated preferences** (axiom survey) **and actions disagree**
+  - What would happen if these axioms were mentioned before the bargaining?
 
 ## Future research
 
+- **Chat logs** are useful even in lieu of proper analysis
+  - Going through them reveals a lot about players' understanding of the game
 - We have a **rich dataset** (real time actions)
   - Good for exploratory analysis and to inform study design in the future
   - Not sure what aspects to look into more deeply – **ideas?**
-- People's **stated preferences** (axiom survey) **and actions disagree**
-  - What would happen if these axioms would mentioned before the bargaining?
 - Differences between matching groups
   - Maybe just player heterogeneity
   - Or norms / reference values determined in the first couple of rounds?
