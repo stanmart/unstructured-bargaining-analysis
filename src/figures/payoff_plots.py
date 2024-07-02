@@ -246,7 +246,15 @@ def payoff_average(df: pl.DataFrame) -> Figure:
 def payoff_scatterplot(df: pl.DataFrame) -> Figure:
     fig, ax = plt.subplots()
     sns.stripplot(
-        df,
+        df.with_columns(
+            role=pl.col("role").replace(
+                {
+                    "P1": "$A_1$ / $A$",
+                    "P2": "$A_2$ / $B_1$",
+                    "P3": "$B$ / $B_2$",
+                }
+            )
+        ),
         x="treatment_name_nice",
         y="payoff_this_round",
         hue="role",
@@ -406,6 +414,9 @@ def payoff_matching_group_average(df: pl.DataFrame) -> sns.axisgrid.FacetGrid:
         linewidth=2,
         marker="2",
     )
+
+    for ax in g.axes.flat:
+        ax.xaxis.grid(False)
 
     g.set_titles(col_template="{col_name} treatment")
     g.set_axis_labels("Player role", "Average payoff")
