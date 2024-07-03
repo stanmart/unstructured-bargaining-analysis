@@ -232,22 +232,6 @@ table
 ## Between matching group variance
 ![](/out/figures/payoff_matching_group_average.svg)
 
-## Time of proposing and accepting final allocation
-![](/out/figures/timing_until_decision.svg)
-
-::: {.smaller}
-- Most final allocations are proposed within the first minute
-:::
-
-## Time of accepting final allocation
-![](/out/figures/timing_until_agreement_scatterplot.svg)
-:::
-
-::: {.smaller}
-- Most agreement times are well before the end of the bargaining time
-- In the $Y=90$ treatment, partial agreements come later
-- Otherwise, agreement times are broadly similar across the main treatments
-:::
 
 # Testing the axioms {.unlisted .unnumbered}
 
@@ -328,7 +312,7 @@ table
 - Most final allocations are proposed within the first minute
 :::
 
-## Time of proposing and accepting final allocation
+## Time of accepting final allocation
 ![](/out/figures/timing_until_agreement_scatterplot.svg)
 
 ::: {.smaller}
