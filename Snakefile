@@ -1,4 +1,4 @@
-from src.util.makeutils import find_quarto_images
+from src.util.makeutils import find_quarto_images, find_opened_files
 
 
 SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
@@ -25,14 +25,13 @@ rule presentations:
 
 rule blm_presentation:
     input:
-        regression = "out/analysis/regression.pkl",
-        regression_dummies = "out/analysis/regression_dummies.pkl",
-        images = find_quarto_images("src/presentation/blm.qmd"),
         qmd = "src/presentation/blm.qmd",
+        analysis_results = find_opened_files("src/presentation/blm.qmd"),
+        images = find_quarto_images("src/presentation/blm.qmd"),
+        bibliography = "src/paper/references.bib",
         css = "src/presentation/include/custom.scss",
         marhjax_js = "src/presentation/include/mathjax-settings.html",
         section_js = "src/presentation/include/sections-in-footer.html",
-        bibliography = "src/paper/references.bib",
     output:
         "out/presentation/blm.html",
     shell:
