@@ -47,25 +47,6 @@ format:
   - The more small players the better: $v(\{A, B_1, B_2\}) = 100$
 - How to divide the value between the players?
 
-## Core
-
-- The set of payoff vectors such that no sub-coalition has a larger value than the sum of their payoffs
-  - Stability-based concept
-  - Similar idea to the Nash equilibrium, but for multi-player deviations
-- Very intuitive and plausible, but
-  - Can be empty (existence not guaranteed)
-  - Can be multi-valued (uniqueness not guaranteed)
-
-## Nucleolus
-
-- Maximizes the smallest excess (sum of payoffs minus value) across coalitions
-  - Not as nice intuition as for the core, but...
-  - if the core is non-empty, the nucleolus is in the core
-- Useful properties
-  - Always exists
-  - Always unique
-- Can be thought of as a way to mix the stability-based intuition behind the core with useful properties
-
 ## Shapley value
 
 - Each players gets their average marginal contribution
@@ -78,6 +59,26 @@ format:
 - Useful properties
   - Always exists
   - Always unique
+
+## Core
+
+- Excess: what a coalition gets vs what it could achieve on its own
+- The set of payoff vectors such that excess is non-negative for all coalitions
+  - Stability-based concept
+  - Similar idea to the Nash equilibrium, but for multi-player deviations
+- Very intuitive and plausible, but
+  - Can be empty (existence not guaranteed)
+  - Can be multi-valued (uniqueness not guaranteed)
+
+## Nucleolus
+
+- Maximizes the smallest excess across coalitions
+  - if the core is non-empty, the nucleolus is in the core
+  - Mix of stability and fairness
+- Useful properties
+  - Always exists
+  - Always unique
+- Can be thought of as a way to mix the stability-based intuition behind the core with useful properties of the Shapley value
 
 ## In our game
 ![](/out/figures/values_theory.svg)
@@ -208,7 +209,7 @@ table
 :::
 
 - Qualitatively agrees with the nucleolus and disagrees with SV
-- Quantitatively disagrees with both (cf. plots)
+- Quantitatively closer to SV in $Y=90$ treatment (cf. plots)
 
 # Exploratory observations
 
@@ -345,8 +346,6 @@ table
 - What to do with it?
   - Find words that are relatively more prevalent depending on the outcome
   - Classify messages into categories (e.g. fairness-related, small talk, etc.) 
-    - Use an LLM through an API
-    - Manually classify some and finetune a BERT-like model to classify the rest
   - Can also learn things like people's understanding of the game
 - In general, would probably need *much* more data for proper NLP analysis
 
@@ -365,11 +364,11 @@ table
 
 ## Main takeaways
 
+- Lots of **equal splits** in all treatments
 - **Nucleolus** gives **qualitatively correct** predictions, Shapley value does not
   - People might think in terms of **stability** and profitable deviations
 - **Both fail quantitatively**, especially when the big player has lots of bargaining power
-  - **Fairness** considerations seem to be important
-  - Although not in the "marginal contribution" way that SV is based on
+  - SV seems to be closer in the $Y=90$ case for non-equal splits
 - People's **stated preferences** (axiom survey) **and actions disagree**
   - What would happen if these axioms were mentioned before the bargaining?
 
