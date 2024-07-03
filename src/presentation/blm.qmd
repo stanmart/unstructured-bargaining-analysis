@@ -1,5 +1,5 @@
 ---
-title: "Unstructured bargaining experiment"
+title: "Free-form bargaining experiment"
 author:
  - Mia Lu
  - Martin Stancsics
@@ -18,6 +18,35 @@ format:
 ---
 
 # Introduction
+
+## Motivation
+
+::: {.fragment}
+- Much work on bargaining in experimental economics (understatement)
+:::
+::: {.fragment}
+- Much less work on **free-form bargaining** between more than two players
+  - especially between **more than two players**
+:::
+::: {.fragment}
+- The **one indispensable player / multiple small players** setting has real-world relevance
+  - Wage bargaining
+  - An inventor with an idea and multiple investors
+  - A band, where one member owns the PA system
+:::
+
+## Research question
+
+::: {.fragment}
+- Problem: non-cooperative game theory cannot provide predictions without structure
+  - E.g. timing of the game, who makes the offers
+  - NCGT solution is alternating offer games, but a lot depends on minor details [@hart1996bargaining]
+:::
+
+::: {.highlight-block .idea .fragment}
+- Intuitive expectation about how substitutabililty affects bargaining power
+- Cooperative game theory concepts might be a viable alternative
+:::
 
 ## Literature
 
