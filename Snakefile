@@ -1,3 +1,6 @@
+from src.util.makeutils import find_quarto_images
+
+
 SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
 WORD_TYPES = ["all", "VERB", "ADJ", "NOUN"]
 PRESENTATIONS, *_ = glob_wildcards("src/presentation/{presentation}.qmd")
@@ -22,46 +25,9 @@ rule presentations:
 
 rule blm_presentation:
     input:
-        "out/figures/chat_excerpt-8,10,11,17-21.svg",
-        "out/figures/chat_excerpt-286-291.svg",
-        "out/figures/chat_excerpt-1104-1111.svg",
-        "out/figures/chat_excerpt-5501-5508.svg",
-        "out/figures/chat_excerpt-6950-6955.svg",
-        "out/figures/chat_excerpt-1371-1376.svg",
-        "out/figures/chat_excerpt-1348-1355.svg",
-        "out/figures/chat_excerpt-2702-2707.svg",
-        "out/figures/chat_excerpt-5640,5647-5648,5660-5663.svg",
-        "out/figures/chat_excerpt-6846-6853.svg",
-        "out/figures/chat_excerpt-7052,7054,7057-7063.svg",
-        "out/figures/chat_excerpt-7590-7596,7598-7599.svg",
-        "out/figures/chat_excerpt-5946-5947,5949-5953.svg",
-        "out/figures/values_theory.svg",
-        "out/figures/payoff_average.svg",
-        "out/figures/payoff_scatterplot.svg",
-        "out/figures/payoff_by_agreement_type.svg",
-        "out/figures/timing_until_decision.svg",
-        "out/figures/timing_until_agreement_scatterplot.svg",
-        "out/analysis/mann_whitney.json",
-        "out/analysis/regression.pkl",
-        "out/analysis/regression_dummies.pkl",
-        "out/figures/axioms_outcomes_efficiency.svg",
-        "out/figures/axioms_outcomes_symmetry.svg",
-        "out/figures/axioms_outcomes_dummy_player.svg",
-        "out/figures/axioms_outcomes_linearity_additivity.svg",
-        "out/figures/axioms_outcomes_stability.svg",
-        "out/figures/axioms_survey_efficiency-2col.svg",
-        "out/figures/axioms_survey_symmetry-2col.svg",
-        "out/figures/axioms_survey_dummy_player-2col.svg",
-        "out/figures/axioms_survey_linearity_HD1-2col.svg",
-        "out/figures/axioms_survey_linearity_additivity-2col.svg",
-        "out/figures/axioms_survey_stability-2col.svg",
-        "out/figures/payoff_matching_group_average.svg", 
-        "out/figures/survey_age.svg",
-        "out/figures/survey_degree.svg",
-        "out/figures/survey_difficulty_rating.svg",
-        "out/figures/survey_gender.svg",
-        "out/figures/survey_nationality.svg",
-        "out/figures/survey_study_fields.svg",
+        regression = "out/analysis/regression.pkl",
+        regression_dummies = "out/analysis/regression_dummies.pkl",
+        images = find_quarto_images("src/presentation/blm.qmd"),
         qmd = "src/presentation/blm.qmd",
         css = "src/presentation/include/custom.scss",
         marhjax_js = "src/presentation/include/mathjax-settings.html",
