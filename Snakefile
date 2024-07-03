@@ -95,6 +95,7 @@ rule figures:
         "out/figures/survey_study_fields.pdf",
         "out/figures/survey_nationality.pdf",
         "out/figures/values_theory.pdf",
+        "out/figures/chat_excerpt-8,10,11,17-21.pdf",
 
 rule run_analysis: 
     input: 
@@ -114,6 +115,14 @@ rule create_values_theory_plot:
         figure = "out/figures/values_theory.{ext}",
     script:
         "src/figures/values_theory_plot.py"
+
+rule create_chat_excerpt:
+    input:
+        actions = "data/clean/_collected/actions.csv",
+    output:
+        figure = "out/figures/chat_excerpt-{rows}.{ext}",
+    script:
+        "src/figures/chat_excerpts.py"
 
 rule create_chat_plot: 
     input:
