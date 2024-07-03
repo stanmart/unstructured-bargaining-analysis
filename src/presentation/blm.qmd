@@ -341,7 +341,7 @@ table
 
 ![Y = 30](/out/figures/chat_excerpt-5640,5647-5648,5660-5663.svg){.chatlog}
 
-![Y = 90](/out/figures/chat_excerpt-6846-6853.svg){.chatlog}
+![Y = 90](/out/figures/chat_excerpt-6846-6847,6849,6851,6853,6855,6857,6859.svg){.chatlog}
 :::
 
 ## Chat – Fairness-based reasoning
@@ -351,7 +351,7 @@ table
 
 ![A gets a bit more](/out/figures/chat_excerpt-7590-7596,7598-7599.svg){.chatlog}
 
-![Rejecting small offers](/out/figures/chat_excerpt-5946-5947,5949-5953.svg){.chatlog}
+![Rejecting small offers](/out/figures/chat_excerpt-7894-7901,7906.svg){.chatlog}
 :::
 
 ## Chat – Dummy player treatment
@@ -367,7 +367,7 @@ table
 ## Chat – Feedback about experiment
 
 ::: {layout-ncol=3}
-![Coalition formation](/out/figures/chat_excerpt-6950-6955.svg){.chatlog}
+![Having a chat](/out/figures/chat_excerpt-6508-6509,6511,6513,6524,6527,6528-6529.svg){.chatlog}
 
 ![Payouts](/out/figures/chat_excerpt-286-291.svg){.chatlog}
 
