@@ -391,3 +391,31 @@ table
 
 ::: {#refs}
 :::
+
+## Appendix 
+
+## Bargaining interface 
+
+![](/src/screenshots/bargaining_interface.png){width=50% height=25%}
+
+## Survey (axioms)
+
+![](/src/screenshots/survey_axioms.png){width=80% height=80%}
+
+## Balance (age)
+![](/out/figures/survey_age.svg)
+
+## Balance (gender)
+![](/out/figures/survey_gender.svg)
+
+## Balance (degree)
+![](/out/figures/survey_degree.svg)
+
+## Balance (study fields)
+![](/out/figures/survey_study_fields.svg)
+
+## Balance (nationality)
+![](/out/figures/survey_nationality.svg)
+
+## Balance (difficulty rating)
+![](/out/figures/survey_difficulty_rating.svg)
