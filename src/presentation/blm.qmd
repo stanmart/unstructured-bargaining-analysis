@@ -350,6 +350,46 @@ table
   - Can also learn things like people's understanding of the game
 - In general, would probably need *much* more data for proper NLP analysis
 
+## Chat – Stability-based reasoning
+
+::: {layout-ncol=3}
+![Y = 10](/out/figures/chat_excerpt-2702-2707.svg){.chatlog}
+
+![Y = 30](/out/figures/chat_excerpt-5640,5647-5648,5660-5663.svg){.chatlog}
+
+![Y = 90](/out/figures/chat_excerpt-6846-6853.svg){.chatlog}
+:::
+
+## Chat – Fairness-based reasoning
+
+::: {layout-ncol=3}
+![Equal split](/out/figures/chat_excerpt-7052,7054,7057-7063.svg){.chatlog}
+
+![A gets a bit more](/out/figures/chat_excerpt-7590-7596,7598-7599.svg){.chatlog}
+
+![Rejecting small offers](/out/figures/chat_excerpt-5946-5947,5949-5953.svg){.chatlog}
+:::
+
+## Chat – Dummy player treatment
+
+::: {layout-ncol=3}
+![Altruism](/out/figures/chat_excerpt-8,10,11,17-21.svg){.chatlog}
+
+![Abuse of position](/out/figures/chat_excerpt-1104-1111.svg){.chatlog}
+
+![Appeal to pity](/out/figures/chat_excerpt-1371-1376.svg){.chatlog}
+:::
+
+## Chat – Feedback about experiment
+
+::: {layout-ncol=3}
+![Coalition formation](/out/figures/chat_excerpt-6950-6955.svg){.chatlog}
+
+![Payouts](/out/figures/chat_excerpt-286-291.svg){.chatlog}
+
+![Bargaining time](/out/figures/chat_excerpt-5501-5508.svg){.chatlog}
+:::
+
 
 # Conclusions
 
