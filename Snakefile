@@ -22,6 +22,19 @@ rule presentations:
 
 rule blm_presentation:
     input:
+        "out/figures/chat_excerpt-8,10,11,17-21.svg",
+        "out/figures/chat_excerpt-286-291.svg",
+        "out/figures/chat_excerpt-1104-1111.svg",
+        "out/figures/chat_excerpt-5501-5508.svg",
+        "out/figures/chat_excerpt-6950-6955.svg",
+        "out/figures/chat_excerpt-1371-1376.svg",
+        "out/figures/chat_excerpt-1348-1355.svg",
+        "out/figures/chat_excerpt-2702-2707.svg",
+        "out/figures/chat_excerpt-5640,5647-5648,5660-5663.svg",
+        "out/figures/chat_excerpt-6846-6853.svg",
+        "out/figures/chat_excerpt-7052,7054,7057-7063.svg",
+        "out/figures/chat_excerpt-7590-7596,7598-7599.svg",
+        "out/figures/chat_excerpt-5946-5947,5949-5953.svg",
         "out/figures/values_theory.svg",
         "out/figures/payoff_average.svg",
         "out/figures/payoff_scatterplot.svg",
@@ -92,7 +105,7 @@ rule figures:
         "out/figures/survey_age.pdf",
         "out/figures/survey_gender.pdf",
         "out/figures/survey_degree.pdf",
-        "out/figures/survey_study_fields.pdf",
+        "out/figures/survey_study_fields.svg",
         "out/figures/survey_nationality.pdf",
         "out/figures/values_theory.pdf",
         "out/figures/chat_excerpt-8,10,11,17-21.pdf",
