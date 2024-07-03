@@ -1,3 +1,6 @@
+from src.util.makeutils import find_quarto_images, find_opened_files
+
+
 SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
 WORD_TYPES = ["all", "VERB", "ADJ", "NOUN"]
 PRESENTATIONS, *_ = glob_wildcards("src/presentation/{presentation}.qmd")
@@ -22,38 +25,13 @@ rule presentations:
 
 rule blm_presentation:
     input:
-        "out/figures/values_theory.svg",
-        "out/figures/payoff_average.svg",
-        "out/figures/payoff_scatterplot.svg",
-        "out/figures/payoff_by_agreement_type.svg",
-        "out/figures/timing_until_decision.svg",
-        "out/figures/timing_until_agreement_scatterplot.svg",
-        "out/analysis/mann_whitney.json",
-        "out/analysis/regression.pkl",
-        "out/analysis/regression_dummies.pkl",
-        "out/figures/axioms_outcomes_efficiency.svg",
-        "out/figures/axioms_outcomes_symmetry.svg",
-        "out/figures/axioms_outcomes_dummy_player.svg",
-        "out/figures/axioms_outcomes_linearity_additivity.svg",
-        "out/figures/axioms_outcomes_stability.svg",
-        "out/figures/axioms_survey_efficiency-2col.svg",
-        "out/figures/axioms_survey_symmetry-2col.svg",
-        "out/figures/axioms_survey_dummy_player-2col.svg",
-        "out/figures/axioms_survey_linearity_HD1-2col.svg",
-        "out/figures/axioms_survey_linearity_additivity-2col.svg",
-        "out/figures/axioms_survey_stability-2col.svg",
-        "out/figures/payoff_matching_group_average.svg", 
-        "out/figures/survey_age.svg",
-        "out/figures/survey_degree.svg",
-        "out/figures/survey_difficulty_rating.svg",
-        "out/figures/survey_gender.svg",
-        "out/figures/survey_nationality.svg",
-        "out/figures/survey_study_fields.svg",
         qmd = "src/presentation/blm.qmd",
+        analysis_results = find_opened_files("src/presentation/blm.qmd"),
+        images = find_quarto_images("src/presentation/blm.qmd"),
+        bibliography = "src/paper/references.bib",
         css = "src/presentation/include/custom.scss",
         marhjax_js = "src/presentation/include/mathjax-settings.html",
         section_js = "src/presentation/include/sections-in-footer.html",
-        bibliography = "src/paper/references.bib",
     output:
         "out/presentation/blm.html",
     shell:
@@ -92,9 +70,10 @@ rule figures:
         "out/figures/survey_age.pdf",
         "out/figures/survey_gender.pdf",
         "out/figures/survey_degree.pdf",
-        "out/figures/survey_study_fields.pdf",
+        "out/figures/survey_study_fields.svg",
         "out/figures/survey_nationality.pdf",
         "out/figures/values_theory.pdf",
+        "out/figures/chat_excerpt-8,10,11,17-21.pdf",
 
 rule run_analysis: 
     input: 
@@ -114,6 +93,14 @@ rule create_values_theory_plot:
         figure = "out/figures/values_theory.{ext}",
     script:
         "src/figures/values_theory_plot.py"
+
+rule create_chat_excerpt:
+    input:
+        actions = "data/clean/_collected/actions.csv",
+    output:
+        figure = "out/figures/chat_excerpt-{rows}.{ext}",
+    script:
+        "src/figures/chat_excerpts.py"
 
 rule create_chat_plot: 
     input:

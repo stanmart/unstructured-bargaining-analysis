@@ -232,22 +232,6 @@ table
 ## Between matching group variance
 ![](/out/figures/payoff_matching_group_average.svg)
 
-## Time of proposing and accepting final allocation
-![](/out/figures/timing_until_decision.svg)
-
-::: {.smaller}
-- Most final allocations are proposed within the first minute
-:::
-
-## Time of accepting final allocation
-![](/out/figures/timing_until_agreement_scatterplot.svg)
-:::
-
-::: {.smaller}
-- Most agreement times are well before the end of the bargaining time
-- In the $Y=90$ treatment, partial agreements come later
-- Otherwise, agreement times are broadly similar across the main treatments
-:::
 
 # Testing the axioms {.unlisted .unnumbered}
 
@@ -328,7 +312,7 @@ table
 - Most final allocations are proposed within the first minute
 :::
 
-## Time of proposing and accepting final allocation
+## Time of accepting final allocation
 ![](/out/figures/timing_until_agreement_scatterplot.svg)
 
 ::: {.smaller}
@@ -349,6 +333,46 @@ table
     - Manually classify some and finetune a BERT-like model to classify the rest
   - Can also learn things like people's understanding of the game
 - In general, would probably need *much* more data for proper NLP analysis
+
+## Chat – Stability-based reasoning
+
+::: {layout-ncol=3}
+![Y = 10](/out/figures/chat_excerpt-2702-2707.svg){.chatlog}
+
+![Y = 30](/out/figures/chat_excerpt-5640,5647-5648,5660-5663.svg){.chatlog}
+
+![Y = 90](/out/figures/chat_excerpt-6846-6847,6849,6851,6853,6855,6857,6859.svg){.chatlog}
+:::
+
+## Chat – Fairness-based reasoning
+
+::: {layout-ncol=3}
+![Equal split](/out/figures/chat_excerpt-7052,7054,7057-7063.svg){.chatlog}
+
+![A gets a bit more](/out/figures/chat_excerpt-7590-7596,7598-7599.svg){.chatlog}
+
+![Rejecting small offers](/out/figures/chat_excerpt-7894-7901,7906.svg){.chatlog}
+:::
+
+## Chat – Dummy player treatment
+
+::: {layout-ncol=3}
+![Altruism](/out/figures/chat_excerpt-8,10,11,17-21.svg){.chatlog}
+
+![Abuse of position](/out/figures/chat_excerpt-1104-1111.svg){.chatlog}
+
+![Appeal to pity](/out/figures/chat_excerpt-1371-1376.svg){.chatlog}
+:::
+
+## Chat – Feedback about experiment
+
+::: {layout-ncol=3}
+![Having a chat](/out/figures/chat_excerpt-6508-6509,6511,6513,6524,6527,6528-6529.svg){.chatlog}
+
+![Payouts](/out/figures/chat_excerpt-286-291.svg){.chatlog}
+
+![Bargaining time](/out/figures/chat_excerpt-5501-5508.svg){.chatlog}
+:::
 
 
 # Conclusions
