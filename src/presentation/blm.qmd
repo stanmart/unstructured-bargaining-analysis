@@ -68,8 +68,8 @@ format:
 
 ## The game
 
-- Players: $N = \{A, B_1, B_2\}$
-- Value function:
+- **Players**: $N = \{A, B_1, B_2\}$
+- **Value function**:
   - No one can create any value alone: $v(\{A\}) = v(\{B_i\}) = 0$
   - Player $A$ is indispensable: $v(\{B_1, B_2\}) = 0$
   - Small players contribute to the value: $v(\{A, B_i\}) = Y \in [0, 100]$
@@ -78,36 +78,55 @@ format:
 
 ## Shapley value
 
-- Each players gets their average marginal contribution
+::: {.fragment}
+- Each players gets their **average marginal contribution**
   - Fairness based motivation
+:::
+::: {.fragment}
 - Appealing characterization
   - Efficient: whole pie is distributed
   - Symmetric: identical (from the pov of $v$) players should get the same payoff
   - Dummy player property: players contributing nothing get nothing
   - Linearity (across games)
+:::
+::: {.fragment}
 - Useful properties
   - Always exists
   - Always unique
+:::
 
 ## Core
 
+::: {.fragment}
 - Excess: what a coalition gets vs what it could achieve on its own
+:::
+::: {.fragment}
 - The set of payoff vectors such that excess is non-negative for all coalitions
+  - **No coalition has an incentive to deviate**
   - Stability-based concept
   - Similar idea to the Nash equilibrium, but for multi-player deviations
+:::
+::: {.fragment}
 - Very intuitive and plausible, but
   - Can be empty (existence not guaranteed)
   - Can be multi-valued (uniqueness not guaranteed)
+:::
 
 ## Nucleolus
 
-- Maximizes the smallest excess across coalitions
+::: {.fragment}
+- **Maximizes the smallest excess** across coalitions
   - if the core is non-empty, the nucleolus is in the core
   - Mix of stability and fairness
+:::
+::: {.fragment}
 - Useful properties
   - Always exists
   - Always unique
+:::
+::: {.fragment}
 - Can be thought of as a way to mix the stability-based intuition behind the core with useful properties of the Shapley value
+:::
 
 ## In our game
 ![](/out/figures/values_theory.svg)
@@ -116,39 +135,54 @@ format:
 
 ## General structure
 
+::: {.fragment}
 - Conducted in the BLU lab (May 2024)
-  - 4 treatments/sessions: $Y=10$, $Y=30$, $Y=90$, dummy player
-  - 144 subjects in total (36 subjects per session) 
+  - **4 treatments/sessions**: $Y=10$, $Y=30$, $Y=90$, dummy player
+  - **144 subjects** in total (36 subjects per session) 
+:::
+::: {.fragment}
 - Timing: 
   - Instructions with comprehension checks
   - Slider task
   - Trial round + 5 bargaining rounds (5 minutes each)
   - Survey (demographics, reasoning, axioms)
-- Payment: 
+:::
+::: {.fragment}
+- Average payoff across all rounds + show-up fee
   - Conversion: 1 point = 0.6CHF
-  - Subjects are paid their average payoff across all rounds + show-up fee
+:::
 
 ## Role and group assignment
 
+::: {.fragment}
 - Player roles are assigned stochastically based on players' performance in the slider task
   - the better they perform, the higher the likelihood of becoming Player A
+:::
+::: {.fragment}
 - Stranger matching for bargaining groups each round
   - no set of subjects is matched twice
+:::
+::: {.fragment}
 - Split each session into 6 matching groups (à 6 players) in order to account for dependence between rounds in the analysis
   - Bargaining groups are only redrawn within matching groups
+:::
 
 ## Bargaining
 
-- Bargaining via public chat 
-- Interface for submitting proposals and current acceptances to facilitate bargaining
+::: {.fragment}
+- Bargaining via public chat and interface for submitting proposals and current acceptances
+:::
+::: {.fragment}
 - Free-form bargaining: 
   - Unlimited number of proposals 
   - No restrictions on the order of proposals and acceptances 
   - Acceptances are not binding and can be changed any time
+:::
+::: {.fragment}
 - At the end of each bargaining round: 
   - Current acceptances are taken as final decisions
   - A proposal is successful only if all members of a coalition agree on it
-  
+:::
 
 
 # Main results
@@ -271,7 +305,6 @@ table
 
 ## Time of accepting final allocation
 ![](/out/figures/timing_until_agreement_scatterplot.svg)
-:::
 
 ::: {.smaller}
 - Most agreement times are well before the end of the bargaining time
@@ -383,35 +416,53 @@ table
 
 ## What we did
 
+::: {.fragment}
 - **Free-form bargaining** is important to understand
   - More realistic than strictly controlled designs
   - NCGT have trouble describing it → check if CGT is predictive
+:::
+::: {.fragment}
 - Players could bargain for 5 minutes **without any binding actions**
   - An interface for proposing and accepting allocations
   - Group-level unrestricted **chat**
+:::
+::: {.fragment}
 - **Vary the necessity of including both small players** between treatments
+:::
 
 ## Main takeaways
 
+::: {.fragment}
 - Lots of **equal splits** in all treatments
-- **Nucleolus** gives **qualitatively correct** predictions, Shapley value does not
+:::
+::: {.fragment}
+- **Nucleolus** gives **qualitatively correct** predictions
   - People might think in terms of **stability** and profitable deviations
+:::
+::: {.fragment}
 - **Both fail quantitatively**, especially when the big player has lots of bargaining power
   - SV seems to be closer in the $Y=90$ case for non-equal splits
+:::
+::: {.fragment}
 - People's **stated preferences** (axiom survey) **and actions disagree**
-  - What would happen if these axioms were mentioned before the bargaining?
+:::
 
 ## Future research
 
+::: {.fragment}
 - **Chat logs** are useful even in lieu of proper analysis
   - Going through them reveals a lot about players' understanding of the game
+:::
+::: {.fragment}
 - We have a **rich dataset** (real time actions)
   - Good for exploratory analysis and to inform study design in the future
   - Not sure what aspects to look into more deeply – **ideas?**
+:::
+::: {.fragment}
 - Differences between matching groups
   - Maybe just player heterogeneity
   - Or norms / reference values determined in the first couple of rounds?
-
+:::
 
 # Thank you {.unnumbered .unlisted}
 
