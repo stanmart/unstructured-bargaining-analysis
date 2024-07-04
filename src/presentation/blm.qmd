@@ -70,7 +70,7 @@ format:
 :::
 
 ::: {.fragment}
-- Vary the bargaining power of the big player
+- Vary the bargaining power of the indispensable player
   - How important it is to have all small players on board
 :::
 
@@ -126,7 +126,7 @@ format:
 - **Players**: $N = \{A, B_1, B_2\}$
 :::
 ::: {.fragment}
-- **Value function**:
+- **Value function**: $v: 2^N \to \mathbb{R}$
   - No one can create any value alone: $v(\{A\}) = v(\{B_i\}) = 0$
   - Player $A$ is indispensable: $v(\{B_1, B_2\}) = 0$
   - Small players contribute to the value: $v(\{A, B_i\}) = Y \in [0, 100]$
@@ -222,7 +222,7 @@ How to divide the value between the players?
 :::
 ::: {.fragment}
 - Average payoff across all rounds + show-up fee
-  - Conversion: 1 point = 0.6CHF
+  - Conversion: 1 point = CHF 0.6
 :::
 
 ::: {.notes}
@@ -234,15 +234,15 @@ How to divide the value between the players?
 ## Role and group assignment
 
 ::: {.fragment}
-- Player roles are assigned stochastically based on players' performance in the slider task
+- **Player roles** are assigned stochastically **based on players' performance in the slider task**
   - the better they perform, the higher the likelihood of becoming Player A
 :::
 ::: {.fragment}
-- Stranger matching for bargaining groups each round
+- **Stranger matching** for bargaining groups each round
   - no set of subjects is matched twice
 :::
 ::: {.fragment}
-- Split each session into 6 matching groups (à 6 players) in order to account for dependence between rounds in the analysis
+- Split each session into **6 matching groups** (à 6 players) in order to account for dependence between rounds in the analysis
   - Bargaining groups are only redrawn within matching groups
 :::
 
@@ -255,18 +255,18 @@ How to divide the value between the players?
 ## Bargaining
 
 ::: {.fragment}
-- Bargaining via public chat and interface for submitting proposals and current acceptances
+- Bargaining via **public chat** and interface for submitting **proposals** and current **acceptances**
 :::
 ::: {.fragment}
 - Free-form bargaining: 
   - Unlimited number of proposals 
   - No restrictions on the order of proposals and acceptances 
-  - Acceptances are not binding and can be changed any time
+  - Acceptances are **not binding** and can be changed any time
 :::
 ::: {.fragment}
 - At the end of each bargaining round: 
   - Current acceptances are taken as final decisions
-  - A proposal is successful only if all members of a coalition agree on it
+  - **A proposal is successful only if all members of a coalition agree on it**
 :::
 
 # Main results
