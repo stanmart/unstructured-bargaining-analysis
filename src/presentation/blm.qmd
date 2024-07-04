@@ -19,33 +19,48 @@ format:
 
 # Introduction
 
-## Literature
-
-::: {.smaller}
+## Literature – bargaining experiments
+:::: {.smaller}
+::: {.fragment}
 - Early unstructured bargaining papers (1950s-1990s):  
-  - @Kalischetal1952, @Maschler1965, @NydeggerOwen1974, @RapoportKahan1976, **@MurnighanRoth1977**, @MurnighanRoth1978, @Micheneretal1979, @MichenerPotter1981, **@LeopoldWildburger1992** 
-    - Free-form bargaining is face-to-face, different experimental standards
-- Most more recent bargaining papers are on bilateral and structured/semi-structured bargaining
-  - E.g. @Isonietal2014, @KaragözoğluRiedl2015, @EmbreyFrechetteLehrer2015, @MitsutsuneTakanori2014
-  - Free-form bargaining: @LuhanPoulsenRoos2019, @Schwaninger2022, @Galeottietal2018, @HossainLyonsSiow2020, **@NavarroVeszteg2020**, @Diermeieretal2008
-    - Almost all bilateral 
-  - Bargaining with at least three players: @MonteroSeftonZhang2008, @TremewanVanberg2016, **@ShinodaFunaki2022**
-    - Structured/semi-structured bargaining 
-- Fairness views: 
-  - @BochetKhannaSiegenthaler2023, @Schwaninger2022, @LuhanPoulsenRoos2019, **@ClippelRozen2022**
+  - E.g. @Kalischetal1952, @Maschler1965, @NydeggerOwen1974, @RapoportKahan1976, **@MurnighanRoth1977**, @MurnighanRoth1978, @Micheneretal1979, @MichenerPotter1981, **@LeopoldWildburger1992** 
+  - Face to face bargaining, different experimental standards
 :::
+::: {.fragment}
+- Free-form bargaining
+  - E.g. @Galeottietal2018, @HossainLyonsSiow2020, **@NavarroVeszteg2020**
+  - Almost always bilateral
+:::
+::: {.fragment}
+- Multi-lateral bargaining
+  - E.g. @MonteroSeftonZhang2008, @MitsutsuneTakanori2014, @TremewanVanberg2016, @chessa2022experiment, **@ShinodaFunaki2022**
+  - Structured or semi-structured
+:::
+::: {.fragment}
+- Fairness views in bargaining
+  - E.g. @LuhanPoulsenRoos2019, **@Schwaninger2022**, **@ClippelRozen2022**
+:::
+::::
+
 
 # Game and solution concepts
 
 ## The game
 
+::: {.fragment}
 - Players: $N = \{A, B_1, B_2\}$
+:::
+::: {.fragment}
 - Value function:
   - No one can create any value alone: $v(\{A\}) = v(\{B_i\}) = 0$
   - Player $A$ is indispensable: $v(\{B_1, B_2\}) = 0$
   - Small players contribute to the value: $v(\{A, B_i\}) = Y \in [0, 100]$
   - The more small players the better: $v(\{A, B_1, B_2\}) = 100$
-- How to divide the value between the players?
+:::
+
+::: {.highlight-block .fragment}
+How to divide the value between the players?
+:::
 
 ## Core
 
@@ -119,7 +134,6 @@ format:
   - Current acceptances are taken as final decisions
   - A proposal is successful only if all members of a coalition agree on it
   
-
 
 # Main results
 
