@@ -52,7 +52,7 @@ format:
 
 ::: {.highlight-block .fragment}
 - How does bargaining power affect bargaining outcomes?
-- How well do cooperative game theory solution concepts have describe the outcomes?
+- How well do cooperative game theory solution concepts describe the outcomes?
 :::
 
 ::: {.notes}
