@@ -25,7 +25,7 @@ format:
 - Much work on bargaining in experimental economics (understatement)
 :::
 ::: {.fragment}
-- Much less work on **free-form bargaining** between more than two players
+- Much less work on **free-form bargaining**
   - especially between **more than two players**
 :::
 ::: {.fragment}
@@ -33,6 +33,13 @@ format:
   - Wage bargaining
   - An inventor with an idea and multiple investors
   - A band, where one member owns the PA system
+:::
+
+::: {.notes}
+ - Need some asymmetry for interesting bargaining outcomes
+ - One player being indispensable is
+   - Natural
+   - Maximally asymmetrix → stronger effect
 :::
 
 ## Research question
@@ -43,9 +50,13 @@ format:
   - NCGT solution is alternating offer games, but a lot depends on minor details [@hart1996bargaining]
 :::
 
-::: {.highlight-block .idea .fragment}
-- Intuitive expectation about how substitutabililty affects bargaining power
-- Cooperative game theory concepts might be a viable alternative
+::: {.highlight-block .fragment}
+- How does bargaining power affect bargaining outcomes?
+- How well do cooperative game theory solution concepts have describe the outcomes?
+:::
+
+::: {.notes}
+- Bargaining power ~ how important it is to have all small players on board (see later)
 :::
 
 ## Literature
@@ -67,9 +78,17 @@ format:
 :::
 ::: {.fragment}
 - Fairness views in bargaining
-  - E.g. @LuhanPoulsenRoos2019, **@Schwaninger2022**, **@ClippelRozen2022**
+  - E.g. @LuhanPoulsenRoos2019, @Schwaninger2022, **@ClippelRozen2022**
 :::
 ::::
+
+::: {.notes}
+- @MurnighanRoth1977: shoes game ($Y=0$); series of papers: information and communication structure are important
+- @LeopoldWildburger1992: face to face, very long rounds, convex comb. of N + ES or SV + ES
+- @NavarroVeszteg2020: bilateral, chat, tests axioms (rejets scale invariance)
+- @ShinodaFunaki2022: chat in some treatments, semi-unstructured; how existence of core affects outcomes
+- @ClippelRozen2022: outside party assigns payoffs, SV + ES
+:::
 
 
 # Game and solution concepts
@@ -89,6 +108,11 @@ format:
 
 ::: {.highlight-block .fragment}
 How to divide the value between the players?
+:::
+
+::: {.notes}
+- No need to define strategy spaces, only players pllus payoffs
+- It "makes sense" for the grand coalition to form (but wait for results)
 :::
 
 ## Shapley value
@@ -146,6 +170,13 @@ How to divide the value between the players?
 ## In our game
 ![](/out/figures/values_theory.svg)
 
+::: {.notes}
+- Both are increasing in Y
+  - Nucleolus is flat for low Y (no real bargaiing power)
+  - SV predictions are less extreme
+- Core would contain ES for Y < 67
+:::
+
 # Experimental design 
 
 ## General structure
@@ -167,6 +198,12 @@ How to divide the value between the players?
   - Conversion: 1 point = 0.6CHF
 :::
 
+::: {.notes}
+- Have to solve tasks on a mock interface to proceed
+- Slider task to make the bargaining position feel earned
+- Slider task performance not disclosed
+:::
+
 ## Role and group assignment
 
 ::: {.fragment}
@@ -180,6 +217,12 @@ How to divide the value between the players?
 ::: {.fragment}
 - Split each session into 6 matching groups (à 6 players) in order to account for dependence between rounds in the analysis
   - Bargaining groups are only redrawn within matching groups
+:::
+
+::: {.notes}
+- Power-validity tradeoff: players could meet again, but
+  - Not in the exact same constellation
+  - Players are anonymous (although some players reveal themselves...)
 :::
 
 ## Bargaining
@@ -289,6 +332,11 @@ table
 - Quantitatively closer to SV in $Y=90$ treatment (cf. plots)
 
 # Exploratory observations
+
+::: {.notes}
+- Will skip quite a lot here
+- Let us know which of these are interesting
+:::
 
 ## Payoffs by coordination outcomes
 :::: {.columns}
@@ -469,6 +517,11 @@ table
 - **Vary the necessity of including both small players** between treatments
 :::
 
+::: {.notes}
+- Our experimental setup is a novel way to do multilateral, free form bargaining
+  - Might be useful for other studies, as well
+:::
+
 ## Main takeaways
 
 ::: {.fragment}
@@ -486,6 +539,11 @@ table
 - People's **stated preferences** (axiom survey) **and actions disagree**
 :::
 
+::: {.notes}
+- In general, considerable heterogeneity in outcomes
+  - Heterogeneity in fairness concepts?
+:::
+
 ## Future research
 
 ::: {.fragment}
@@ -501,6 +559,10 @@ table
 - Differences between matching groups
   - Maybe just player heterogeneity
   - Or norms / reference values determined in the first couple of rounds?
+:::
+
+::: {.notes}
+- Any ideas on what to dig deeper into?
 :::
 
 # Thank you {.unnumbered .unlisted}
