@@ -49,32 +49,47 @@ format:
 :::
 
 ## Literature
-
-::: {.smaller}
+:::: {.smaller}
+::: {.fragment}
 - Early unstructured bargaining papers (1950s-1990s):  
-  - @Kalischetal1952, @Maschler1965, @NydeggerOwen1974, @RapoportKahan1976, **@MurnighanRoth1977**, @MurnighanRoth1978, @Micheneretal1979, @MichenerPotter1981, **@LeopoldWildburger1992** 
-    - Free-form bargaining is face-to-face, different experimental standards
-- Most more recent bargaining papers are on bilateral and structured/semi-structured bargaining
-  - E.g. @Isonietal2014, @KaragözoğluRiedl2015, @EmbreyFrechetteLehrer2015, @MitsutsuneTakanori2014
-  - Free-form bargaining: @LuhanPoulsenRoos2019, @Schwaninger2022, @Galeottietal2018, @HossainLyonsSiow2020, **@NavarroVeszteg2020**, @Diermeieretal2008
-    - Almost all bilateral 
-  - Bargaining with at least three players: @MonteroSeftonZhang2008, @TremewanVanberg2016, **@ShinodaFunaki2022**
-    - Structured/semi-structured bargaining 
-- Fairness views: 
-  - @BochetKhannaSiegenthaler2023, @Schwaninger2022, @LuhanPoulsenRoos2019, **@ClippelRozen2022**
+  - E.g. @Kalischetal1952, @Maschler1965, @NydeggerOwen1974, @RapoportKahan1976, **@MurnighanRoth1977**, @MurnighanRoth1978, @Micheneretal1979, @MichenerPotter1981, **@LeopoldWildburger1992** 
+  - Face to face bargaining, different experimental standards
 :::
+::: {.fragment}
+- Free-form bargaining
+  - E.g. @Galeottietal2018, @HossainLyonsSiow2020, **@NavarroVeszteg2020**
+  - Almost always bilateral
+:::
+::: {.fragment}
+- Multi-lateral bargaining
+  - E.g. @MonteroSeftonZhang2008, @MitsutsuneTakanori2014, @TremewanVanberg2016, @chessa2022experiment, **@ShinodaFunaki2022**
+  - Structured or semi-structured
+:::
+::: {.fragment}
+- Fairness views in bargaining
+  - E.g. @LuhanPoulsenRoos2019, **@Schwaninger2022**, **@ClippelRozen2022**
+:::
+::::
+
 
 # Game and solution concepts
 
 ## The game
 
+::: {.fragment}
 - **Players**: $N = \{A, B_1, B_2\}$
+:::
+::: {.fragment}
 - **Value function**:
   - No one can create any value alone: $v(\{A\}) = v(\{B_i\}) = 0$
   - Player $A$ is indispensable: $v(\{B_1, B_2\}) = 0$
   - Small players contribute to the value: $v(\{A, B_i\}) = Y \in [0, 100]$
   - The more small players the better: $v(\{A, B_1, B_2\}) = 100$
-- How to divide the value between the players?
+:::
+
+::: {.highlight-block .fragment}
+How to divide the value between the players?
+:::
 
 ## Shapley value
 
@@ -183,7 +198,6 @@ format:
   - Current acceptances are taken as final decisions
   - A proposal is successful only if all members of a coalition agree on it
 :::
-
 
 # Main results
 
@@ -296,21 +310,6 @@ table
 ## Between matching group variance
 ![](/out/figures/payoff_matching_group_average.svg)
 
-## Time of proposing and accepting final allocation
-![](/out/figures/timing_until_decision.svg)
-
-::: {.smaller}
-- Most final allocations are proposed within the first minute
-:::
-
-## Time of accepting final allocation
-![](/out/figures/timing_until_agreement_scatterplot.svg)
-
-::: {.smaller}
-- Most agreement times are well before the end of the bargaining time
-- In the $Y=90$ treatment, partial agreements come later
-- Otherwise, agreement times are broadly similar across the main treatments
-:::
 
 # Testing the axioms {.unlisted .unnumbered}
 
@@ -391,7 +390,7 @@ table
 - Most final allocations are proposed within the first minute
 :::
 
-## Time of proposing and accepting final allocation
+## Time of accepting final allocation
 ![](/out/figures/timing_until_agreement_scatterplot.svg)
 
 ::: {.smaller}
@@ -410,6 +409,46 @@ table
   - Classify messages into categories (e.g. fairness-related, small talk, etc.) 
   - Can also learn things like people's understanding of the game
 - In general, would probably need *much* more data for proper NLP analysis
+
+## Chat – Stability-based reasoning
+
+::: {layout-ncol=3}
+![Y = 10](/out/figures/chat_excerpt-2702-2707.svg){.chatlog}
+
+![Y = 30](/out/figures/chat_excerpt-5640,5647-5648,5660-5663.svg){.chatlog}
+
+![Y = 90](/out/figures/chat_excerpt-6846-6847,6849,6851,6853,6855,6857,6859.svg){.chatlog}
+:::
+
+## Chat – Fairness-based reasoning
+
+::: {layout-ncol=3}
+![Equal split](/out/figures/chat_excerpt-7052,7054,7057-7063.svg){.chatlog}
+
+![A gets a bit more](/out/figures/chat_excerpt-7590-7596,7598-7599.svg){.chatlog}
+
+![Rejecting small offers](/out/figures/chat_excerpt-7894-7901,7906.svg){.chatlog}
+:::
+
+## Chat – Dummy player treatment
+
+::: {layout-ncol=3}
+![Altruism](/out/figures/chat_excerpt-8,10,11,17-21.svg){.chatlog}
+
+![Abuse of position](/out/figures/chat_excerpt-1104-1111.svg){.chatlog}
+
+![Appeal to pity](/out/figures/chat_excerpt-1371-1376.svg){.chatlog}
+:::
+
+## Chat – Feedback about experiment
+
+::: {layout-ncol=3}
+![Having a chat](/out/figures/chat_excerpt-6508-6509,6511,6513,6524,6527,6528-6529.svg){.chatlog}
+
+![Payouts](/out/figures/chat_excerpt-286-291.svg){.chatlog}
+
+![Bargaining time](/out/figures/chat_excerpt-5501-5508.svg){.chatlog}
+:::
 
 
 # Conclusions
