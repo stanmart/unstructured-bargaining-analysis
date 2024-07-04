@@ -59,6 +59,33 @@ format:
 - Bargaining power ~ how important it is to have all small players on board (see later)
 :::
 
+## What we do
+
+::: {.fragment}
+- **Free-form bargaining between three players**
+  - Almost no structure
+  - Group-level unrestricted **chat**
+  - An interface for proposing and accepting allocations
+  - No binding decision until the very last second
+:::
+
+::: {.fragment}
+- Vary the bargaining power of the big player
+  - How important it is to have all small players on board
+:::
+
+::: {.fragment}
+- We test, whether:
+  - Outcomes vary as we would expect, based on bargaining power
+  - Certain CGT solution concepts provide good predictions
+:::
+
+::: {.notes}
+- Everything before the final seconds is cheap talk
+- What the big player and one small player can achieve on their own
+- Also, lots of data for exploratory analysis
+:::
+
 ## Literature
 :::: {.smaller}
 ::: {.fragment}
