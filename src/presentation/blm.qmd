@@ -33,39 +33,15 @@ format:
 :::
 ::: {.fragment}
 - Multi-lateral bargaining
-  - E.g. @MonteroSeftonZhang2008, @TremewanVanberg2016, **@ShinodaFunaki2022**
+  - E.g. @MonteroSeftonZhang2008, @MitsutsuneTakanori2014, @TremewanVanberg2016, @chessa2022experiment, **@ShinodaFunaki2022**
   - Structured or semi-structured
 :::
 ::: {.fragment}
 - Fairness views in bargaining
-  - E.g. @LuhanPoulsenRoos2019, **@Schwaninger2022**
+  - E.g. @LuhanPoulsenRoos2019, **@Schwaninger2022**, **@ClippelRozen2022**
 :::
 ::::
 
-## Literature – CGT experiments
-
-:::: {.smaller}
-::: {.fragment}
-- The Nash program: CGT solution concepts as NCGT equilibria
-  - Various bargaining games: @gul1989bargaining, @winter1994demand, @stole1996organizational, @hart1996bargaining
-  - Experimental test: **@chessa2022experiment**
-:::
-::: {.fragment}
-- Testing cooperative game theory
-  - Observational study: @MitsutsuneTakanori2014
-  - Lab experiment: @komorita1984effects
-:::
-::: {.fragment}
-- Fairness and CGT
-  - **@ClippelRozen2022**
-:::
-::::
-
-::: {.notes}
- - Theoretical result: The SPE of certain non-coop bargaining games is the SV
- - @chessa2022experiment test two such (multi-player, SV as SPE) non-coop bargaining games in the lab
- - Surprisingly little work on testing coop game theory
-:::
 
 # Game and solution concepts
 
