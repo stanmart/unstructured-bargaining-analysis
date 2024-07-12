@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import Any
 
 import openai
@@ -59,7 +60,7 @@ def prepare_dataset(actions: pl.DataFrame) -> pl.DataFrame:
         action_id=pl.lit(0),
     ).with_columns(
         action_id=pl.col("action_id")
-        .cumcount()
+        .cum_count()
         .over(["treatment_name", "round_number", "group_id", "action"])
     )
 
@@ -162,13 +163,38 @@ def analyze_log(client: openai.Client, df: pl.DataFrame) -> pl.DataFrame:
 
 
 if __name__ == "__main__":
+    output_file = Path(snakemake.output[0])  # noqa F821 # type: ignore
+    output_exists = output_file.is_file()
+    execution_allowed = os.environ.get("ALLOW_OPENAI_REQUESTS") == "true"
+
+    if output_exists:
+        print("Output file already exists, but Snakemake wants to recreate it.")
+        if not execution_allowed:
+            print("OpenAI requests are disabled. Using existing file.")
+            output_file.touch()
+            exit(0)
+        else:
+            print("OpenAI requests are enabled. Recreating file.")
+    else:
+        print("Output file does not exist.")
+        if not execution_allowed:
+            print("OpenAI requests are disabled. Exiting.")
+            exit(1)
+        else:
+            print("OpenAI requests are enabled. Creating file.")
+
     actions = pl.read_csv(snakemake.input.actions)  # noqa F821 # type: ignore
 
-    df = prepare_dataset(actions)
+    df = prepare_dataset(actions)[:100]
 
     result_dfs = []
     for _, dfi in df.group_by("treatment_name", "group_id", "round_number"):
         result_dfs.append(analyze_log(create_openai_client(), dfi))
 
     result_df_long = pl.concat(result_dfs)
-    result_df_long.write_csv(snakemake.output[0])  # noqa F821 # type: ignore
+    result_df_long.write_csv(output_file)
+
+    print("Done classyfing chat messages.")
+    print(
+        "Consider committing the output to the reository to avoid unnecessary OpenAI requests."
+    )
