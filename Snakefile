@@ -88,6 +88,14 @@ rule run_analysis:
     script: 
         "src/analysis/analysis.py"
 
+rule classify_chat_messages:
+    input:
+        actions = "data/clean/_collected/actions.csv",
+    output:
+        chat_classified = "data/cached/chat_classified.csv",
+    script:
+        "src/analysis/classify_chat.py"
+
 rule create_values_theory_plot:
     output:
         figure = "out/figures/values_theory.{ext}",

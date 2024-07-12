@@ -8,6 +8,7 @@ platforms = ["linux-64", "win-64", "osx-64", "osx-arm64"]
 
 [tasks]
 prepare-to-publish = "snakemake --cores 1 prepare_to_deploy"
+classify-chat-messages = { cmd = "snakemake --cores 1 classify_chat_messages", env = { ALLOW_OPENAI_REQUESTS = "true" } }
 create-presentations = "snakemake --cores 1 presentations"
 create-figures = "snakemake --cores 1 figures"
 create-datasets = "snakemake --cores 1 create_datasets"
