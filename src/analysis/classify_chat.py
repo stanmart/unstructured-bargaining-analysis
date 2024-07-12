@@ -122,11 +122,15 @@ def get_model_response(client: openai.Client, chat_log: str) -> str:
 
 
 def parse_model_response_row(row: str) -> dict[str, int | str]:
-    message_id, topic = row.split(":")
-    return {
-        "action_id": int(message_id.lstrip("#")),
-        "topic": topic.strip(),
-    }
+    try:
+        message_id, topic = row.split(":")
+        return {
+            "action_id": int(message_id.lstrip("#")),
+            "topic": topic.strip(),
+        }
+    except ValueError as e:
+        print(f"Could not parse row: {row}")
+        raise e
 
 
 def parse_model_response(model_response: str) -> pl.DataFrame:
@@ -171,10 +175,13 @@ if __name__ == "__main__":
         os.path.join(snakemake.params["cache_dir"], "*.parquet")  # noqa F821 # type: ignore
     )
     execution_allowed = os.environ.get("ALLOW_OPENAI_REQUESTS") == "true"
+    delete_cache = os.environ.get("DELETE_CACHE") == "true"
 
     if execution_allowed:
-        print("OpenAI requests are enabled. (Re)creating cache.")
-        if cache_files:
+        print("OpenAI requests are enabled.")
+        client = create_openai_client()
+
+        if cache_files and delete_cache:
             print("Cache directory is not empty. Deleting cache files.")
             for file in cache_files:
                 os.remove(file)
@@ -183,20 +190,24 @@ if __name__ == "__main__":
 
         actions = pl.read_csv(snakemake.input.actions)  # noqa F821 # type: ignore
 
-        df = prepare_dataset(actions)
+        df = prepare_dataset(actions)[:100]
 
         for (treatment_name, group_id, round_number), dfi in df.group_by(  # type: ignore
             "treatment_name", "group_id", "round_number"
         ):
-            print(
-                f"Classifying chat messages for treatment {treatment_name}, round {round_number}, group {group_id}."
+            cache_file_path = os.path.join(
+                snakemake.params["cache_dir"],  # noqa F821 # type: ignore
+                f"{treatment_name}_g{group_id}_r{round_number}.parquet",
             )
-            analyze_log(create_openai_client(), dfi).write_parquet(
-                os.path.join(
-                    snakemake.params["cache_dir"],  # noqa F821 # type: ignore
-                    f"{treatment_name}_{group_id}_{round_number}.parquet",
+            if os.path.exists(cache_file_path):
+                print(
+                    f"Using cached file for {treatment_name}, group {group_id}, round {round_number}."
                 )
-            )
+            else:
+                print(
+                    f"Classifying chat messages for {treatment_name}, round {round_number}, group {group_id}."
+                )
+                analyze_log(client, dfi).write_parquet(cache_file_path)
 
         print("Done classyfing chat messages.")
         print(
@@ -206,7 +217,7 @@ if __name__ == "__main__":
     else:
         print("OpenAI requests are disabled.")
         if cache_files:
-            print(f"Using {len(cache_files)} cached files.")
+            print(f"Using {len(cache_files)} cached files only.")
         else:
             print("No cache files found. Exiting.")
             exit(1)
