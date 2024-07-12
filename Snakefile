@@ -92,7 +92,9 @@ rule classify_chat_messages:
     input:
         actions = "data/clean/_collected/actions.csv",
     output:
-        chat_classified = "data/cached/chat_classified.csv",
+        chat_classified = "out/analysis/chat_classified.csv",
+    params:
+        cache_dir = "data/cached/chat_classified",
     script:
         "src/analysis/classify_chat.py"
 
