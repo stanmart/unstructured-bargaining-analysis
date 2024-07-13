@@ -14,13 +14,19 @@ PROP #[PROPOSAL_ID] @[PLAYER_NAME]: [distribution of the money]
 ACC #[ACCEPTANCE_ID] @[PLAYER_NAME]: PROP #[PROPOSAL_ID]
 separated by newlines.
 
-Please classify which TOPIC each message (MSG) belongs to. You only have to classify messages, not proposals or acceptances (those latter two are only included for context). Possible topics are: bargaining-related, small-talk, experiment-related, fairness-related, meta-talk, identifying-each-other. The classification should also take into account the context of the message.
+Please classify which TOPIC each message (MSG) belongs to. You only have to classify messages, not proposals or acceptances (those latter two are only included for context). The classification should also take into account the context of the message (e.g. when a message is a reply to another).
+Possible topics are:
+ - greetings and farewells: e.g. saying hello, goodbye, etc.
+ - small talk: e.g. discussing the weather, etc.
+ - bargaining: messages aimed at getting a better deal, e.g. discussing proposals, counterproposals, threats, rebuttals etc.; based on the players' bargaining positions
+ - fairness: discussing proposals in terms of fairness, justice, and discussing what is fair in general; not based on the players' bargaining positions
+ - meta-talk: e.g. talking about the aim of the experiment, how they feel about the task, etc.
+ - identifying each other: e.g. trying to figure out if players met each other in previous rounds, or identifying information for later
 
 Your response be a json object with the following format:
 #[MESSAGE_ID]: [TOPIC]
 for each message, separated by newlines.
 If there are no rows of type MSG, please respond with NO_MESSAGES.
-Please do not return anything else.
 """
 
 
@@ -134,7 +140,7 @@ def parse_model_response_row(row: str) -> dict[str, int | str]:
 
 
 def parse_model_response(model_response: str) -> pl.DataFrame:
-    model_response = model_response.strip()
+    model_response = model_response.strip().lstrip("{").rstrip("}").strip()
     if model_response == "NO_MESSAGES":
         rows = []
     else:
