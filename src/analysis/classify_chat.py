@@ -237,5 +237,5 @@ if __name__ == "__main__":
     new_cache_files = glob.glob(
         os.path.join(snakemake.params["cache_dir"], "*.parquet")  # noqa F821 # type: ignore
     )
-    result_df_long = pl.concat(pl.read_parquet(file) for file in cache_files)
+    result_df_long = pl.concat(pl.read_parquet(file) for file in new_cache_files)
     result_df_long.write_csv(snakemake.output.chat_classified)  # noqa F821 # type: ignore
