@@ -108,7 +108,7 @@ def create_openai_client() -> openai.Client:
 
 
 def get_model_response(
-    client: openai.Client, chat_log: str, model: str = "gpt-3.5-turbo"
+    client: openai.Client, chat_log: str, model: str = "gpt-4o"
 ) -> str:
     response = client.chat.completions.create(
         messages=[
@@ -158,9 +158,11 @@ def parse_model_response(model_response: str) -> pl.DataFrame:
     )
 
 
-def analyze_log(client: openai.Client, df: pl.DataFrame) -> pl.DataFrame:
+def analyze_log(
+    client: openai.Client, df: pl.DataFrame, model: str = "gpt-4o"
+) -> pl.DataFrame:
     chat_log = create_chat_log(df)
-    model_response = get_model_response(client, chat_log)
+    model_response = get_model_response(client, chat_log, model)
     model_response_df = parse_model_response(model_response)
 
     result_df = model_response_df.join(
