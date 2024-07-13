@@ -18,14 +18,16 @@ Please classify which TOPIC each message (MSG) belongs to. You only have to clas
 Possible topics are:
  - greetings and farewells: e.g. saying hello, goodbye, etc.
  - small talk: e.g. discussing the weather, etc.
- - bargaining: messages aimed at getting a better deal, e.g. discussing proposals, counterproposals, threats, rebuttals etc.; based on the players' bargaining positions
- - fairness: discussing proposals in terms of fairness, justice, and discussing what is fair in general; not based on the players' bargaining positions
+ - bargaining: messages discussing the distribution of the money, based on one's bargaining position (i.e. one's necessity to create value); this includes offers, counteroffers, rejections, making other players compete, etc.
+ - fairness: messages discussing the distribution of the money, based on fairness or justice ideas
  - meta-talk: e.g. talking about the aim of the experiment, how they feel about the task, etc.
  - identifying each other: e.g. trying to figure out if players met each other in previous rounds, or identifying information for later
+ - other: messages that do not fit into any of the above categories
 
 Your response be a json object with the following format:
 #[MESSAGE_ID]: [TOPIC]
 for each message, separated by newlines.
+It should look like the contents of a dictionary, but without the surrounding curly braces and apostrophes.
 If there are no rows of type MSG, please respond with NO_MESSAGES.
 """
 
@@ -105,7 +107,9 @@ def create_openai_client() -> openai.Client:
     )
 
 
-def get_model_response(client: openai.Client, chat_log: str) -> str:
+def get_model_response(
+    client: openai.Client, chat_log: str, model: str = "gpt-3.5-turbo"
+) -> str:
     response = client.chat.completions.create(
         messages=[
             {
@@ -117,7 +121,7 @@ def get_model_response(client: openai.Client, chat_log: str) -> str:
                 "content": chat_log,
             },
         ],
-        model="gpt-3.5-turbo",
+        model=model,
         temperature=0.0,
     )
 
