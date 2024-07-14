@@ -28,6 +28,7 @@ Your response be a json object with the following format:
 #[MESSAGE_ID]: [TOPIC]
 for each message, separated by newlines.
 It should look like the contents of a dictionary, but without the surrounding curly braces and apostrophes.
+Do not include any other lines, such as code block delimiters or comments.
 If there are no rows of type MSG, please respond with NO_MESSAGES.
 """
 
@@ -202,7 +203,7 @@ if __name__ == "__main__":
 
         actions = pl.read_csv(snakemake.input.actions)  # noqa F821 # type: ignore
 
-        df = prepare_dataset(actions)[:100]
+        df = prepare_dataset(actions)
 
         for (treatment_name, group_id, round_number), dfi in df.group_by(  # type: ignore
             "treatment_name", "group_id", "round_number"
