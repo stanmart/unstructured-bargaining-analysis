@@ -52,6 +52,7 @@ rule figures:
         "out/figures/timing_until_agreement_scatterplot.pdf",
         "out/figures/timing_until_agreement_by_round.pdf",
         "out/figures/proposal_number_per_round.pdf",
+        "out/figures/proposal_gini.pdf",
         "out/figures/axioms_survey_efficiency.pdf",
         "out/figures/axioms_survey_symmetry.pdf",
         "out/figures/axioms_survey_dummy_player.pdf",
