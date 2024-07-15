@@ -11,7 +11,9 @@ def create_nonarametric_table(mw_results: dict[str, dict[str, float]]) -> pd.Dat
             "pvalue": "p-value",
         }
     )
-    table = table.rename(index=lambda s: " < ".join(f"[Y = {t}]" for t in s.split("-")))
+    table = table.rename(
+        index=lambda s: "{" + " < ".join(f"[Y = {t}]" for t in s.split("-")) + "}"
+    )
     return table
 
 
