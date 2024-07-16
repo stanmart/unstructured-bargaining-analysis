@@ -33,6 +33,7 @@ spacy = ">=3.7.4,<3.8"
 pip = ">=24.0,<25"
 quarto = ">=1.4.550,<1.5"
 openai = ">=1.35.13,<1.36"
+mpltern = ">=1.0.4,<1.1"
 
 [environments]
 default = { solve-group = "main"}
