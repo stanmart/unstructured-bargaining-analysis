@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import mpltern
 import numpy as np
 import polars as pl
+from matplotlib import colormaps
+from matplotlib.colors import to_hex
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
 
@@ -158,7 +160,7 @@ def plot_allocations(df: pl.DataFrame) -> Figure:
         "[0, 70)": 0,
         "[70, 80)": 70,
         "[80, 90)": 80,
-        "[90, 100)": 90,
+        "[90, 99)": 90,
         "99": 99,
         "100": 100,
     }
@@ -166,13 +168,11 @@ def plot_allocations(df: pl.DataFrame) -> Figure:
         "[99, 100)": "99",
         "[100, inf)": "100",
     }
+    viridis = colormaps["viridis"]
+
     colormap = {
-        "[0, 70)": "#d62728",
-        "[70, 80)": "#bf812d",
-        "[80, 90)": "#dfc27d",
-        "[90, 99)": "#80cdc1",
-        "99": "#01665e",
-        "100": "#2c7bb6",
+        category: to_hex(viridis(i / len(color_bin_limits)))
+        for i, category in enumerate(color_bin_limits.keys())
     }
 
     for ax, treatment in zip(axes.flatten(), treatments_in_data):
