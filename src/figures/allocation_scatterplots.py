@@ -152,7 +152,7 @@ def plot_allocations(df: pl.DataFrame) -> Figure:
     fig, axes = plt.subplots(
         ceil(len(treatments_in_data) / 2), 2, subplot_kw={"projection": "ternary"}
     )
-    fig.subplots_adjust(wspace=0.3, hspace=0.3)
+    fig.subplots_adjust(wspace=0.3, hspace=0.6)
 
     color_bin_limits = {
         "[0, 70)": 0,
@@ -221,7 +221,7 @@ def plot_allocations(df: pl.DataFrame) -> Figure:
         label="Shapley value",
     )
     legend = fig.legend(handles=point_handles + [nucleolus_marker, shapley_marker])
-    legend.set_title("Total allocated\npoints")
+    legend.set_title("Total points\nallocated")
 
     return fig
 
@@ -237,9 +237,9 @@ def plot_treatment(
     df_i = df.filter(pl.col("treatment_name_nice") == treatment, pl.col("total") > 0)
 
     if treatment == "Dummy player":
-        ax.set_tlabel("B")
-        ax.set_llabel("A1")
-        ax.set_rlabel("A2")
+        ax.set_tlabel("Share of B")
+        ax.set_llabel("Share of A1")
+        ax.set_rlabel("Share of A2")
 
         top = df_i["prop_3"]
         left = df_i["prop_1"]
@@ -254,9 +254,9 @@ def plot_treatment(
         nuc_r = df_i["nuc_2"][0]
 
     else:
-        ax.set_tlabel("A")
-        ax.set_llabel("B1")
-        ax.set_rlabel("B2")
+        ax.set_tlabel("Share of A")
+        ax.set_llabel("Share of B1")
+        ax.set_rlabel("Share of B2")
 
         top = df_i["prop_1"]
         left = df_i["prop_2"]
@@ -291,7 +291,7 @@ def plot_treatment(
         c="None",
         edgecolors=colors,
         s=10,  # type: ignore
-        alpha=1,
+        alpha=0.8,
     )
 
     ax.scatter(
@@ -353,9 +353,10 @@ if __name__ == "__main__":
 
     if snakemake.wildcards.type == "outcomes":  # noqa F821 # type: ignore
         df = prepare_dataset(outcomes, type="outcomes")
-    elif snakemake.wildcards.type == "actions":  # noqa F821 # type: ignore
+    elif snakemake.wildcards.type == "proposals":  # noqa F821 # type: ignore
         df = prepare_dataset(actions, type="actions")
     else:
         raise ValueError(f"Unknown type: {snakemake.wildcards.type}")  # noqa F821 # type: ignore
 
+    plot = plot_allocations(df)
     plot.savefig(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore

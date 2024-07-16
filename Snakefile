@@ -74,6 +74,8 @@ rule figures:
         "out/figures/survey_nationality.pdf",
         "out/figures/values_theory.pdf",
         "out/figures/chat_excerpt-8,10,11,17-21.pdf",
+        "out/figures/allocations_outcomes.pdf",
+        "out/figures/allocations_proposals.pdf",
 
 rule run_analysis: 
     input: 
@@ -174,6 +176,16 @@ rule create_timing_plot:
         figure = "out/figures/timing_{plot}.{ext}",
     script:
         "src/figures/timing_plots.py"
+
+
+rule create_allocation_plot:
+    input:
+        outcomes = "data/clean/_collected/outcomes.csv",
+        actions = "data/clean/_collected/actions.csv",
+    output:
+        figure = "out/figures/allocations_{type}.{ext}",
+    script:
+        "src/figures/allocation_scatterplots.py"
 
 
 rule create_payoff_plot:
