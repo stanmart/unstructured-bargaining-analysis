@@ -79,6 +79,25 @@ rule figures:
         "out/figures/allocations_outcomes.pdf",
         "out/figures/allocations_proposals.pdf",
 
+
+rule nonparametric_table:
+    input:
+        mann_whitney = "out/analysis/mann_whitney.json",
+    output:
+        table = "out/tables/nonparametric_table.tex",
+    script:
+        "src/tables/nonparametric_table.py"
+
+
+rule regression_table:
+    input:
+        regression = "out/analysis/regression.pkl",
+        regression_dummies = "out/analysis/regression_dummies.pkl",
+    output:
+        table = "out/tables/regression_table.tex",
+    script:
+        "src/tables/regression_table.py"
+
 rule run_analysis: 
     input: 
         outcomes = "data/clean/_collected/outcomes.csv", 
