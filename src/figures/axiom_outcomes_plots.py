@@ -122,29 +122,11 @@ def plot_outcomes_linearity_additivity(df: pl.DataFrame) -> sns.axisgrid.FacetGr
         df.group_by("treatment_name_nice")
         .agg(pl.col("1").mean(), pl.col("2").mean(), pl.col("3").mean())
         .filter((pl.col("treatment_name_nice") != "Dummy player"))
-        .with_columns(observed=True)
-    )
-
-    theoretical = pl.DataFrame(
-        {
-            "treatment_name_nice": "Y = 30",
-            "1": 0.75
-            * df_results.filter(pl.col("treatment_name_nice") == "Y = 10")["1"]
-            + 0.25 * df_results.filter(pl.col("treatment_name_nice") == "Y = 90")["1"],
-            "2": 0.75
-            * df_results.filter(pl.col("treatment_name_nice") == "Y = 10")["2"]
-            + 0.25 * df_results.filter(pl.col("treatment_name_nice") == "Y = 90")["2"],
-            "3": 0.75
-            * df_results.filter(pl.col("treatment_name_nice") == "Y = 10")["3"]
-            + 0.25 * df_results.filter(pl.col("treatment_name_nice") == "Y = 90")["3"],
-            "observed": False,
-        }
-    )
-
-    df_results = pl.concat([df_results, theoretical]).melt(
-        id_vars=["treatment_name_nice", "observed"],
-        variable_name="player_role",
-        value_name="mean_payoff",
+        .melt(
+            id_vars=["treatment_name_nice"],
+            variable_name="player_role",
+            value_name="mean_payoff",
+        )
     )
 
     g = sns.FacetGrid(
@@ -152,11 +134,6 @@ def plot_outcomes_linearity_additivity(df: pl.DataFrame) -> sns.axisgrid.FacetGr
             treatments_int=pl.Series(
                 df_results.to_series(0).str.strip_chars("Y = ").str.to_integer()
             ),
-            linear=pl.when(
-                (pl.col("treatment_name_nice") == "Y = 30") & (pl.col("observed"))
-            )
-            .then(False)
-            .otherwise(True),
         ),
         col="player_role",
     )
@@ -165,15 +142,6 @@ def plot_outcomes_linearity_additivity(df: pl.DataFrame) -> sns.axisgrid.FacetGr
         sns.scatterplot,
         x="treatments_int",
         y="mean_payoff",
-        hue="observed",
-    ).add_legend(title="Observed data")
-
-    g.map_dataframe(
-        sns.lineplot,
-        x="treatments_int",
-        y="mean_payoff",
-        hue="linear",
-        palette="flare",
     )
 
     for ax in g.axes.flat:
@@ -182,7 +150,7 @@ def plot_outcomes_linearity_additivity(df: pl.DataFrame) -> sns.axisgrid.FacetGr
     g.set_titles(col_template="Player {col_name}")
     g.set_axis_labels("Treatment value Y", "Average payoff")
     g.figure.suptitle(
-        "Bargaining outcomes: Agreement with the linearity axiom",
+        "Bargaining outcomes: Player roles' average payoff by treatment",
         y=1.1,
         verticalalignment="top",
     )
