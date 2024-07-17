@@ -162,6 +162,7 @@ def timing_until_agreement_scatterplot(df: pl.DataFrame) -> Figure:
     ax.legend(title="")
     ax.set_xticks([0, 60, 120, 180, 240, 300])
     ax.set_xticklabels(["0", "1", "2", "3", "4", "5"])
+    fig.set_size_inches(6, 4)
 
     return fig
 
