@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import polars as pl
 import seaborn as sns
 
@@ -42,6 +43,67 @@ def proposal_number_per_round(df: pl.DataFrame) -> sns.FacetGrid:
     )
     g.set_titles(col_template="{col_name} treatment")
     g.set_axis_labels("Round", "Average number of proposals")
+
+    return g
+
+
+def proposal_gini(df: pl.DataFrame) -> sns.FacetGrid:
+    df_gini = (
+        df.with_columns(
+            gini=(
+                (pl.col("allocation_1") - pl.col("allocation_2")).abs()
+                + (pl.col("allocation_1") - pl.col("allocation_3")).abs()
+                + (pl.col("allocation_2") - pl.col("allocation_3")).abs()
+            )
+            / (
+                3
+                * (
+                    pl.col("allocation_1")
+                    + pl.col("allocation_2")
+                    + pl.col("allocation_3")
+                )
+            ),
+            is_A=pl.when(pl.col("treatment_name_nice") != "Dummy player")
+            .then(pl.col("id_in_group") == 1)
+            .otherwise(pl.col("id_in_group") != 3),
+        )
+        .group_by(["treatment_name_nice", "participant_code", "is_A"])
+        .agg(avg_gini=pl.col("gini").mean())
+        .pivot(
+            columns="is_A",
+            index=["treatment_name_nice", "participant_code"],
+            values="avg_gini",
+        )
+        .fill_null(-0.1)
+        .fill_nan(-0.1)
+    )
+
+    g = sns.FacetGrid(
+        data=df_gini.rename({"true": "gini_avg_A", "false": "gini_avg_B"}).with_columns(
+            incomplete=(pl.col("gini_avg_A") == -0.1) | (pl.col("gini_avg_B") == -0.1),
+        ),
+        col="treatment_name_nice",
+    )
+    g.map_dataframe(
+        sns.scatterplot,
+        x="gini_avg_B",
+        y="gini_avg_A",
+        style="incomplete",
+        alpha=0.5,
+    )
+
+    def const_line(*args, **kwargs):
+        x = [0, 0.43]
+        y = [0, 0.43]
+        plt.plot(y, x, color="Red")
+
+    g.map(const_line)
+    g.set_titles(col_template="{col_name} treatment")
+    g.set_axis_labels(
+        "Average gini coefficient of proposals as B",
+        "Average gini coefficient of proposals as A",
+        fontsize=8,
+    )
 
     return g
 

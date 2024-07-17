@@ -426,6 +426,52 @@ def payoff_matching_group_average(df: pl.DataFrame) -> sns.axisgrid.FacetGrid:
     return g
 
 
+def payoff_groups(df: pl.DataFrame) -> sns.FacetGrid:
+    outcome_groups = df.pivot(
+        index=["treatment_name_nice", "round_number", "group_id", "agreement"],
+        columns="id_in_group",
+        values="payoff_this_round",
+    ).with_columns(
+        group=pl.when(pl.col("agreement") == "Breakdown")
+        .then(pl.lit("Coordination failure"))
+        .when(pl.col("agreement") == "Partial agreement")
+        .then(pl.lit("Partial agreement"))
+        .when((pl.col("1") == 33) & (pl.col("2") == 33) & (pl.col("3") == 33))
+        .then(pl.lit("Equal split"))
+        .when(
+            (pl.col("1").is_in([33, 34]))
+            & (pl.col("2").is_in([33, 34]))
+            & (pl.col("3").is_in([33, 34]))
+        )
+        .then(pl.lit("Almost-equal split"))
+        .when((pl.col("1") == pl.col("2")) & (pl.col("1") > pl.col("3")))
+        .then(pl.lit("Grand coalition: 1 = 2 > 3"))
+        .when((pl.col("1") > pl.col("2")) & (pl.col("2") == pl.col("3")))
+        .then(
+            pl.lit(
+                "Grand coalition: 1 > 2 = 3"
+            )  # note that this is a slight misnomer as this excludes almost-equal splits
+        )
+        .otherwise(pl.lit("Grand coalition: other"))
+    )
+
+    g = sns.displot(
+        outcome_groups,
+        x="treatment_name_nice",
+        hue="group",
+        multiple="stack",
+        alpha=0.9,
+    )
+
+    for ax in g.axes.flat:
+        ax.xaxis.grid(False)
+
+    g.set_axis_labels("Treatment", "Cluster size")
+    g.legend.set_title("Outcome clusters")  # type: ignore
+
+    return g
+
+
 if __name__ == "__main__":
     outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
     df = prepare_dataset(outcomes)
