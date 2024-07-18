@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import polars as pl
 import seaborn as sns
+from matplotlib.ticker import AutoMinorLocator
 
 
 def prepare_dataset(actions: pl.DataFrame) -> pl.DataFrame:
@@ -83,6 +84,7 @@ def proposal_gini(df: pl.DataFrame) -> sns.FacetGrid:
             incomplete=(pl.col("gini_avg_A") == -0.1) | (pl.col("gini_avg_B") == -0.1),
         ),
         col="treatment_name_nice",
+        col_wrap=2,
     )
     g.map_dataframe(
         sns.scatterplot,
@@ -100,10 +102,19 @@ def proposal_gini(df: pl.DataFrame) -> sns.FacetGrid:
     g.map(const_line)
     g.set_titles(col_template="{col_name} treatment")
     g.set_axis_labels(
-        "Average gini coefficient of proposals as B",
-        "Average gini coefficient of proposals as A",
-        fontsize=8,
+        "Average gini coefficient\nof proposals as B",
+        "Average gini coefficient\nof proposals as A",
+        # fontsize=8,
     )
+
+    for ax in g.axes.flatten():
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
+        ax.xaxis.set_ticks([0.0, 0.2, 0.4])
+        ax.xaxis.set_ticks([-0.1], labels=["N/A"], minor=True)
+        ax.yaxis.set_minor_locator(AutoMinorLocator())
+        ax.yaxis.set_ticks([0.0, 0.2, 0.4])
+        ax.yaxis.set_ticks([-0.1], labels=["N/A"], minor=True)
+        ax.grid(which="minor", axis="both", color="grey", linestyle=":")
 
     return g
 
