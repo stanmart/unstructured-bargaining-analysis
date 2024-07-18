@@ -64,10 +64,7 @@ rule figures:
         "out/figures/axioms_outcomes_dummy_player.pdf",
         "out/figures/axioms_outcomes_linearity_additivity.pdf",
         "out/figures/axioms_outcomes_stability.pdf",
-        expand("out/figures/chat_top_equal_split_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
-        expand("out/figures/chat_top_agreement_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
-        expand("out/figures/chat_top_role_{word_type}_nodummy.pdf", word_type=WORD_TYPES),
-        expand("out/figures/chat_top_treatment_name_nice_{word_type}_withdummy.pdf", word_type=WORD_TYPES),
+        "out/figures/plot_chat_topics_until_agreement.pdf",
         "out/figures/survey_difficulty_rating.pdf", 
         "out/figures/survey_age.pdf",
         "out/figures/survey_gender.pdf",
@@ -111,6 +108,17 @@ rule run_analysis:
     script: 
         "src/analysis/analysis.py"
 
+rule create_chat_plot: 
+    input:
+        outcomes = "data/clean/_collected/outcomes.csv",
+        actions =  "data/clean/_collected/actions.csv",
+        chat = "out/analysis/chat_classified.csv",
+    output: 
+        figure = "out/figures/plot_chat_{plot}.{ext}",
+    script: 
+        "src/figures/chat_plots.py"
+
+
 rule classify_chat_messages:
     input:
         actions = "data/clean/_collected/actions.csv",
@@ -134,24 +142,6 @@ rule create_chat_excerpt:
         figure = "out/figures/chat_excerpt-{rows}.{ext}",
     script:
         "src/figures/chat_excerpts.py"
-
-rule create_chat_plot: 
-    input:
-        outcomes = "data/clean/_collected/outcomes.csv",
-        lemmas = "out/analysis/lemmas.csv",
-    output: 
-        figure = "out/figures/chat_top_{group_var}_{word_type}_{dummy}.{ext}",
-    script: 
-        "src/figures/chat_plots.py"
-
-rule lemmatize_chat_data:
-    input:
-        actions = "data/clean/_collected/actions.csv",
-        outcomes = "data/clean/_collected/outcomes.csv",
-    output:
-        lemmas = "out/analysis/lemmas.csv",
-    script:
-        "src/analysis/lemmatize_chat.py"
 
 rule create_survey_plot: 
     input: 
