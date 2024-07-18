@@ -83,11 +83,29 @@ def plot_chat_topics(
 ) -> sns.FacetGrid:
     treatment_names = pl.Enum(["Dummy player", "Y = 10", "Y = 30", "Y = 90"])
 
+    main_topics = pl.Enum(["bargaining", "meta-talk", "small talk"])
+    sub_topics = pl.Enum(
+        [
+            "fairness-based",
+            "non-fairness-based",
+            "rules",
+            "purpose",
+            "identification",
+            "greetings and farewells",
+            "other",
+        ]
+    )
+
     df_chat = (
-        chat.with_columns(
+        chat.filter(
+            pl.col("main_topic").is_in(["bargaining", "meta-talk", "small talk"])
+        )
+        .with_columns(
             sub_topic_cleaned=pl.when(pl.col("sub_topic") == "farewells")
             .then(pl.lit("greetings and farewells"))
             .otherwise(pl.col("sub_topic"))
+            .cast(sub_topics),
+            main_topic=pl.col("main_topic").cast(main_topics),
         )
         .join(
             final_choices,
@@ -106,7 +124,7 @@ def plot_chat_topics(
             )
             .cast(treatment_names),
         )
-    ).filter(pl.col("main_topic").is_in(["bargaining", "meta-talk", "small talk"]))
+    )
 
     if until_agreement:
         df_chat = df_chat.filter(
