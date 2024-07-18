@@ -15,21 +15,24 @@ ACC #[ACCEPTANCE_ID] @[PLAYER_NAME]: PROP #[PROPOSAL_ID]
 separated by newlines.
 
 Please classify which TOPIC each message (MSG) belongs to. You only have to classify messages, not proposals or acceptances (those latter two are only included for context). The classification should also take into account the context of the message (e.g. when a message is a reply to another).
-Possible topics are:
- - greetings and farewells: e.g. saying hello, goodbye, etc.
- - small talk: e.g. discussing the weather, etc.
- - bargaining: messages discussing the distribution of the money, based on one's bargaining position (i.e. one's necessity to create value); this includes offers, counteroffers, rejections, making other players compete, etc.
- - fairness: messages discussing the distribution of the money, based on fairness or justice ideas
- - meta-talk: e.g. talking about the aim of the experiment, how they feel about the task, etc.
- - identifying each other: e.g. trying to figure out if players met each other in previous rounds, or identifying information for later
- - other: messages that do not fit into any of the above categories
+Each message should be classified into one main and one subtopic. The topics are given in the following nested list:
+ - small talk: messages that are not directly related to the experiment
+    - greetings and farewells: e.g. saying hello, goodbye, etc.
+    - other: e.g. talking about the weather, how to spend the remaining time, etc.
+ - bargaining: messages discussing the distribution of the money, making and reacting to proposals, counter-proposals, etc.
+    - fairness-based: using arguments based on fairness or justice ideas
+    - non-fairness-based: using arguments based on other considerations
+ - meta-talk: talking about the experiment itself
+    - purpose: discussing what the experimenters are trying to find out
+    - rules: discussing and clarifying the rules of the experiment
+    - identification: identifying each other, e.g. trying to figure out if players met each other in previous rounds, or identifying information for later
 
-Your response be a json object with the following format:
-#[MESSAGE_ID]: [TOPIC]
+Your response should be of the following format:
+#[MESSAGE_ID]: [MAIN_TOPIC], [SUB_TOPIC]
 for each message, separated by newlines.
 It should look like the contents of a dictionary, but without the surrounding curly braces and apostrophes.
 Do not include any other lines, such as code block delimiters or comments.
-If there are no rows of type MSG, please respond with NO_MESSAGES.
+If there are no rows of type MSG, please respond with NO_MESSAGES without any additional content, such as IDs or comments.
 """
 
 
@@ -135,9 +138,11 @@ def get_model_response(
 def parse_model_response_row(row: str) -> dict[str, int | str]:
     try:
         message_id, topic = row.split(":")
+        main_topic, sub_topic = topic.split(",")
         return {
             "action_id": int(message_id.lstrip("#")),
-            "topic": topic.strip(),
+            "main_topic": main_topic.strip(),
+            "sub_topic": sub_topic.strip(),
         }
     except ValueError as e:
         print(f"Could not parse row: {row}")
@@ -154,7 +159,8 @@ def parse_model_response(model_response: str) -> pl.DataFrame:
         rows,
         schema={
             "action_id": pl.UInt32,
-            "topic": pl.String,
+            "main_topic": pl.String,
+            "sub_topic": pl.String,
         },
     )
 
@@ -176,7 +182,8 @@ def analyze_log(
             "id_in_group",
             "timestamp",
             "body",
-            "topic",
+            "main_topic",
+            "sub_topic",
         ]
     )
 

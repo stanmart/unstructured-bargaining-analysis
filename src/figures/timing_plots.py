@@ -97,7 +97,16 @@ def timing_until_decision(df: pl.DataFrame) -> so.Plot:
     empty_formatter = FixedFormatter([])
 
     plot = (
-        so.Plot(df)
+        so.Plot(
+            df.with_columns(
+                agreement=pl.col("agreement").replace(
+                    {
+                        "Full agreement": "Full",
+                        "Partial agreement": "Partial",
+                    }
+                )
+            )
+        )
         .add(
             so.Range(),
             y="row_number",
@@ -105,7 +114,7 @@ def timing_until_decision(df: pl.DataFrame) -> so.Plot:
             xmax="time_until_final_agreement",
             color="agreement",
         )
-        .label(x="Time (m)", y="", color="")
+        .label(x="Time (m)", y="", color="Agreement")
         .facet(
             col="treatment_name_nice",
             order=["Dummy player", "Y = 10", "Y = 30", "Y = 90"],
@@ -115,7 +124,7 @@ def timing_until_decision(df: pl.DataFrame) -> so.Plot:
             .tick(at=[0, 60, 120, 180, 240, 300])
             .label(like=lambda x, _: f"{x/60:.0f}"),  # type: ignore
             y=so.Continuous().tick().label(formatter=empty_formatter),
-            color=so.Nominal(order=["Full agreement", "Partial agreement"]),
+            color=so.Nominal(order=["Full", "Partial"]),
         )
     )
     return plot
@@ -153,6 +162,7 @@ def timing_until_agreement_scatterplot(df: pl.DataFrame) -> Figure:
     ax.legend(title="")
     ax.set_xticks([0, 60, 120, 180, 240, 300])
     ax.set_xticklabels(["0", "1", "2", "3", "4", "5"])
+    fig.set_size_inches(6, 4)
 
     return fig
 
