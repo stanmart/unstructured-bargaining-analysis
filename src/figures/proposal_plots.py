@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import polars as pl
 import seaborn as sns
-from matplotlib.ticker import AutoMinorLocator
 
 
 def prepare_dataset(actions: pl.DataFrame) -> pl.DataFrame:
@@ -107,14 +106,12 @@ def proposal_gini(df: pl.DataFrame) -> sns.FacetGrid:
         # fontsize=8,
     )
 
-    for ax in g.axes.flatten():
-        ax.xaxis.set_minor_locator(AutoMinorLocator())
-        ax.xaxis.set_ticks([0.0, 0.2, 0.4])
-        ax.xaxis.set_ticks([-0.1], labels=["N/A"], minor=True)
-        ax.yaxis.set_minor_locator(AutoMinorLocator())
-        ax.yaxis.set_ticks([0.0, 0.2, 0.4])
-        ax.yaxis.set_ticks([-0.1], labels=["N/A"], minor=True)
-        ax.grid(which="minor", axis="both", color="grey", linestyle=":")
+    g.set(
+        xticks=[-0.1, 0.0, 0.2, 0.4],
+        xticklabels=["N/A", "0.0", "0.2", "0.4"],
+        yticks=[-0.1, 0.0, 0.2, 0.4],
+        yticklabels=["N/A", "0.0", "0.2", "0.4"],
+    )
 
     return g
 
