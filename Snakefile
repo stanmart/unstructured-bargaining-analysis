@@ -64,7 +64,7 @@ rule figures:
         "out/figures/axioms_outcomes_dummy_player.pdf",
         "out/figures/axioms_outcomes_linearity_additivity.pdf",
         "out/figures/axioms_outcomes_stability.pdf",
-        "out/figures/plot_chat_topics_until_agreement.pdf",
+        "out/figures/chat_topics_until_agreement.pdf",
         "out/figures/survey_difficulty_rating.pdf", 
         "out/figures/survey_age.pdf",
         "out/figures/survey_gender.pdf",
@@ -114,7 +114,7 @@ rule create_chat_plot:
         actions =  "data/clean/_collected/actions.csv",
         chat = "out/analysis/chat_classified.csv",
     output: 
-        figure = "out/figures/plot_chat_{plot}.{ext}",
+        figure = "out/figures/chat_topics_{sample}.{ext}",
     script: 
         "src/figures/chat_plots.py"
 

@@ -78,12 +78,12 @@ def prepare_final_choices(
     return final_choices
 
 
-def plot_chat_topics_until_agreement(
-    chat: pl.DataFrame, final_choices: pl.DataFrame
+def plot_chat_topics(
+    chat: pl.DataFrame, final_choices: pl.DataFrame, until_agreement: bool = True
 ) -> sns.FacetGrid:
     treatment_names = pl.Enum(["Dummy player", "Y = 10", "Y = 30", "Y = 90"])
 
-    df_chat_until_agreement = (
+    df_chat = (
         chat.with_columns(
             sub_topic_cleaned=pl.when(pl.col("sub_topic") == "farewells")
             .then(pl.lit("greetings and farewells"))
@@ -93,15 +93,6 @@ def plot_chat_topics_until_agreement(
             final_choices,
             on=["treatment_name", "round_number", "group_id"],
             how="left",
-        )
-        .filter(
-            pl.when(
-                pl.col(
-                    "time_of_final_agreement"
-                ).is_null()  # include chats with coordination failures
-            )
-            .then(True)
-            .otherwise(pl.col("timestamp") <= pl.col("time_of_final_agreement"))
         )
         .with_columns(
             treatment_name_nice=pl.col("treatment_name")
@@ -115,14 +106,27 @@ def plot_chat_topics_until_agreement(
             )
             .cast(treatment_names),
         )
-    )
+    ).filter(pl.col("main_topic").is_in(["bargaining", "meta-talk", "small talk"]))
+
+    if until_agreement:
+        df_chat = df_chat.filter(
+            pl.when(
+                pl.col(
+                    "time_of_final_agreement"
+                ).is_null()  # include chats with coordination failures
+            )
+            .then(True)
+            .otherwise(pl.col("timestamp") <= pl.col("time_of_final_agreement"))
+        )
 
     g = sns.displot(
-        df_chat_until_agreement,
+        df_chat,
         x="main_topic",
         hue="sub_topic_cleaned",
         multiple="stack",
         col="treatment_name_nice",
+        col_wrap=2,
+        height=3.5,
     )
 
     for ax in g.axes.flat:
@@ -154,10 +158,11 @@ if __name__ == "__main__":
             "axes.spines.top": False,
         },
     )
-    try:
-        funcname = "plot_chat_" + snakemake.wildcards.plot  # noqa F821 # type: ignore
-        plot = globals()[funcname](chat, final_choices)
-    except KeyError:
-        raise ValueError(f"Unknown plot: {snakemake.wildcards.plot}")  # noqa F821 # type: ignore
+    if snakemake.wildcards.sample == "all":  # noqa F821 # type: ignore
+        plot = plot_chat_topics(chat, final_choices, until_agreement=False)
+    elif snakemake.wildcards.sample == "until_agreement":  # noqa F821 # type: ignore
+        plot = plot_chat_topics(chat, final_choices, until_agreement=True)
+    else:
+        raise ValueError(f"Unknown sample: {snakemake.wildcards.sample}")  # noqa F821 # type: ignore
 
     plot.savefig(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
