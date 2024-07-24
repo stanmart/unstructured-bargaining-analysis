@@ -75,6 +75,7 @@ rule figures:
         "out/figures/chat_excerpt-8,10,11,17-21.pdf",
         "out/figures/allocations_outcomes.pdf",
         "out/figures/allocations_proposals.pdf",
+        "out/figures/allocations_proposals_A_first.pdf",
 
 
 rule nonparametric_table:

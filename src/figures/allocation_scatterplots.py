@@ -78,6 +78,9 @@ def prepare_dataset(
                     "payoff_this_round",
                 ]
             )
+            .with_columns(
+                timestamp=pl.lit(None, dtype=pl.Float64),
+            )
             .pivot(
                 index=["session_code", "treatment_name", "round_number", "group_id"],
                 values=["payoff_this_round"],
@@ -103,6 +106,7 @@ def prepare_dataset(
                     "round_number",
                     "id_in_group",
                     "group_id",
+                    "timestamp",
                     "allocation_1",
                     "allocation_2",
                     "allocation_3",
@@ -224,6 +228,51 @@ def plot_allocations(df: pl.DataFrame) -> Figure:
     legend.set_title("Total points\nallocated")
 
     return fig
+
+
+def select_first_proposal_of_A(df: pl.DataFrame) -> pl.DataFrame:
+    return (
+        df.filter(
+            (
+                (pl.col("treatment_name") == "treatment_dummy_player")
+                & pl.col("id_in_group").is_in([1, 2])
+            )
+            | (
+                (pl.col("treatment_name") != "treatment_dummy_player")
+                & (pl.col("id_in_group") == 1)
+            )
+        )
+        .sort(
+            "session_code",
+            "treatment_name_nice",
+            "round_number",
+            "group_id",
+            "id_in_group",
+            "timestamp",
+        )
+        .group_by(
+            [
+                "session_code",
+                "treatment_name_nice",
+                "round_number",
+                "group_id",
+                "id_in_group",
+            ],
+            maintain_order=True,
+        )
+        .agg(
+            pl.col("prop_1").first(),
+            pl.col("prop_2").first(),
+            pl.col("prop_3").first(),
+            pl.col("shap_1").first(),
+            pl.col("shap_2").first(),
+            pl.col("shap_3").first(),
+            pl.col("nuc_1").first(),
+            pl.col("nuc_2").first(),
+            pl.col("nuc_3").first(),
+            pl.col("total").first(),
+        )
+    )
 
 
 def plot_treatment(
@@ -355,6 +404,8 @@ if __name__ == "__main__":
         df = prepare_dataset(outcomes, type="outcomes")
     elif snakemake.wildcards.type == "proposals":  # noqa F821 # type: ignore
         df = prepare_dataset(actions, type="actions")
+    elif snakemake.wildcards.type == "proposals_A_first":  # noqa F821 # type: ignore
+        df = select_first_proposal_of_A(prepare_dataset(actions, type="actions"))
     else:
         raise ValueError(f"Unknown type: {snakemake.wildcards.type}")  # noqa F821 # type: ignore
 
