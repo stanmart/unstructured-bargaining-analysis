@@ -101,8 +101,9 @@ def prepare_dataset(
                     "session_code",
                     "treatment_name",
                     "round_number",
-                    "id_in_group",
                     "group_id",
+                    "id_in_group",
+                    "participant_code",
                     "allocation_1",
                     "allocation_2",
                     "allocation_3",
@@ -149,37 +150,54 @@ def prepare_dataset(
     return df.filter(pl.col("round_number") > 1)
 
 
-def plot_allocations(df: pl.DataFrame) -> Figure:
+def plot_allocations(df: pl.DataFrame, colors_var: str = "total") -> Figure:
     treatments_in_data: list[str] = df["treatment_name_nice"].unique().sort().to_list()
     fig, axes = plt.subplots(
         ceil(len(treatments_in_data) / 2), 2, subplot_kw={"projection": "ternary"}
     )
     fig.subplots_adjust(wspace=0.3, hspace=0.6)
 
-    color_bin_limits = {
-        "[0, 70)": 0,
-        "[70, 80)": 70,
-        "[80, 90)": 80,
-        "[90, 99)": 90,
-        "99": 99,
-        "100": 100,
-    }
-    color_bin_rename = {
-        "[99, 100)": "99",
-        "[100, inf)": "100",
-    }
     viridis = colormaps["viridis"]
 
-    colormap = {
-        category: to_hex(viridis(i / len(color_bin_limits)))
-        for i, category in enumerate(color_bin_limits.keys())
-    }
+    if colors_var == "total":
+        color_bin_limits = {
+            "[0, 70)": 0,
+            "[70, 80)": 70,
+            "[80, 90)": 80,
+            "[90, 99)": 90,
+            "99": 99,
+            "100": 100,
+        }
+        color_bin_rename = {
+            "[99, 100)": "99",
+            "[100, inf)": "100",
+        }
+        colormap = {
+            category: to_hex(viridis(i / len(color_bin_limits)))
+            for i, category in enumerate(color_bin_limits.keys())
+        }
+    elif colors_var.endswith("axiom"):
+        categories = [
+            "Strongly Disagree",
+            "Disagree",
+            "Neutral",
+            "Agree",
+            "Strongly Agree",
+            "No opinion",
+        ]
+        palette = colormaps["Spectral"](np.linspace(0, 1, len(categories)))
+        colormap = {
+            category: to_hex(color) for category, color in zip(categories, palette)
+        }
+        color_bin_limits = None
+        color_bin_rename = {}
 
     for ax, treatment in zip(axes.flatten(), treatments_in_data):
         plot_treatment(
             ax=ax,
             df=df,
             treatment=treatment,
+            color_var=colors_var,
             color_bin_limits=color_bin_limits,
             colormap=colormap,
             color_bin_rename=color_bin_rename,
@@ -230,8 +248,9 @@ def plot_treatment(
     ax: mpltern.TernaryAxes,
     df: pl.DataFrame,
     treatment: str,
-    color_bin_limits: dict[str, int],
     colormap: dict[str, str],
+    color_var: str = "total",
+    color_bin_limits: dict[str, int] | None = None,
     color_bin_rename: dict[str, str] = {},
 ) -> None:
     df_i = df.filter(pl.col("treatment_name_nice") == treatment, pl.col("total") > 0)
@@ -274,13 +293,16 @@ def plot_treatment(
     left_jitter = jitter_series(left, type="normal", spread=0.02)
     right_jitter = jitter_series(right, type="normal", spread=0.02)
 
-    color_bins = (
-        df_i["total"]
-        .cut(list(color_bin_limits.values()), left_closed=True)
-        .cast(pl.String)
-        .replace(color_bin_rename)
-    )
-    colors = color_bins.replace(colormap)
+    if color_bin_limits:
+        color_bins = (
+            df_i[color_var]
+            .cut(list(color_bin_limits.values()), left_closed=True)
+            .cast(pl.String)
+            .replace(color_bin_rename)
+        )
+        colors = color_bins.replace(colormap)
+    else:
+        colors = df[color_var].replace(colormap)
 
     ax.grid(alpha=0.5)
 
@@ -353,10 +375,17 @@ if __name__ == "__main__":
 
     if snakemake.wildcards.type == "outcomes":  # noqa F821 # type: ignore
         df = prepare_dataset(outcomes, type="outcomes")
-    elif snakemake.wildcards.type == "proposals":  # noqa F821 # type: ignore
+        colors_var = "total"
+    elif snakemake.wildcards.type.startswith("proposals"):  # noqa F821 # type: ignore
         df = prepare_dataset(actions, type="actions")
+        if snakemake.wildcards.type.endswith("axiom"):  # noqa F821 # type: ignore
+            colors_var = snakemake.wildcards.type.split("_by_")[-1]  # noqa F821 # type: ignore
+            survey = outcomes.select("participant_code", colors_var)
+            df = df.join(survey, on="participant_code", how="left")
+        else:
+            colors_var = "total"
     else:
         raise ValueError(f"Unknown type: {snakemake.wildcards.type}")  # noqa F821 # type: ignore
 
-    plot = plot_allocations(df)
+    plot = plot_allocations(df, colors_var=colors_var)
     plot.savefig(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
