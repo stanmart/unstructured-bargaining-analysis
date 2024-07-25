@@ -380,7 +380,7 @@ if __name__ == "__main__":
         df = prepare_dataset(actions, type="actions")
         if snakemake.wildcards.type.endswith("axiom"):  # noqa F821 # type: ignore
             colors_var = snakemake.wildcards.type.split("_by_")[-1]  # noqa F821 # type: ignore
-            survey = outcomes.select("participant_code", colors_var)
+            survey = outcomes.select("participant_code", colors_var).unique()
             df = df.join(survey, on="participant_code", how="left")
         else:
             colors_var = "total"
