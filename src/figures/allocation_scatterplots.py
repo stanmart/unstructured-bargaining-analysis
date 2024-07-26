@@ -191,6 +191,8 @@ def plot_allocations(df: pl.DataFrame, colors_var: str = "total") -> Figure:
         }
         color_bin_limits = None
         color_bin_rename = {}
+    else:
+        raise ValueError(f"No colormap for {colors_var}")
 
     for ax, treatment in zip(axes.flatten(), treatments_in_data):
         plot_treatment(
