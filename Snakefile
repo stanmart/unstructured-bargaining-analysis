@@ -75,6 +75,12 @@ rule figures:
         "out/figures/chat_excerpt-8,10,11,17-21.pdf",
         "out/figures/allocations_outcomes.pdf",
         "out/figures/allocations_proposals.pdf",
+        "out/figures/allocations_proposals_by_dummy_player_axiom.pdf",
+        "out/figures/allocations_proposals_by_symmetry_axiom.pdf",
+        "out/figures/allocations_proposals_by_efficiency_axiom.pdf",
+        "out/figures/allocations_proposals_by_linearity_additivity_axiom.pdf",
+        "out/figures/allocations_proposals_by_linearity_HD1_axiom.pdf",
+        "out/figures/allocations_proposals_by_stability_axiom.pdf",
 
 
 rule nonparametric_table:
