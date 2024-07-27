@@ -376,8 +376,27 @@ def payoff_equal_splits_by_round(df: pl.DataFrame) -> sns.FacetGrid:
 
 
 def payoff_matching_group_average(df: pl.DataFrame) -> sns.axisgrid.FacetGrid:
+    role_order = ["$A_1$ / $A$", "$A_2$ / $B_1$", "$B$ / $B_2$"]
+    role_dtype = pl.Enum(role_order)
+
+    df_plot = (
+        df.group_by(["treatment_name_nice", "matching_group", "role"])
+        .mean()
+        .with_columns(
+            role=pl.col("role")
+            .replace(
+                {
+                    "P1": "$A_1$ / $A$",
+                    "P2": "$A_2$ / $B_1$",
+                    "P3": "$B$ / $B_2$",
+                }
+            )
+            .cast(role_dtype)
+        )
+    )
+
     g = sns.FacetGrid(
-        df.group_by(["treatment_name_nice", "matching_group", "role"]).mean(),
+        df_plot,
         col="treatment_name_nice",
         height=6,
         aspect=0.65,
