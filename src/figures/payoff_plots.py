@@ -1,3 +1,4 @@
+import ast
 import warnings
 
 import matplotlib.pyplot as plt
@@ -212,10 +213,12 @@ def add_nucleolus_and_shapley(
     return ax
 
 
-def payoff_average(df: pl.DataFrame) -> Figure:
+def payoff_average(
+    df: pl.DataFrame, round_numbers: list[int] = [2, 3, 4, 5, 6]
+) -> Figure:
     fig, ax = plt.subplots()
     sns.barplot(
-        df.with_columns(
+        df.filter(pl.col("round_number").is_in(round_numbers)).with_columns(
             role=pl.col("role").replace(
                 {
                     "P1": "$A_1$ / $A$",
@@ -510,7 +513,15 @@ if __name__ == "__main__":
     )
     try:
         funcname = "payoff_" + snakemake.wildcards.plot  # noqa F821 # type: ignore
-        plot = globals()[funcname](df)
+        if snakemake.wildcards.plot == "average":  # noqa F821 # type: ignore
+            round_numbers = (
+                ast.literal_eval(snakemake.wildcards.rounds)  # noqa F821 # type: ignore
+                if snakemake.wildcards.rounds != "all"  # noqa F821 # type: ignore
+                else [2, 3, 4, 5, 6]
+            )
+            plot = payoff_average(df, round_numbers)  # noqa F821 # type: ignore
+        else:
+            plot = globals()[funcname](df)
     except KeyError:
         raise ValueError(f"Unknown plot: {snakemake.wildcards.plot}")  # noqa F821 # type: ignore
 
