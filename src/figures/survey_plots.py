@@ -64,7 +64,7 @@ def plot_age(df: pl.DataFrame) -> sns.FacetGrid:
     return g
 
 
-def plot_study_fields(df: pl.DataFrame) -> sns.FacetGrid:
+def plot_study_field(df: pl.DataFrame) -> sns.FacetGrid:
     g = sns.FacetGrid(
         df,
         height=6,
