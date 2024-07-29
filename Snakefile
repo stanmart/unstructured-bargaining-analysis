@@ -154,6 +154,7 @@ rule create_chat_excerpt:
 rule create_survey_plot: 
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",
+        personal = "data/clean/_collected/personal.csv",
     output: 
         figure = "out/figures/survey_{plot}.{ext}",
     script: 
@@ -226,10 +227,12 @@ rule concatenate_sessions:
     input:
         actions = expand("data/clean/session_{session_code}/actions.csv", session_code=SESSION_CODES),
         outcomes = expand("data/clean/session_{session_code}/outcomes.csv", session_code=SESSION_CODES),
+        personal = expand("data/clean/session_{session_code}/survey_data_personal.csv", session_code=SESSION_CODES),
         session_details = expand("data/clean/session_{session_code}/session_details.txt", session_code=SESSION_CODES),
     output:
         actions = "data/clean/_collected/actions.csv",
         outcomes = "data/clean/_collected/outcomes.csv",
+        personal = "data/clean/_collected/personal.csv",
     script:
         "src/data/concatenate_sessions.py"
 
@@ -241,7 +244,7 @@ rule merge_session_data:
         proposals = "data/clean/session_{session_code}/proposals.csv",
         bargaining_data = "data/clean/session_{session_code}/bargaining.csv",
         slider_data = "data/clean/session_{session_code}/slider_data.csv",
-        survey_data = "data/clean/session_{session_code}/survey_data.csv",
+        survey_data = "data/clean/session_{session_code}/survey_data_nonpersonal.csv",
     output:
         actions = "data/clean/session_{session_code}/actions.csv",
         outcomes = "data/clean/session_{session_code}/outcomes.csv",
@@ -256,7 +259,8 @@ rule collect_session_data:
         live_data = "data/raw/live_data.csv",
         chat_data = "data/raw/chat_data.csv",
         slider_data = "data/raw/slider_data.csv",
-        survey_data = "data/raw/survey_data.csv",
+        survey_data_nonpersonal = "data/raw/survey_data_nonpersonal.csv",
+        survey_data_personal = "data/raw/survey_data_personal.csv",
     output:
         session_details = "data/clean/session_{session_code}/session_details.txt",
         chat = "data/clean/session_{session_code}/chat.csv",
@@ -265,7 +269,8 @@ rule collect_session_data:
         acceptances = "data/clean/session_{session_code}/acceptances.csv",
         bargaining_data = "data/clean/session_{session_code}/bargaining.csv",
         slider_data = "data/clean/session_{session_code}/slider_data.csv",
-        survey_data = "data/clean/session_{session_code}/survey_data.csv",
+        survey_data_nonpersonal = "data/clean/session_{session_code}/survey_data_nonpersonal.csv",
+        survey_data_personal = "data/clean/session_{session_code}/survey_data_personal.csv",
     script:
         "src/data/collect_session_data.py"
 

@@ -3,8 +3,22 @@ import polars as pl
 import seaborn as sns
 
 
-def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame:
+def prepare_outcomes(outcomes: pl.DataFrame) -> pl.DataFrame:
     df = outcomes.filter(pl.col("round_number") == 6).with_columns(
+        treatment_name_nice=pl.col("treatment_name").replace(
+            {
+                "treatment_dummy_player": "Dummy player",
+                "treatment_y_10": "Y = 10",
+                "treatment_y_30": "Y = 30",
+                "treatment_y_90": "Y = 90",
+            }
+        )
+    )
+    return df
+
+
+def prepare_personal(personal: pl.DataFrame) -> pl.DataFrame:
+    df = personal.with_columns(
         treatment_name_nice=pl.col("treatment_name").replace(
             {
                 "treatment_dummy_player": "Dummy player",
@@ -183,8 +197,25 @@ def plot_difficulty_rating(df: pl.DataFrame) -> sns.axisgrid.FacetGrid:
 
 
 if __name__ == "__main__":
-    outcomes = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
-    df = prepare_dataset(outcomes)
+    personal_variables = [
+        "age",
+        "gender",
+        "gender_other",
+        "degree",
+        "degree_other",
+        "study_field",
+        "study_field_other",
+        "nationality",
+        "has_second_natinality",
+        "second_nationality",
+    ]
+    variable = snakemake.wildcards.plot  # noqa F821 # type: ignore
+    if variable in personal_variables:
+        personal = pl.read_csv(snakemake.input.personal)  # noqa F821 # type: ignore
+        df = prepare_personal(personal)
+    else:
+        personal = pl.read_csv(snakemake.input.outcomes)  # noqa F821 # type: ignore
+        df = prepare_outcomes(personal)
 
     sns.set_style(
         "whitegrid",
@@ -201,9 +232,9 @@ if __name__ == "__main__":
     )
 
     try:
-        funcname = "plot_" + snakemake.wildcards.plot  # noqa F821 # type: ignore
+        funcname = "plot_" + variable
         plot = globals()[funcname](df)
     except KeyError:
-        raise ValueError(f"Unknown plot: {snakemake.wildcards.plot}")  # noqa F821 # type: ignore
+        raise ValueError(f"Unknown plot: {variable}")
 
     plot.savefig(snakemake.output.figure, bbox_inches="tight")  # noqa F821 # type: ignore
