@@ -15,6 +15,7 @@ create-figures = "snakemake --cores 1 figures"
 create-datasets = "snakemake --cores 1 create_datasets"
 power-analysis = "snakemake --cores 1 power_analysis"
 run-analysis = "snakemake --cores 1 run_analysis" 
+anonymize = "python src/data/anonymize_survey.py"
 
 [dependencies]
 python = "3.11.*"
