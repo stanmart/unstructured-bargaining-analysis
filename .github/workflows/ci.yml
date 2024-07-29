@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          echo "${{ vars.RAW_DATA_CHECKSUMS }}" > CHECKSUMS
+          echo "${{ vars.RAW_DATA_ANON_CHECKSUMS }}" > CHECKSUMS
           echo "Raw data checksums:"
           cat CHECKSUMS
           echo "Checking data raw integrity..."

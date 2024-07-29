@@ -42,6 +42,8 @@ First, navigate to the `Data` tab in the otree admin interface and export the fo
  - Chat logs → `data/raw/chat_data.csv`
  - Page times → `data/raw/page_time_data.csv`
 
+Then, use `pixi run anonymize` to create `data/raw/survey_data_nonpersonal.csv`, and the anonymezed survey data `data/raw/survey_data_personal.csv` (note that the columns are individually reshuffled in the latter file, therefore it is only suitable for single-variable desciptives). Make sure to remove the original survey data file after this step.
+
 Checksums for the raw data are stored in the `RAW_DATA_CHECKSUMS` repository variable.
 </details>
 

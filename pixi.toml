@@ -15,6 +15,7 @@ create-figures = "snakemake --cores 1 figures"
 create-datasets = "snakemake --cores 1 create_datasets"
 power-analysis = "snakemake --cores 1 power_analysis"
 run-analysis = "snakemake --cores 1 run_analysis" 
+anonymize = "python src/data/anonymize_survey.py"
 
 [dependencies]
 python = "3.11.*"
@@ -51,7 +52,7 @@ format = "ruff check --fix --select I; ruff format; exit 0"
 lint = "ruff check --extend-select I; exit 0"
 spellcheck = "codespell --ignore-words codespell-ignore-words.txt --skip '*.csv,playground,out,*bib,gh-pages' && echo 'Spellcheck passed!'; exit 0"
 typecheck = { cmd = "pyright; exit 0", env = { PYRIGHT_PYTHON_IGNORE_WARNINGS = "true" } }
-data-check = "gh variable list --json name --json value -q '.[] | select(.name | contains(\"RAW_DATA_CHECKSUMS\")) .value' | shasum -a 256 --check --quiet && echo 'Data integrity check passed!'"
+data-check = "gh variable list --json name --json value -q '.[] | select(.name | contains(\"RAW_DATA_ANON_CHECKSUMS\")) .value' | shasum -a 256 --check --quiet && echo 'Data integrity check passed!'"
 
 [feature.build-graphs.dependencies]
 snakemake = {version = "8.11.*", channel = "bioconda"}
