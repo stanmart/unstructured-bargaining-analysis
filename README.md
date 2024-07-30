@@ -42,7 +42,7 @@ First, navigate to the `Data` tab in the otree admin interface and export the fo
  - Chat logs → `data/raw/chat_data.csv`
  - Page times → `data/raw/page_time_data.csv`
 
-Then, use `pixi run anonymize` to create `data/raw/survey_data_nonpersonal.csv`, and the anonymezed survey data `data/raw/survey_data_personal.csv` (note that the columns are individually reshuffled in the latter file, therefore it is only suitable for single-variable desciptives). Make sure to remove the original survey data file after this step.
+Then, use `pixi run anonymize` to create `data/raw/wide_data_nonpersonal.csv`, `data/raw/survey_data_nonpersonal.csv`, and the anonymezed survey data `data/raw/survey_data_personal.csv`  (note that the columns are individually reshuffled in the latter file, therefore it is only suitable for single-variable desciptives). Make sure to remove the original data files after this step.
 
 Checksums for the raw data are stored in the `RAW_DATA_CHECKSUMS` repository variable.
 </details>
@@ -74,6 +74,11 @@ Other `pixi` commands are also available. E.g.:
  - To create a chart of the analysis steps at `build-graphs/filegraph.svg`, run `pixi run filegraph` (or similar commands for the `dag` or the `rulegraph`)
 
 </details>
+
+
+## Automatic replication
+
+The project is set up with GitHub Actions to automatically replicate the paper on every push to the main branch. See the `publish.yml` workflow for details. The compiled paper is available at [stanmart.github.io/unstructured-bargaining-analysis/paper.pdf](https://stanmart.github.io/unstructured-bargaining-analysis/paper.pdf).
 
 
 ## Contributing
