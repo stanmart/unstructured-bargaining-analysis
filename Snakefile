@@ -51,7 +51,7 @@ rule update_latex_deps:
     shell:
         "python src/util/makeutils.py collect-latex-packages \
             --add-biber --add-latexmk --check-against-tl \
-            --output-file tl_packages.txt --force-add ms --force-add latex-bin \
+            --output-file tl_packages.txt --force-add ms \
             {input.deps}"
 
 

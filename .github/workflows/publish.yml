@@ -21,6 +21,7 @@ jobs:
       - name: Setup latex
         uses: teatimeguest/setup-texlive-action@v3
         with:
+          packages: scheme-basic
           package-file: tl_packages.txt
           repository: https://texlive.info/historic/systems/texlive/2021/tlnet-final/
           version: 2021
