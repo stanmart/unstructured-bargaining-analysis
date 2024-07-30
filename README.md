@@ -9,10 +9,10 @@ Code for analyzing the results of the unstructured bargaining experiment
 
 ### Software requirements
 
-The project is set up so that [pixi](https://pixi.sh/latest/) handles the installation of the required dependencies into a local virtual environment. First, install pixi as described in the [documentation](https://pixi.sh/latest/#installation). Then, you can run the commands as described in the [replicating the paper](#replicating-the-paper) section.
+The project is set up so that [pixi](https://pixi.sh/latest/) handles the installation of the required dependencies into a local virtual environment (Expect for latex. If you'd like to compile the paper, then make sure you also have a tex distribution with the necessary packages and `latexmk` available on the path.). First, install pixi as described in the [documentation](https://pixi.sh/latest/#installation). Then, you can run the commands as described in the [replicating the paper](#replicating-the-paper) section.
 
 <details>
-<summary>Using pixi</summary>
+<summary>Using pixi (advanced)</summary>
 With pixi installed, you have three main commands at your disposal:
 
  - `pixi run [TASK]` runs the pixi task `[TASK]`. For a list of available tasks, run `pixi task list`.
@@ -29,7 +29,7 @@ Pixi also uses a lockfile. This lockfile is updated automatically when you add a
 Data exported from oTree is already placed into the `data/raw` directory. Please do not modify it under any circumstances. Automated checks are in place to ensure that the data is not modified.
 
 <details>
-<summary>Exporting data from otree</summary>
+<summary>Exporting data from oTree (for documentation purposes)</summary>
 The data in the `data/raw` directory is exported from the otree admin interface. The following steps describe how it can be obtained.
 First, navigate to the `Data` tab in the otree admin interface and export the following files to the indicated location. Always chose the plain format.
 
