@@ -619,7 +619,7 @@ table
 ![](/out/figures/survey_degree.svg)
 
 ## Balance (study fields)
-![](/out/figures/survey_study_fields.svg)
+![](/out/figures/survey_study_field.svg)
 
 ## Balance (nationality)
 ![](/out/figures/survey_nationality.svg)
