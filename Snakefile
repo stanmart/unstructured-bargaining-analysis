@@ -10,13 +10,15 @@ PRESENTATIONS, *_ = glob_wildcards("src/presentation/{presentation}.qmd")
 rule prepare_to_deploy:
     input:
         presentations = expand("out/presentation/{presentation}.html", presentation=PRESENTATIONS),
+        paper = "out/paper/paper.pdf",
     output:
+        paper = "gh-pages/paper.pdf",
         presentations = expand("gh-pages/{presentation}.html", presentation=PRESENTATIONS),
         nojekyll = "gh-pages/.nojekyll"
     run:
         from shutil import copy2
         from pathlib import Path
-        for file in input.presentations:
+        for file in input.presentations + [input.paper]:
             copy2(file, "gh-pages")
         Path(output.nojekyll).touch()
 
@@ -29,7 +31,7 @@ rule paper:
         util_script = "src/util/makeutils.py"
     output:
         pdf = "out/paper/paper.pdf",
-        # dep = "out/paper/paper.dep"
+        dep = "out/paper/paper.dep"
     params:
         pdf_wo_ext = lambda wildcards, output: splitext(basename(output.pdf))[0],
         outdir = lambda wildcards, output: dirname(output.pdf)

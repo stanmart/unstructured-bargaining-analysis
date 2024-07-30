@@ -103,3 +103,14 @@ pre-commit install
 After this, the checks will be performed automatically before every commit.
 
 </details>
+
+<details>
+<summary>Latex dependencies</summary>
+A list of the required latex packages is stored in the `tl_packeges.txt` file. Make sure to update the file if you add new packages to the paper:
+
+```bash
+pixi run update-latex-deps
+```
+
+After updating the file, commit it to the repository so that the CI can install the required packages.
+</details>

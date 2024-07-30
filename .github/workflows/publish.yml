@@ -18,6 +18,12 @@ jobs:
         with:
           cache: true
           environments: default
+      - name: Setup latex
+        uses: teatimeguest/setup-texlive-action@v3
+        with:
+          package-file: tl_packages.txt
+          repository: https://texlive.info/historic/systems/texlive/2021/tlnet-final/
+          version: 2021
       - name: Cache Output
         id: cache-output
         uses: actions/cache@v4
