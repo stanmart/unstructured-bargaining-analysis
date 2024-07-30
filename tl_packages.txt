@@ -27,6 +27,7 @@ kvsetkeys
 l3kernel
 l3packages
 latex
+latex-bin
 latexmk
 letltxmacro
 listings
