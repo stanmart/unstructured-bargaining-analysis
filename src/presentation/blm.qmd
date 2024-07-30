@@ -100,7 +100,7 @@ format:
 :::
 ::: {.fragment}
 - Multi-lateral bargaining
-  - E.g. @MonteroSeftonZhang2008, @MitsutsuneTakanori2014, @TremewanVanberg2016, @chessa2022experiment, **@ShinodaFunaki2022**
+  - E.g. @MonteroSeftonZhang2008, @MitsutsuneTakanori2014, @TremewanVanberg2016, @chessa2023experiment, **@ShinodaFunaki2022**
   - Structured or semi-structured
 :::
 ::: {.fragment}
