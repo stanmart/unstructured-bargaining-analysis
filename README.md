@@ -9,7 +9,7 @@ Code for analyzing the results of the unstructured bargaining experiment
 
 ### Software requirements
 
-The project is set up so that [pixi](https://pixi.sh/latest/) handles the installation of the required dependencies into a local virtual environment. First, install pixi as described in the [documentation](https://pixi.sh/latest/#installation). Then, you can run the commands as described in the [running the analysis](#running-the-analysis) section.
+The project is set up so that [pixi](https://pixi.sh/latest/) handles the installation of the required dependencies into a local virtual environment. First, install pixi as described in the [documentation](https://pixi.sh/latest/#installation). Then, you can run the commands as described in the [replicating the paper](#replicating-the-paper) section.
 
 <details>
 <summary>Using pixi</summary>
@@ -26,7 +26,7 @@ Pixi also uses a lockfile. This lockfile is updated automatically when you add a
 
 ### Data requirements
 
-Data exported from otree is already placed into the `data/raw` directory. Please do not modify it under any circumstances. Automated checks are in place to ensure that the data is not modified.
+Data exported from oTree is already placed into the `data/raw` directory. Please do not modify it under any circumstances. Automated checks are in place to ensure that the data is not modified.
 
 <details>
 <summary>Exporting data from otree</summary>
@@ -47,13 +47,39 @@ Then, use `pixi run anonymize` to create `data/raw/survey_data_nonpersonal.csv`,
 Checksums for the raw data are stored in the `RAW_DATA_CHECKSUMS` repository variable.
 </details>
 
-## Running the analysis
+## Replicating the paper
+
+First, clone the repository and navigate to the project directory.
+
+```bash
+git clone git@github.com:stanmart/unstructured-bargaining-analysis.git
+cd unstructured-bargaining-analysis
+```
+
+Then, make sure that the software requirements are met as described in the [software requirements](#software-requirements) section.
+
+Finally, the following command will set up the environment, run the analysis, and create the paper.
+
+```bash
+pixi run paper
+```
+
+
+<details>
+
+Other `pixi` commands are also available. E.g.:
 
  - To create the collected datasets in `data/clean_collected`, run: `pixi run create-datasets`
  - To rerun the power analysis at `src/power_analysis/power.ipynb`, run `pixi run power-analysis`
  - To create a chart of the analysis steps at `build-graphs/filegraph.svg`, run `pixi run filegraph` (or similar commands for the `dag` or the `rulegraph`)
 
-## Automated checks
+</details>
+
+
+## Contributing
+
+<details>
+<summary>Automated checks</summary>
 
 The project is set up with GitHub Actions to run automated checks on every push and pull request to the main branch. The checks include:
  - `ruff check` for Python code style
@@ -75,3 +101,5 @@ Then, you can install the hooks by running
 pre-commit install
 ```
 After this, the checks will be performed automatically before every commit.
+
+</details>

@@ -48,7 +48,7 @@
 %\textcite[pre note][post note]{} e.g. Voth (2010)
 %\Citetitle{} only display title with automatic contextual capitalization
 % \bibliography{} % load bib file w/o .bib in name
-\addbibresource{references.bib}
+\addbibresource{src/paper/references.bib}
 \usepackage{mfirstuc}
 \DeclareFieldFormat{jtnoformat}{\capitalisewords{#1}}
 
@@ -390,7 +390,7 @@ Let us start by answering the main question of this paper: how does bargaining p
 
 \begin{table}
     \centering
-    \input{out/tables/regression_table}
+    \input{out/tables/regression_table.tex}
     \caption{Parametric test of the main hypotheses. Standard errors are clustered at the matching group level.}
     \label{tab:main_regressions}
 \end{table}
@@ -398,7 +398,7 @@ Let us start by answering the main question of this paper: how does bargaining p
 
 \begin{table}
     \centering
-    \input{out/tables/nonparametric_table}
+    \input{out/tables/nonparametric_table.tex}
     \caption{Non-parametric Mann-Whitney test of the main hypothesis. Observations are aggregated to the matching group level to ensure independence.}
     \label{tab:main_nonparametric}
 \end{table}
@@ -468,7 +468,7 @@ Next, we examine the difference between proposals that the same player makes in 
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\linewidth]{out/figures/proposal_Gini.pdf}
+    \includegraphics[width=0.8\linewidth]{out/figures/proposal_gini.pdf}
     \caption{Average Gini coefficient of one's proposals when in different roles. Each dot represents one participant. Participants for which we only observed proposals in one role are marked as N/A for the relevant role.}
     \label{fig:proposals_gini}
 \end{figure}

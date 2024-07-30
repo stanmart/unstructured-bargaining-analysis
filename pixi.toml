@@ -8,6 +8,7 @@ platforms = ["linux-64", "win-64", "osx-64", "osx-arm64"]
 
 [tasks]
 prepare-to-publish = "snakemake --cores 1 prepare_to_deploy"
+paper = "snakemake --cores 1 paper"
 classify-chat-messages = { cmd = "snakemake --cores 1 classify_chat_messages", env = { ALLOW_OPENAI_REQUESTS = "true" } }
 reclassify-chat-messages = { cmd = "snakemake --cores 1 --forcerun classify_chat_messages", env = { ALLOW_OPENAI_REQUESTS = "true", DELETE_CACHE = "true" } }
 create-presentations = "snakemake --cores 1 presentations"
@@ -35,6 +36,8 @@ pip = ">=24.0,<25"
 quarto = ">=1.4.550,<1.5"
 openai = ">=1.35.13,<1.36"
 mpltern = ">=1.0.4,<1.1"
+typer = ">=0.9.4,<0.10"
+requests = ">=2.32.3,<3"
 
 [environments]
 default = { solve-group = "main"}

@@ -1,4 +1,5 @@
-from src.util.makeutils import find_quarto_images, find_opened_files
+from os.path import normpath, splitext, basename, dirname
+from src.util.makeutils import find_input_files, find_opened_files, find_quarto_images
 
 
 SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
@@ -18,6 +19,38 @@ rule prepare_to_deploy:
         for file in input.presentations:
             copy2(file, "gh-pages")
         Path(output.nojekyll).touch()
+
+
+rule paper:
+    input:
+        tex = "src/paper/paper.tex",
+        bib = "src/paper/references.bib",
+        inputs = lambda wildcard: find_input_files(f"src/paper/paper.tex"),
+        util_script = "src/util/makeutils.py"
+    output:
+        pdf = "out/paper/paper.pdf",
+        # dep = "out/paper/paper.dep"
+    params:
+        pdf_wo_ext = lambda wildcards, output: splitext(basename(output.pdf))[0],
+        outdir = lambda wildcards, output: dirname(output.pdf)
+    shell:
+        "latexmk -pdf -synctex=1 -file-line-error \
+                 -outdir={params.outdir} \
+                 -jobname={params.pdf_wo_ext} \
+                 -interaction=nonstopmode {input.tex}"
+
+
+rule update_latex_deps:
+    input:
+        deps = "out/paper/paper.dep",
+        util_script = "src/util/makeutils.py"
+    output:
+        dep_file = "tl_packages.txt"
+    shell:
+        "python src/util/makeutils.py collect-latex-packages \
+            --add-biber --add-latexmk --check-against-tl \
+            --output-file tl_packages.txt --force-add ms {input.deps}"
+
 
 rule presentations:
     input:
