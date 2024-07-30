@@ -118,6 +118,10 @@ def plot_outcomes_stability(df: pl.DataFrame) -> sns.FacetGrid:
 
 
 def plot_outcomes_linearity_additivity(df: pl.DataFrame) -> sns.axisgrid.FacetGrid:
+    role_order = ["$A$", "$B_1$", "$B_2$"]
+    role_dtype = pl.Enum(role_order)
+
+    
     df_results = (
         df.group_by("treatment_name_nice")
         .agg(pl.col("1").mean(), pl.col("2").mean(), pl.col("3").mean())
@@ -126,6 +130,16 @@ def plot_outcomes_linearity_additivity(df: pl.DataFrame) -> sns.axisgrid.FacetGr
             id_vars=["treatment_name_nice"],
             variable_name="player_role",
             value_name="mean_payoff",
+        ).with_columns(
+            role=pl.col("player_role")
+            .replace(
+                {
+                    "1": "$A$",
+                    "2": "$B_1$",
+                    "3": "$B_2$",
+                }
+            )
+            .cast(role_dtype)
         )
     )
 
@@ -135,7 +149,7 @@ def plot_outcomes_linearity_additivity(df: pl.DataFrame) -> sns.axisgrid.FacetGr
                 df_results.to_series(0).str.strip_chars("Y = ").str.to_integer()
             ),
         ),
-        col="player_role",
+        col="role",
     )
 
     g.map_dataframe(

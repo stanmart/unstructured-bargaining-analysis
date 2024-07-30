@@ -40,15 +40,15 @@ rule blm_presentation:
 
 rule figures:
     input:
-        "out/figures/payoff_scatterplot.pdf",
+        "out/figures/payoff_scatterplot_rounds_all.pdf",
         "out/figures/payoff_average_rounds_all.pdf",
         "out/figures/payoff_average_rounds_[6].pdf",
         "out/figures/payoff_average_rounds_[2,3,4,5].pdf",
-        "out/figures/payoff_by_agreement_type.pdf",
-        "out/figures/payoff_share_of_agreement_types.pdf",
-        "out/figures/payoff_share_of_agreement_types_by_round.pdf",
+        "out/figures/payoff_by_agreement_type_rounds_all.pdf",
+        "out/figures/payoff_share_of_agreement_types_rounds_all.pdf",
+        "out/figures/payoff_share_of_agreement_types_by_round_rounds_all.pdf",
         "out/figures/payoff_equal_splits_by_round_rounds_all.pdf",
-        "out/figures/payoff_matching_group_average.pdf",
+        "out/figures/payoff_matching_group_average_rounds_all.pdf",
         "out/figures/timing_until_decision.pdf",
         "out/figures/timing_until_agreement_scatterplot.pdf",
         "out/figures/timing_until_agreement_by_round.pdf",
