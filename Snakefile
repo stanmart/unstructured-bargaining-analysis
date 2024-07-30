@@ -288,7 +288,7 @@ rule merge_session_data:
 
 rule collect_session_data:
     input:
-        wide_data = "data/raw/wide_data.csv",
+        wide_data = "data/raw/wide_data_nonpersonal.csv",
         bargaining_data = "data/raw/bargaining_data.csv",
         live_data = "data/raw/live_data.csv",
         chat_data = "data/raw/chat_data.csv",
