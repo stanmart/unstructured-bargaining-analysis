@@ -103,6 +103,7 @@ def plot_nationality(df: pl.DataFrame) -> sns.FacetGrid:
         height=5,
         aspect=1,
         col="treatment_name_nice",
+        col_wrap=2,
     )
 
     nationalities = list(df["nationality"].unique())
@@ -126,6 +127,8 @@ def plot_nationality(df: pl.DataFrame) -> sns.FacetGrid:
 
     g.set_titles(col_template="{col_name} treatment")
     g.set_axis_labels("", "Count")
+    g.tick_params(axis="x", labelbottom=True)
+    g.figure.tight_layout()
 
     return g
 

@@ -11,11 +11,24 @@ def prepare_dataset(outcomes: pl.DataFrame) -> pl.DataFrame:
                 "treatment_y_30": "Y = 30",
                 "treatment_y_90": "Y = 90",
             }
-        )
+        ),
+        treatment_name_xaxis=pl.col("treatment_name").replace(
+            {
+                "treatment_dummy_player": "Dummy\nplayer",
+                "treatment_y_10": "Y = 10",
+                "treatment_y_30": "Y = 30",
+                "treatment_y_90": "Y = 90",
+            }
+        ),
     )
 
     df = df.pivot(
-        index=["treatment_name_nice", "round_number", "group_id"],
+        index=[
+            "treatment_name_nice",
+            "treatment_name_xaxis",
+            "round_number",
+            "group_id",
+        ],
         columns="id_in_group",
         values="payoff_this_round",
     )
@@ -30,16 +43,19 @@ def plot_outcomes_dummy_player(df: pl.DataFrame) -> sns.FacetGrid:
 
     g = sns.displot(
         df_plot,
-        x="treatment_name_nice",
+        x="treatment_name_xaxis",
         multiple="stack",
         hue="satisfies_dummy_player_axiom",
         alpha=0.9,
+        height=3,
     )
     for ax in g.axes.flat:
         ax.xaxis.grid(False)
+        ax.tick_params(axis="x", labelrotation=90)
 
     g.set_axis_labels("", "Count")
     g.legend.set_title("Satisfies\nDummy player\naxiom")  # type: ignore
+    sns.move_legend(g, "center left", bbox_to_anchor=(0.53, 0.6))
 
     return g
 
@@ -51,16 +67,19 @@ def plot_outcomes_efficiency(df: pl.DataFrame) -> sns.FacetGrid:
 
     g = sns.displot(
         df_plot,
-        x="treatment_name_nice",
+        x="treatment_name_xaxis",
         multiple="stack",
         hue="satisfies_efficiency",
         alpha=0.9,
+        height=3,
     )
     for ax in g.axes.flat:
         ax.xaxis.grid(False)
+        ax.tick_params(axis="x", labelrotation=90)
 
     g.set_axis_labels("Treatment", "Count")
     g.legend.set_title("Satisfies\nefficiency\naxiom")  # type: ignore
+    sns.move_legend(g, "center left", bbox_to_anchor=(0.65, 0.6))
 
     return g
 
@@ -74,16 +93,19 @@ def plot_outcomes_symmetry(df: pl.DataFrame) -> sns.FacetGrid:
 
     g = sns.displot(
         df_plot,
-        x="treatment_name_nice",
+        x="treatment_name_xaxis",
         multiple="stack",
         hue="satisfies_symmetry",
         alpha=0.9,
+        height=3,
     )
     for ax in g.axes.flat:
         ax.xaxis.grid(False)
+        ax.tick_params(axis="x", labelrotation=90)
 
     g.set_axis_labels("Treatment", "Count")
     g.legend.set_title("Satisfies\nsymmetry\naxiom")  # type: ignore
+    sns.move_legend(g, "center left", bbox_to_anchor=(0.65, 0.6))
 
     return g
 
@@ -103,16 +125,19 @@ def plot_outcomes_stability(df: pl.DataFrame) -> sns.FacetGrid:
 
     g = sns.displot(
         df_plot,
-        x="treatment_name_nice",
+        x="treatment_name_xaxis",
         multiple="stack",
         hue="satisfies_stability",
         alpha=0.9,
+        height=3,
     )
     for ax in g.axes.flat:
         ax.xaxis.grid(False)
+        ax.tick_params(axis="x", labelrotation=90)
 
     g.set_axis_labels("Treatment", "Count")
     g.legend.set_title("Satisfies\nstability\naxiom")  # type: ignore
+    sns.move_legend(g, "center left", bbox_to_anchor=(0.65, 0.6))
 
     return g
 
@@ -150,6 +175,7 @@ def plot_outcomes_linearity_additivity(df: pl.DataFrame) -> sns.axisgrid.FacetGr
             ),
         ),
         col="role",
+        height=2.8,
     )
 
     g.map_dataframe(

@@ -401,8 +401,9 @@ def payoff_matching_group_average(df: pl.DataFrame) -> sns.axisgrid.FacetGrid:
     g = sns.FacetGrid(
         df_plot,
         col="treatment_name_nice",
-        height=6,
-        aspect=0.65,
+        height=3,
+        aspect=1,
+        col_wrap=2,
     )
 
     g.map_dataframe(
@@ -442,9 +443,6 @@ def payoff_matching_group_average(df: pl.DataFrame) -> sns.axisgrid.FacetGrid:
 
     g.set_titles(col_template="{col_name} treatment")
     g.set_axis_labels("Player role", "Average payoff")
-    g.figure.suptitle(
-        "Average payoff by matching group", y=1.1, verticalalignment="top"
-    )
     return g
 
 
