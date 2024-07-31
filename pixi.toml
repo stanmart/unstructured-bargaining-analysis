@@ -61,6 +61,7 @@ data-check = "gh variable list --json name --json value -q '.[] | select(.name |
 [feature.build-graphs.dependencies]
 snakemake = {version = "8.11.*", channel = "bioconda"}
 graphviz = "*"
+typer = ">=0.12.3,<0.13"
 [feature.build-graphs.tasks]
 create-build-graph-dir = "mkdir -p build-graphs"
 dag = { cmd = "snakemake --dag | dot -Tsvg > build-graphs/dag.svg", depends-on = ["create-build-graph-dir"] }
