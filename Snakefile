@@ -1,9 +1,8 @@
-from os.path import normpath, splitext, basename, dirname
+from os.path import splitext, basename, dirname
 from src.util.makeutils import find_input_files, find_opened_files, find_quarto_images
 
 
 SESSION_CODES = ["ykdzfw2h", "5r4374w0", "v0bpsxm2", "m7xcm95f"]
-WORD_TYPES = ["all", "VERB", "ADJ", "NOUN"]
 PRESENTATIONS, *_ = glob_wildcards("src/presentation/{presentation}.qmd")
 
 
@@ -58,6 +57,7 @@ rule update_latex_deps:
 rule presentations:
     input:
         expand("out/presentation/{presentation}.html", presentation=PRESENTATIONS)
+
 
 rule blm_presentation:
     input:
@@ -137,6 +137,7 @@ rule regression_table:
     script:
         "src/tables/regression_table.py"
 
+
 rule run_analysis: 
     input: 
         outcomes = "data/clean/_collected/outcomes.csv", 
@@ -149,6 +150,7 @@ rule run_analysis:
         axiom_results =  "out/analysis/axiom_test_results.pkl",
     script: 
         "src/analysis/analysis.py"
+
 
 rule create_chat_plot: 
     input:
@@ -171,11 +173,13 @@ rule classify_chat_messages:
     script:
         "src/analysis/classify_chat.py"
 
+
 rule create_values_theory_plot:
     output:
         figure = "out/figures/values_theory.{ext}",
     script:
         "src/figures/values_theory_plot.py"
+
 
 rule create_chat_excerpt:
     input:
@@ -185,6 +189,7 @@ rule create_chat_excerpt:
     script:
         "src/figures/chat_excerpts.py"
 
+
 rule create_survey_plot: 
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",
@@ -193,6 +198,7 @@ rule create_survey_plot:
         figure = "out/figures/survey_{plot}.{ext}",
     script: 
         "src/figures/survey_plots.py"
+
 
 rule create_axiom_survey_plot: 
     input: 
@@ -205,6 +211,7 @@ rule create_axiom_survey_plot:
     script: 
         "src/figures/axiom_plots.py"
 
+
 rule create_axiom_outcomes_plot: 
     input: 
         outcomes = "data/clean/_collected/outcomes.csv",
@@ -212,6 +219,7 @@ rule create_axiom_outcomes_plot:
         figure = "out/figures/axioms_outcomes_{axiom}.{ext}",
     script: 
         "src/figures/axiom_outcomes_plots.py"
+
 
 rule create_proposal_plot:
     input:

@@ -70,6 +70,8 @@ pixi run paper
 Other `pixi` commands are also available. E.g.:
 
  - To create the collected datasets in `data/clean_collected`, run: `pixi run create-datasets`
+ - To run the statistical tests, run `pixi run run-analysis`
+ - To create all figures in pdf format, run `pixi run figures`
  - To rerun the power analysis at `src/power_analysis/power.ipynb`, run `pixi run power-analysis`
  - To create a chart of the analysis steps at `build-graphs/filegraph.svg`, run `pixi run filegraph` (or similar commands for the `dag` or the `rulegraph`)
 
