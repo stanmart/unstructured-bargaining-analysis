@@ -109,7 +109,6 @@ rule figures:
         "out/figures/survey_study_field.svg",
         "out/figures/survey_nationality.pdf",
         "out/figures/values_theory.pdf",
-        "out/figures/chat_excerpt-8,10,11,17-21.pdf",
         "out/figures/allocations_outcomes.pdf",
         "out/figures/allocations_proposals.pdf",
         "out/figures/allocations_proposals_by_dummy_player_axiom.pdf",
