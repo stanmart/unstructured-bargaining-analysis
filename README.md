@@ -9,7 +9,7 @@ Code for analyzing the results of the unstructured bargaining experiment
 
 ### Software requirements
 
-The project is set up so that [pixi](https://pixi.sh/latest/) handles the installation of the required dependencies into a local virtual environment (Expect for latex. If you'd like to compile the paper, then make sure you also have a tex distribution with the necessary packages and `latexmk` available on the path.). First, install pixi as described in the [documentation](https://pixi.sh/latest/#installation). Then, you can run the commands as described in the [replicating the paper](#replicating-the-paper) section.
+The project is set up so that [pixi](https://pixi.sh/latest/) handles the installation of the required dependencies into a local virtual environment (Except for latex. If you'd like to compile the paper, make sure you have a tex distribution with the necessary packages and `latexmk` available on the path.). First, install pixi as described in the [documentation](https://pixi.sh/latest/#installation). Then, you can run the commands as described in the [replicating the paper](#replicating-the-paper) section.
 
 <details>
 <summary>Using pixi (advanced)</summary>
